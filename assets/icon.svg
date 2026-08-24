@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>AI SEO Autopilot icon</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1E3A8A"/>
+      <stop offset="1" stop-color="#0D9488"/>
+    </linearGradient>
+    <linearGradient id="spark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FDE68A"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="256" height="256" rx="48" fill="url(#bg)"/>
+
+  <!-- Autopilot orbit ring, tilted, around the search mark -->
+  <ellipse cx="128" cy="128" rx="72" ry="34" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="6"
+           transform="rotate(-28 128 128)"/>
+
+  <!-- Search / SEO magnifying glass -->
+  <circle cx="118" cy="118" r="38" fill="none" stroke="#FFFFFF" stroke-width="12"/>
+  <line x1="146" y1="146" x2="176" y2="176" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- AI spark riding the orbit -->
+  <path d="M196 76 L202 92 L218 98 L202 104 L196 120 L190 104 L174 98 L190 92 Z" fill="url(#spark)"/>
+</svg>

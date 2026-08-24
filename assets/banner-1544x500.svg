@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1544 500" width="1544" height="500">
+  <title>AI SEO Autopilot banner</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1E3A8A"/>
+      <stop offset="1" stop-color="#0D9488"/>
+    </linearGradient>
+    <linearGradient id="spark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FDE68A"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1544" height="500" fill="url(#bg)"/>
+
+  <!-- faint oversized orbit rings in the background for texture -->
+  <ellipse cx="1180" cy="250" rx="420" ry="200" fill="none" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="10" transform="rotate(-18 1180 250)"/>
+  <ellipse cx="1180" cy="250" rx="300" ry="140" fill="none" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="8" transform="rotate(-18 1180 250)"/>
+
+  <!-- icon mark -->
+  <g transform="translate(120 150)">
+    <ellipse cx="100" cy="100" rx="72" ry="34" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="6" transform="rotate(-28 100 100)"/>
+    <circle cx="90" cy="90" r="38" fill="none" stroke="#FFFFFF" stroke-width="12"/>
+    <line x1="118" y1="118" x2="148" y2="148" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"/>
+    <path d="M168 48 L174 64 L190 70 L174 76 L168 92 L162 76 L146 70 L162 64 Z" fill="url(#spark)"/>
+  </g>
+
+  <text x="340" y="235" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700" fill="#FFFFFF">AI SEO Autopilot</text>
+  <text x="342" y="285" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#E0F2FE">AI-assisted SEO that scans, recommends, and — with Pro — acts on its own</text>
+</svg>

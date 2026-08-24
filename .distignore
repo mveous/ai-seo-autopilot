@@ -1,0 +1,11 @@
+tests/
+phpunit.xml.dist
+phpcs.xml.dist
+composer.json
+composer.lock
+vendor/
+node_modules/
+.git*
+.editorconfig
+*.md
+!readme.txt
