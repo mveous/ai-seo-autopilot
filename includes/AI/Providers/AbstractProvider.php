@@ -8,6 +8,9 @@
 namespace AISEOAutopilot\AI\Providers;
 
 use AISEOAutopilot\AI\AIProviderInterface;
+use AISEOAutopilot\AI\AIResponse;
+use WordPress\AiClient\AiClient;
+use WordPress\AiClient\Providers\Http\Contracts\RequestAuthenticationInterface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,6 +20,12 @@ abstract class AbstractProvider implements AIProviderInterface {
 
 	protected string $api_key;
 
+	/**
+	 * Whether the bundled WordPress AI Client SDK has been wired up to run
+	 * over wp_remote_request() (and WP object cache) for this request yet.
+	 */
+	private static bool $ai_client_bootstrapped = false;
+
 	public function __construct( string $api_key ) {
 		$this->api_key = $api_key;
 	}
@@ -25,6 +34,127 @@ abstract class AbstractProvider implements AIProviderInterface {
 		$models = $this->get_models();
 
 		return (string) array_key_first( $models );
+	}
+
+	/**
+	 * Attempts to run a completion through the WordPress AI Client SDK
+	 * (the officially recommended integration path, since it's what
+	 * WordPress core itself uses starting in 7.0 via wp_ai_client_prompt()).
+	 *
+	 * Returns null whenever the SDK path can't be used for any reason
+	 * (not installed/autoloaded, unknown model, provider rejects the
+	 * request while resolving model metadata, transport failure, etc.),
+	 * so the caller falls back to its own direct wp_safe_remote_post()
+	 * implementation. That fallback is what keeps the plugin working
+	 * identically on every WordPress version it supports (6.0+), not
+	 * just 7.0+, and is why the direct HTTP code below still exists
+	 * alongside this bridge rather than replacing it outright.
+	 *
+	 * @param array{model?:string,temperature?:float,max_tokens?:int,json?:bool} $options
+	 *
+	 * @return AIResponse|\WP_Error|null
+	 */
+	protected function generate_via_ai_client(
+		string $system_prompt,
+		string $user_prompt,
+		array $options,
+		string $ai_client_provider_class,
+		string $ai_client_model_id,
+		RequestAuthenticationInterface $authentication
+	) {
+		if ( ! self::bootstrap_ai_client() || ! class_exists( $ai_client_provider_class ) ) {
+			return null;
+		}
+
+		try {
+			$registry    = AiClient::defaultRegistry();
+			$provider_id = $ai_client_provider_class::metadata()->getId();
+
+			if ( ! $registry->hasProvider( $provider_id ) ) {
+				$registry->registerProvider( $ai_client_provider_class );
+			}
+
+			$registry->setProviderRequestAuthentication( $provider_id, $authentication );
+
+			$model = $ai_client_provider_class::model( $ai_client_model_id );
+
+			$prompt = wp_ai_client_prompt( $user_prompt )
+				->using_model( $model )
+				->using_system_instruction( $system_prompt )
+				->using_temperature( (float) ( $options['temperature'] ?? 0.4 ) )
+				->using_max_tokens( (int) ( $options['max_tokens'] ?? 800 ) );
+
+			if ( ! empty( $options['json'] ) ) {
+				$prompt = $prompt->as_json_response();
+			}
+
+			$result = $prompt->generate_text_result();
+		} catch ( \Throwable $e ) {
+			return null;
+		}
+
+		if ( is_wp_error( $result ) ) {
+			return null;
+		}
+
+		$candidates = $result->getCandidates();
+
+		if ( empty( $candidates ) ) {
+			return null;
+		}
+
+		$content = '';
+		foreach ( $candidates[0]->getMessage()->getParts() as $part ) {
+			$content .= (string) $part->getText();
+		}
+
+		if ( '' === $content ) {
+			return new \WP_Error(
+				'ai_seo_autopilot_ai_empty_response',
+				__( 'The AI provider returned an empty response.', 'ai-seo-autopilot' )
+			);
+		}
+
+		$usage = $result->getTokenUsage();
+
+		return new AIResponse(
+			content: $content,
+			prompt_tokens: $usage->getPromptTokens(),
+			completion_tokens: $usage->getCompletionTokens(),
+			provider: $this->get_id(),
+			model: $ai_client_model_id,
+			raw: method_exists( $result, 'toArray' ) ? $result->toArray() : array()
+		);
+	}
+
+	/**
+	 * Wires the bundled AI Client SDK to WordPress's own HTTP and object
+	 * cache APIs, exactly once per request. Skipped on WordPress 7.0+,
+	 * where core provides (and has already wired up) its own copy.
+	 */
+	private static function bootstrap_ai_client(): bool {
+		if ( ! function_exists( 'wp_ai_client_prompt' ) ) {
+			return false;
+		}
+
+		if ( self::$ai_client_bootstrapped ) {
+			return true;
+		}
+
+		if (
+			( ! function_exists( 'wp_has_ai_client' ) || ! wp_has_ai_client() )
+			&& class_exists( \WordPress\AI_Client\HTTP\WP_AI_Client_Discovery_Strategy::class )
+		) {
+			\WordPress\AI_Client\HTTP\WP_AI_Client_Discovery_Strategy::init();
+
+			if ( class_exists( \WordPress\AI_Client\Cache\WordPress_Cache::class ) ) {
+				AiClient::setCache( new \WordPress\AI_Client\Cache\WordPress_Cache() );
+			}
+		}
+
+		self::$ai_client_bootstrapped = true;
+
+		return true;
 	}
 
 	/**

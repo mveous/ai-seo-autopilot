@@ -14,16 +14,16 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$settings      = get_option( 'ai_seo_autopilot_settings', array() );
-$remove_data   = ! empty( $settings['advanced']['remove_data_on_uninstall'] );
+$aiseo_settings    = get_option( 'ai_seo_autopilot_settings', array() );
+$aiseo_remove_data = ! empty( $aiseo_settings['advanced']['remove_data_on_uninstall'] );
 
-if ( ! $remove_data ) {
+if ( ! $aiseo_remove_data ) {
 	return;
 }
 
 global $wpdb;
 
-$tables = array(
+$aiseo_tables = array(
 	$wpdb->prefix . 'ai_seo_scans',
 	$wpdb->prefix . 'ai_seo_issues',
 	$wpdb->prefix . 'ai_seo_actions',
@@ -34,13 +34,13 @@ $tables = array(
 	$wpdb->prefix . 'ai_seo_ai_usage',
 );
 
-foreach ( $tables as $table ) {
+foreach ( $aiseo_tables as $aiseo_table ) {
 	// Table names are built from a fixed, hardcoded list above — never from
 	// user input — so this is safe without a placeholder-based prepare().
-	$wpdb->query( "DROP TABLE IF EXISTS `{$table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- $table is from the fixed, hardcoded list above, never user input; dropping the plugin's own tables is uninstall.php's entire purpose, gated behind the opt-in "remove data on uninstall" setting checked above.
+	$wpdb->query( "DROP TABLE IF EXISTS `{$aiseo_table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- $aiseo_table is from the fixed, hardcoded list above, never user input; dropping the plugin's own tables is uninstall.php's entire purpose, gated behind the opt-in "remove data on uninstall" setting checked above.
 }
 
-$options = array(
+$aiseo_options = array(
 	'ai_seo_autopilot_settings',
 	'ai_seo_autopilot_db_version',
 	'ai_seo_autopilot_activated_at',
@@ -49,9 +49,9 @@ $options = array(
 	'ai_seo_autopilot_license_status',
 );
 
-foreach ( $options as $option ) {
-	delete_option( $option );
-	delete_site_option( $option );
+foreach ( $aiseo_options as $aiseo_option ) {
+	delete_option( $aiseo_option );
+	delete_site_option( $aiseo_option );
 }
 
 // Remove plugin-owned postmeta.

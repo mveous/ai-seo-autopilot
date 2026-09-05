@@ -8,6 +8,8 @@
 namespace AISEOAutopilot\AI\Providers;
 
 use AISEOAutopilot\AI\AIResponse;
+use WordPress\AnthropicAiProvider\Authentication\AnthropicApiKeyRequestAuthentication;
+use WordPress\AnthropicAiProvider\Provider\AnthropicProvider as AiClientAnthropicProvider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class AnthropicProvider extends AbstractProvider {
 
+	// Retained as the fallback transport for WordPress < 7.0 (this plugin
+	// supports 6.0+) and for when the bundled AI Client SDK can't service
+	// a request; see AbstractProvider::generate_via_ai_client().
 	private const API_BASE     = 'https://api.anthropic.com/v1';
 	private const API_VERSION  = '2023-06-01';
 
@@ -36,6 +41,19 @@ final class AnthropicProvider extends AbstractProvider {
 
 	public function generate( string $system_prompt, string $user_prompt, array $options = array() ) {
 		$model = $options['model'] ?? $this->get_default_model();
+
+		$via_ai_client = $this->generate_via_ai_client(
+			$system_prompt,
+			$user_prompt,
+			$options,
+			AiClientAnthropicProvider::class,
+			$model,
+			new AnthropicApiKeyRequestAuthentication( $this->api_key )
+		);
+
+		if ( null !== $via_ai_client ) {
+			return $via_ai_client;
+		}
 
 		if ( ! empty( $options['json'] ) ) {
 			$system_prompt .= "\n\n" . __( 'Respond with valid JSON only. Do not include markdown code fences or any commentary outside the JSON object.', 'ai-seo-autopilot' );

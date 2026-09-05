@@ -8,6 +8,8 @@
 namespace AISEOAutopilot\AI\Providers;
 
 use AISEOAutopilot\AI\AIResponse;
+use WordPress\GoogleAiProvider\Authentication\GoogleApiKeyRequestAuthentication;
+use WordPress\GoogleAiProvider\Provider\GoogleProvider as AiClientGoogleProvider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,6 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class GeminiProvider extends AbstractProvider {
 
+	// Retained as the fallback transport for WordPress < 7.0 (this plugin
+	// supports 6.0+) and for when the bundled AI Client SDK can't service
+	// a request; see AbstractProvider::generate_via_ai_client(). The AI
+	// Client's Google provider covers the same Gemini models under its
+	// 'google' provider id.
 	private const API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 
 	public function get_id(): string {
@@ -35,6 +42,19 @@ final class GeminiProvider extends AbstractProvider {
 
 	public function generate( string $system_prompt, string $user_prompt, array $options = array() ) {
 		$model = $options['model'] ?? $this->get_default_model();
+
+		$via_ai_client = $this->generate_via_ai_client(
+			$system_prompt,
+			$user_prompt,
+			$options,
+			AiClientGoogleProvider::class,
+			$model,
+			new GoogleApiKeyRequestAuthentication( $this->api_key )
+		);
+
+		if ( null !== $via_ai_client ) {
+			return $via_ai_client;
+		}
 
 		$generation_config = array(
 			'temperature'     => $options['temperature'] ?? 0.4,

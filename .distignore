@@ -1,11 +1,25 @@
-tests/
 phpunit.xml.dist
 phpcs.xml.dist
 composer.json
 composer.lock
-vendor/
+# vendor/ ships in the release: it carries the WordPress AI Client SDK
+# (wordpress/wp-ai-client + wordpress/ai-provider-for-{openai,google,anthropic}
+# and their runtime deps), a required runtime dependency. Only the
+# require-dev (lint/test tooling) subtrees are excluded below.
+vendor/bin/
+vendor/dealerdirect/
+vendor/myclabs/
+vendor/nikic/
+vendor/phar-io/
+vendor/phpcompatibility/
+vendor/phpcsstandards/
+vendor/phpunit/
+vendor/sebastian/
+vendor/squizlabs/
+vendor/theseer/
+vendor/wp-coding-standards/
+vendor/yoast/
 node_modules/
 .git*
 .editorconfig
 *.md
-!readme.txt

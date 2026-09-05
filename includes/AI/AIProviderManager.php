@@ -24,12 +24,6 @@ final class AIProviderManager {
 
 	private const KEYS_OPTION = 'ai_seo_autopilot_api_keys';
 
-	/**
-	 * The only provider Free users can connect. Pro unlocks the rest via
-	 * the `ai_multi_provider` feature gate.
-	 */
-	public const FREE_PROVIDER = 'anthropic';
-
 	/** @var array<string,class-string<AIProviderInterface>> */
 	private array $providers = array();
 
@@ -92,16 +86,12 @@ final class AIProviderManager {
 	}
 
 	/**
-	 * Whether this provider requires Pro to connect. Free is limited to
-	 * Anthropic Claude; Pro unlocks every registered provider (including
-	 * ones Pro itself registers via `ai_seo_autopilot/register_ai_providers`).
+	 * Whether this provider requires Pro to connect. Every registered
+	 * provider (Anthropic, OpenAI, Gemini, and any Pro-registered ones)
+	 * is available on Free.
 	 */
 	public function is_provider_locked( string $provider_id ): bool {
-		if ( self::FREE_PROVIDER === $provider_id ) {
-			return false;
-		}
-
-		return ! $this->features->is_available( 'ai_multi_provider' );
+		return false;
 	}
 
 	/**

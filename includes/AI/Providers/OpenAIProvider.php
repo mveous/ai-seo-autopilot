@@ -8,6 +8,8 @@
 namespace AISEOAutopilot\AI\Providers;
 
 use AISEOAutopilot\AI\AIResponse;
+use WordPress\AiClient\Providers\Http\DTO\ApiKeyRequestAuthentication;
+use WordPress\OpenAiAiProvider\Provider\OpenAiProvider as AiClientOpenAiProvider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class OpenAIProvider extends AbstractProvider {
 
+	// Retained as the fallback transport for WordPress < 7.0 (this plugin
+	// supports 6.0+) and for when the bundled AI Client SDK can't service
+	// a request; see AbstractProvider::generate_via_ai_client().
 	private const API_BASE = 'https://api.openai.com/v1';
 
 	public function get_id(): string {
@@ -36,6 +41,19 @@ final class OpenAIProvider extends AbstractProvider {
 
 	public function generate( string $system_prompt, string $user_prompt, array $options = array() ) {
 		$model = $options['model'] ?? $this->get_default_model();
+
+		$via_ai_client = $this->generate_via_ai_client(
+			$system_prompt,
+			$user_prompt,
+			$options,
+			AiClientOpenAiProvider::class,
+			$model,
+			new ApiKeyRequestAuthentication( $this->api_key )
+		);
+
+		if ( null !== $via_ai_client ) {
+			return $via_ai_client;
+		}
 
 		$body = array(
 			'model'       => $model,
