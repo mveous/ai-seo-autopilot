@@ -52,6 +52,10 @@ final class Assets implements Registrable {
 				'i18n'      => array(
 					'confirmRunScan' => __( 'Run a full SEO scan now? This runs in the background and may take a few minutes on large sites.', 'ai-seo-autopilot' ),
 					'genericError'   => __( 'Something went wrong. Please try again.', 'ai-seo-autopilot' ),
+					'fixing'         => __( 'Fixing…', 'ai-seo-autopilot' ),
+					'fixed'          => __( 'Fixed', 'ai-seo-autopilot' ),
+					'newTitle'       => __( 'New title:', 'ai-seo-autopilot' ),
+					'newDescription' => __( 'New description:', 'ai-seo-autopilot' ),
 				),
 			)
 		);

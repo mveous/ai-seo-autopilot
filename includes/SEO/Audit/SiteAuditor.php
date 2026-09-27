@@ -572,6 +572,64 @@ final class SiteAuditor {
 	}
 
 	/**
+	 * Issue types the AI can fix, mapped to the SEO meta field it rewrites.
+	 */
+	private const AI_FIXABLE = array(
+		'missing_title'         => 'title',
+		'duplicate_title'       => 'title',
+		'missing_description'   => 'description',
+		'duplicate_description' => 'description',
+	);
+
+	public static function ai_fix_field( string $issue_type ): ?string {
+		return self::AI_FIXABLE[ $issue_type ] ?? null;
+	}
+
+	/**
+	 * @return array<string,mixed>|null
+	 */
+	public function get_issue( int $issue_id ): ?array {
+		global $wpdb;
+
+		$table = Migrator::table( 'issues' );
+
+		$row = $wpdb->get_row( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is from Migrator::table(), custom plugin table, no core API exists.
+			$wpdb->prepare(
+				"SELECT * FROM {$table} WHERE id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from Migrator::table(), not user input.
+				$issue_id
+			),
+			ARRAY_A
+		);
+
+		return is_array( $row ) ? $row : null;
+	}
+
+	public function resolve_issue( int $issue_id ): void {
+		global $wpdb;
+
+		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is from Migrator::table(), custom plugin table, no core API exists.
+			Migrator::table( 'issues' ),
+			array(
+				'status'      => 'resolved',
+				'resolved_at' => current_time( 'mysql', true ),
+			),
+			array( 'id' => $issue_id ),
+			array( '%s', '%s' ),
+			array( '%d' )
+		);
+	}
+
+	public function count_open_issues(): int {
+		global $wpdb;
+
+		$table = Migrator::table( 'issues' );
+
+		return (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is from Migrator::table(), custom plugin table, no core API exists; caching is a possible future optimization.
+			"SELECT COUNT(*) FROM {$table} WHERE status = 'open'"
+		);
+	}
+
+	/**
 	 * @return array<int,array<string,mixed>>
 	 */
 	public function get_open_issues( int $limit = 50, int $offset = 0 ): array {

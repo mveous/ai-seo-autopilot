@@ -337,3 +337,14 @@
 
 .ai-seo-upgrade-hero { text-align: center; padding: 20px 0; }
 .ai-seo-upgrade-cta { text-align: center; padding: 20px 0 40px; }
+
+.ai-seo-issues-table td { vertical-align: top; }
+.ai-seo-issue-severity { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.ai-seo-issue-severity--high { background: #fef2f2; color: var(--ai-seo-danger); }
+.ai-seo-issue-severity--medium { background: #fffbeb; color: var(--ai-seo-warning); }
+.ai-seo-issue-severity--low { background: #f3f4f6; color: var(--ai-seo-muted); }
+.ai-seo-issue-action { white-space: nowrap; }
+.ai-seo-issue-action .description { white-space: normal; }
+.ai-seo-issue-fixed { color: var(--ai-seo-success); font-weight: 600; }
+.ai-seo-issues-table tr.is-fixed td { opacity: .7; }
+@keyframes spin { to { transform: rotate(360deg); } }

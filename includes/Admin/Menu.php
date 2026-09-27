@@ -78,6 +78,13 @@ final class Menu implements Registrable {
 			wp_die( esc_html__( 'You do not have permission to access this page.', 'ai-seo-autopilot' ) );
 		}
 
+		$view = isset( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view switch, no state change.
+
+		if ( 'issues' === $view ) {
+			$this->render_view( 'issues' );
+			return;
+		}
+
 		$this->render_view( 'dashboard', array( 'features' => $this->features ) );
 	}
 
