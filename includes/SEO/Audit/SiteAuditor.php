@@ -624,8 +624,11 @@ final class SiteAuditor {
 
 		$table = Migrator::table( 'issues' );
 
-		return (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is from Migrator::table(), custom plugin table, no core API exists; caching is a possible future optimization.
-			"SELECT COUNT(*) FROM {$table} WHERE status = 'open'"
+		return (int) $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is from Migrator::table(), custom plugin table, no core API exists; caching is a possible future optimization.
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table} WHERE status = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is from Migrator::table(), not user input.
+				'open'
+			)
 		);
 	}
 
