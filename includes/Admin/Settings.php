@@ -1,8 +1,9 @@
 <?php
 /**
  * Settings storage, defaults, and the admin-post handlers that save each
- * settings tab. Rendering lives in admin/views/settings.php; this class
- * only owns data (read, sanitize, persist).
+ * settings tab. Rendering lives in AISEOAutopilot\Admin\Views\SettingsView
+ * and AISEOAutopilot\Admin\Views\SettingsTabs\*; this class only owns data
+ * (read, sanitize, persist).
  *
  * @package AISEOAutopilot\Admin
  */

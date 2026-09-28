@@ -1,13 +1,17 @@
 <?php
 /**
- * Registers the wp-admin menu pages and delegates rendering to view
- * templates in admin/views/.
+ * Registers the wp-admin menu pages and delegates rendering to the
+ * class-based views in AISEOAutopilot\Admin\Views.
  *
  * @package AISEOAutopilot\Admin
  */
 
 namespace AISEOAutopilot\Admin;
 
+use AISEOAutopilot\Admin\Views\DashboardView;
+use AISEOAutopilot\Admin\Views\IssuesView;
+use AISEOAutopilot\Admin\Views\SettingsView;
+use AISEOAutopilot\Admin\Views\UpgradeView;
 use AISEOAutopilot\Core\Plugin;
 use AISEOAutopilot\Core\Registrable;
 use AISEOAutopilot\Features\CapabilityManager;
@@ -81,11 +85,11 @@ final class Menu implements Registrable {
 		$view = isset( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view switch, no state change.
 
 		if ( 'issues' === $view ) {
-			$this->render_view( 'issues' );
+			( new IssuesView() )->render();
 			return;
 		}
 
-		$this->render_view( 'dashboard', array( 'features' => $this->features ) );
+		( new DashboardView( $this->features ) )->render();
 	}
 
 	public function render_settings(): void {
@@ -96,13 +100,11 @@ final class Menu implements Registrable {
 		/** @var Settings|null $settings */
 		$settings = Plugin::instance()->get( 'admin.settings' );
 
-		$this->render_view(
-			'settings',
-			array(
-				'features' => $this->features,
-				'settings' => $settings,
-			)
-		);
+		if ( ! $settings ) {
+			return;
+		}
+
+		( new SettingsView( $this->features, $settings ) )->render();
 	}
 
 	public function render_upgrade(): void {
@@ -110,24 +112,7 @@ final class Menu implements Registrable {
 			wp_die( esc_html__( 'You do not have permission to access this page.', 'ai-seo-autopilot' ) );
 		}
 
-		$this->render_view( 'upgrade', array( 'features' => $this->features ) );
-	}
-
-	/**
-	 * @param array<string,mixed> $vars
-	 */
-	private function render_view( string $view, array $vars = array() ): void {
-		$path = AI_SEO_AUTOPILOT_DIR . 'admin/views/' . $view . '.php';
-
-		if ( ! is_readable( $path ) ) {
-			return;
-		}
-
-		// Extracted for template ergonomics; keys are hardcoded above, not
-		// user input, so this is not an injection vector.
-		extract( $vars, EXTR_SKIP ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
-
-		require $path;
+		( new UpgradeView( $this->features ) )->render();
 	}
 
 	private function capability( string $action ): string {
