@@ -1,13 +1,13 @@
 <?php
 /**
- * Anthropic Claude (Messages API) adapter.
+ * Anthropic Claude adapter, backed by the bundled WordPress AI Client SDK's
+ * Anthropic provider.
  *
  * @package AISEOAutopilot\AI\Providers
  */
 
 namespace AISEOAutopilot\AI\Providers;
 
-use AISEOAutopilot\AI\AIResponse;
 use WordPress\AnthropicAiProvider\Authentication\AnthropicApiKeyRequestAuthentication;
 use WordPress\AnthropicAiProvider\Provider\AnthropicProvider as AiClientAnthropicProvider;
 
@@ -17,11 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class AnthropicProvider extends AbstractProvider {
 
-	// Retained as the fallback transport for WordPress < 7.0 (this plugin
-	// supports 6.0+) and for when the bundled AI Client SDK can't service
-	// a request; see AbstractProvider::generate_via_ai_client().
-	private const API_BASE     = 'https://api.anthropic.com/v1';
-	private const API_VERSION  = '2023-06-01';
+	private const API_BASE    = 'https://api.anthropic.com/v1';
+	private const API_VERSION = '2023-06-01';
 
 	public function get_id(): string {
 		return 'anthropic';
@@ -33,74 +30,30 @@ final class AnthropicProvider extends AbstractProvider {
 
 	public function get_models(): array {
 		return array(
-			'claude-sonnet-5' => 'Claude Sonnet 5',
+			'claude-sonnet-5'           => 'Claude Sonnet 5',
 			'claude-haiku-4-5-20251001' => 'Claude Haiku 4.5',
-			'claude-opus-5'   => 'Claude Opus 5',
+			'claude-opus-5'             => 'Claude Opus 5',
 		);
 	}
 
 	public function generate( string $system_prompt, string $user_prompt, array $options = array() ) {
-		$model = $options['model'] ?? $this->get_default_model();
-
-		$via_ai_client = $this->generate_via_ai_client(
-			$system_prompt,
-			$user_prompt,
-			$options,
-			AiClientAnthropicProvider::class,
-			$model,
-			new AnthropicApiKeyRequestAuthentication( $this->api_key )
-		);
-
-		if ( null !== $via_ai_client ) {
-			return $via_ai_client;
+		if ( ! class_exists( AnthropicApiKeyRequestAuthentication::class ) ) {
+			return new \WP_Error(
+				'ai_seo_autopilot_ai_client_missing',
+				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-seo-autopilot' )
+			);
 		}
 
 		if ( ! empty( $options['json'] ) ) {
 			$system_prompt .= "\n\n" . __( 'Respond with valid JSON only. Do not include markdown code fences or any commentary outside the JSON object.', 'ai-seo-autopilot' );
 		}
 
-		$body = array(
-			'model'      => $model,
-			'system'     => $system_prompt,
-			'max_tokens' => $options['max_tokens'] ?? 800,
-			'temperature' => $options['temperature'] ?? 0.4,
-			'messages'   => array(
-				array(
-					'role'    => 'user',
-					'content' => $user_prompt,
-				),
-			),
-		);
-
-		$decoded = $this->post_json(
-			self::API_BASE . '/messages',
-			$body,
-			array(
-				'x-api-key'         => $this->api_key,
-				'anthropic-version' => self::API_VERSION,
-			)
-		);
-
-		if ( is_wp_error( $decoded ) ) {
-			return $decoded;
-		}
-
-		$content = $decoded['content'][0]['text'] ?? '';
-
-		if ( '' === $content ) {
-			return new \WP_Error(
-				'ai_seo_autopilot_ai_empty_response',
-				__( 'The AI provider returned an empty response.', 'ai-seo-autopilot' )
-			);
-		}
-
-		return new AIResponse(
-			content: (string) $content,
-			prompt_tokens: (int) ( $decoded['usage']['input_tokens'] ?? 0 ),
-			completion_tokens: (int) ( $decoded['usage']['output_tokens'] ?? 0 ),
-			provider: $this->get_id(),
-			model: $model,
-			raw: $decoded
+		return $this->complete_via_ai_client(
+			$system_prompt,
+			$user_prompt,
+			$options,
+			AiClientAnthropicProvider::class,
+			new AnthropicApiKeyRequestAuthentication( $this->api_key )
 		);
 	}
 

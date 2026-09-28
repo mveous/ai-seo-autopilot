@@ -7,6 +7,7 @@
 
 namespace AISEOAutopilot\Core;
 
+use AISEOAutopilot\AI\AIClient;
 use AISEOAutopilot\AI\AIProviderManager;
 use AISEOAutopilot\AI\PromptManager;
 use AISEOAutopilot\AI\UsageTracker;
@@ -100,6 +101,7 @@ final class Plugin {
 		$this->set( 'upgrade', new UpgradeManager() );
 
 		// AI subsystem.
+		AIClient::init();
 		$this->set( 'ai.usage', new UsageTracker() );
 		$this->set( 'ai.prompts', new PromptManager() );
 		$this->set( 'ai.providers', new AIProviderManager( $this->get( 'features' ) ) );

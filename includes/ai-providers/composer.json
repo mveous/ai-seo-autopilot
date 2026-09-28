@@ -1,0 +1,12 @@
+{
+    "require": {
+        "wordpress/ai-provider-for-openai": "^1.1",
+        "wordpress/ai-provider-for-google": "^1.1",
+        "wordpress/ai-provider-for-anthropic": "^1.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
