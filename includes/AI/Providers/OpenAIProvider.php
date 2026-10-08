@@ -17,8 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class OpenAIProvider extends AbstractProvider {
 
-	private const API_BASE = 'https://api.openai.com/v1';
-
 	public function get_id(): string {
 		return 'openai';
 	}
@@ -54,24 +52,26 @@ final class OpenAIProvider extends AbstractProvider {
 	}
 
 	public function validate_api_key( string $api_key ) {
-		$response = wp_safe_remote_get(
-			self::API_BASE . '/models',
-			array(
-				'timeout' => 15,
-				'headers' => array( 'Authorization' => 'Bearer ' . $api_key ),
-			)
-		);
-
-		if ( is_wp_error( $response ) ) {
-			return new \WP_Error( 'ai_seo_autopilot_ai_network_error', $response->get_error_message() );
+		if ( ! class_exists( ApiKeyRequestAuthentication::class ) ) {
+			return new \WP_Error(
+				'ai_seo_autopilot_ai_client_missing',
+				__( 'The bundled AI Client SDK could not be loaded.', 'ai-seo-autopilot' )
+			);
 		}
 
-		$code = (int) wp_remote_retrieve_response_code( $response );
+		$result = $this->complete_via_ai_client(
+			'Respond with the word OK only.',
+			'Test the OpenAI API connection.',
+			array( 'max_tokens' => 5 ),
+			AiClientOpenAiProvider::class,
+			new ApiKeyRequestAuthentication( $api_key )
+		);
 
-		if ( 200 !== $code ) {
+		if ( is_wp_error( $result ) ) {
 			return new \WP_Error(
 				'ai_seo_autopilot_ai_invalid_key',
-				__( 'This OpenAI API key could not be verified.', 'ai-seo-autopilot' )
+				__( 'This OpenAI API key could not be verified.', 'ai-seo-autopilot' ),
+				array( 'previous_error' => $result )
 			);
 		}
 

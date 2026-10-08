@@ -11,41 +11,43 @@ namespace AISEOAutopilot\AI\Providers;
 use WordPress\AnthropicAiProvider\Authentication\AnthropicApiKeyRequestAuthentication;
 use WordPress\AnthropicAiProvider\Provider\AnthropicProvider as AiClientAnthropicProvider;
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
 	exit;
 }
 
-final class AnthropicProvider extends AbstractProvider {
+final class AnthropicProvider extends AbstractProvider
+{
 
-	private const API_BASE    = 'https://api.anthropic.com/v1';
-	private const API_VERSION = '2023-06-01';
-
-	public function get_id(): string {
+	public function get_id(): string
+	{
 		return 'anthropic';
 	}
 
-	public function get_label(): string {
-		return __( 'Anthropic Claude', 'ai-seo-autopilot' );
+	public function get_label(): string
+	{
+		return __('Anthropic Claude', 'ai-seo-autopilot');
 	}
 
-	public function get_models(): array {
+	public function get_models(): array
+	{
 		return array(
-			'claude-sonnet-5'           => 'Claude Sonnet 5',
+			'claude-sonnet-5' => 'Claude Sonnet 5',
 			'claude-haiku-4-5-20251001' => 'Claude Haiku 4.5',
-			'claude-opus-5'             => 'Claude Opus 5',
+			'claude-opus-5' => 'Claude Opus 5',
 		);
 	}
 
-	public function generate( string $system_prompt, string $user_prompt, array $options = array() ) {
-		if ( ! class_exists( AnthropicApiKeyRequestAuthentication::class ) ) {
+	public function generate(string $system_prompt, string $user_prompt, array $options = array())
+	{
+		if (!class_exists(AnthropicApiKeyRequestAuthentication::class)) {
 			return new \WP_Error(
 				'ai_seo_autopilot_ai_client_missing',
-				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-seo-autopilot' )
+				__('The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-seo-autopilot')
 			);
 		}
 
-		if ( ! empty( $options['json'] ) ) {
-			$system_prompt .= "\n\n" . __( 'Respond with valid JSON only. Do not include markdown code fences or any commentary outside the JSON object.', 'ai-seo-autopilot' );
+		if (!empty($options['json'])) {
+			$system_prompt .= "\n\n" . __('Respond with valid JSON only. Do not include markdown code fences or any commentary outside the JSON object.', 'ai-seo-autopilot');
 		}
 
 		return $this->complete_via_ai_client(
@@ -53,32 +55,44 @@ final class AnthropicProvider extends AbstractProvider {
 			$user_prompt,
 			$options,
 			AiClientAnthropicProvider::class,
-			new AnthropicApiKeyRequestAuthentication( $this->api_key )
+			new AnthropicApiKeyRequestAuthentication($this->api_key)
 		);
 	}
 
-	public function validate_api_key( string $api_key ) {
-		$response = wp_safe_remote_get(
-			self::API_BASE . '/models',
-			array(
-				'timeout' => 15,
-				'headers' => array(
-					'x-api-key'         => $api_key,
-					'anthropic-version' => self::API_VERSION,
-				),
-			)
-		);
-
-		if ( is_wp_error( $response ) ) {
-			return new \WP_Error( 'ai_seo_autopilot_ai_network_error', $response->get_error_message() );
+	public function validate_api_key(string $api_key)
+	{
+		if (!class_exists(AnthropicApiKeyRequestAuthentication::class)) {
+			return new \WP_Error(
+				'ai_seo_autopilot_ai_client_missing',
+				__(
+					'The bundled AI Client SDK could not be loaded.',
+					'ai-seo-autopilot'
+				)
+			);
 		}
 
-		$code = (int) wp_remote_retrieve_response_code( $response );
+		$authentication = new AnthropicApiKeyRequestAuthentication($api_key);
 
-		if ( 200 !== $code ) {
+		$result = $this->complete_via_ai_client(
+			'Respond with the word OK only.',
+			'Test the Anthropic API connection.',
+			array(
+				'max_tokens' => 5,
+			),
+			AiClientAnthropicProvider::class,
+			$authentication
+		);
+
+		if (is_wp_error($result)) {
 			return new \WP_Error(
 				'ai_seo_autopilot_ai_invalid_key',
-				__( 'This Anthropic API key could not be verified.', 'ai-seo-autopilot' )
+				__(
+					'This Anthropic API key could not be verified.',
+					'ai-seo-autopilot'
+				),
+				array(
+					'previous_error' => $result,
+				)
 			);
 		}
 
