@@ -33,7 +33,7 @@ define('AI_SEO_AUTOPILOT_DIR', plugin_dir_path(__FILE__));
 define('AI_SEO_AUTOPILOT_URL', plugin_dir_url(__FILE__));
 define('AI_SEO_AUTOPILOT_BASENAME', plugin_basename(__FILE__));
 define('AI_SEO_AUTOPILOT_TEXT_DOMAIN', 'ai-seo-autopilot');
-define('AI_SEO_AUTOPILOT_MIN_PHP', '8.1');
+define('AI_SEO_AUTOPILOT_MIN_PHP', '8.0');
 define('AI_SEO_AUTOPILOT_MIN_WP', '6.0');
 
 // -----------------------------------------------------------------------

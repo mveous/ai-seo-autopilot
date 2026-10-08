@@ -71,14 +71,19 @@ final class AIProviderManager {
 	 * @return array<string,string> model id => label, for a given provider.
 	 */
 	public function get_models( string $provider_id ): array {
-		if ( ! isset( $this->providers[ $provider_id ] ) ) {
-			return array();
-		}
+		return $this->get_models_for_key( $provider_id, (string) $this->get_api_key( $provider_id ) );
+	}
 
-		$class    = $this->providers[ $provider_id ];
-		$instance = new $class( '' );
+	/**
+	 * Models for a provider as seen by a specific key (providers that list
+	 * models live use the key to query their API).
+	 *
+	 * @return array<string,string> model id => label.
+	 */
+	public function get_models_for_key( string $provider_id, string $api_key ): array {
+		$provider = $this->make_provider( $provider_id, $api_key );
 
-		return $instance->get_models();
+		return null === $provider ? array() : $provider->get_models();
 	}
 
 	public function has_provider( string $provider_id ): bool {

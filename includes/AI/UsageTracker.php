@@ -47,17 +47,17 @@ final class UsageTracker implements Registrable {
 			),
 		),
 		'gemini'    => array(
-			'gemini-2.0-flash' => array(
+			'gemini-2.5-flash'      => array(
+				'prompt'     => 0.0003,
+				'completion' => 0.0025,
+			),
+			'gemini-2.5-flash-lite' => array(
 				'prompt'     => 0.0001,
 				'completion' => 0.0004,
 			),
-			'gemini-1.5-flash' => array(
-				'prompt'     => 0.000075,
-				'completion' => 0.0003,
-			),
-			'gemini-1.5-pro'   => array(
+			'gemini-2.5-pro'        => array(
 				'prompt'     => 0.00125,
-				'completion' => 0.005,
+				'completion' => 0.01,
 			),
 		),
 		'anthropic' => array(

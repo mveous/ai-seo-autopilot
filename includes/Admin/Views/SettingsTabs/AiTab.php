@@ -69,7 +69,7 @@ final class AiTab implements View {
 							<input type="hidden" name="provider" value="<?php echo esc_attr( $provider_id ); ?>" />
 							<?php wp_nonce_field( 'ai_seo_autopilot_settings' ); ?>
 
-							<input type="password" name="api_key" autocomplete="off" placeholder="<?php echo esc_attr( $has_key ? __( 'Enter a new key to replace it', 'ai-seo-autopilot' ) : __( 'API key', 'ai-seo-autopilot' ) ); ?>" />
+							<input type="password" name="api_key" autocomplete="off" placeholder="<?php echo esc_attr( $has_key ? __( 'Leave blank to keep the current key', 'ai-seo-autopilot' ) : __( 'API key', 'ai-seo-autopilot' ) ); ?>" />
 
 							<select name="model">
 								<?php foreach ( $models as $model_id => $model_label ) : ?>
@@ -112,6 +112,68 @@ final class AiTab implements View {
 			</div>
 
 			<button type="submit" class="ai-seo-button ai-seo-button--primary"><?php esc_html_e( 'Save Changes', 'ai-seo-autopilot' ); ?></button>
+
+			<script>
+				( function () {
+					var ajaxUrl = <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>;
+					var nonce = <?php echo wp_json_encode( wp_create_nonce( 'ai_seo_autopilot_settings' ) ); ?>;
+					var loadingText = <?php echo wp_json_encode( __( 'Loading models…', 'ai-seo-autopilot' ) ); ?>;
+
+					document.querySelectorAll( '.ai-seo-provider-card form' ).forEach( function ( form ) {
+						var keyInput = form.querySelector( 'input[name="api_key"]' );
+						var select = form.querySelector( 'select[name="model"]' );
+						var provider = form.querySelector( 'input[name="provider"]' );
+						var timer;
+
+						if ( ! keyInput || ! select || ! provider ) {
+							return;
+						}
+
+						function load() {
+							var key = keyInput.value.trim();
+							if ( key.length < 10 ) {
+								return;
+							}
+
+							var previous = select.value;
+							var body = new URLSearchParams( {
+								action: 'ai_seo_autopilot_fetch_models',
+								_wpnonce: nonce,
+								provider: provider.value,
+								api_key: key
+							} );
+
+							var originalHtml = select.innerHTML;
+							select.disabled = true;
+							select.innerHTML = '<option>' + loadingText + '</option>';
+
+							fetch( ajaxUrl, { method: 'POST', credentials: 'same-origin', body: body } )
+								.then( function ( r ) { return r.json(); } )
+								.then( function ( res ) {
+									if ( ! res.success || ! res.data.models ) {
+										select.innerHTML = originalHtml;
+										return;
+									}
+									select.innerHTML = '';
+									Object.keys( res.data.models ).forEach( function ( id ) {
+										var opt = document.createElement( 'option' );
+										opt.value = id;
+										opt.textContent = res.data.models[ id ];
+										opt.selected = id === previous;
+										select.appendChild( opt );
+									} );
+								} )
+								.catch( function () { select.innerHTML = originalHtml; } )
+								.finally( function () { select.disabled = false; } );
+						}
+
+						keyInput.addEventListener( 'input', function () {
+							clearTimeout( timer );
+							timer = setTimeout( load, 600 );
+						} );
+					} );
+				}() );
+			</script>
 		</form>
 		<?php
 	}

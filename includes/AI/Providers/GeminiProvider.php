@@ -27,12 +27,76 @@ final class GeminiProvider extends AbstractProvider {
 		return __( 'Google Gemini', 'ai-seo-autopilot' );
 	}
 
+	/**
+	 * Offline fallback only; Google retires Gemini models often, so the live
+	 * list from the API (see fetch_live_models()) is preferred.
+	 */
 	public function get_models(): array {
+		$live = $this->fetch_live_models();
+
+		if ( ! empty( $live ) ) {
+			return $live;
+		}
+
 		return array(
-			'gemini-2.0-flash' => 'Gemini 2.0 Flash',
-			'gemini-1.5-flash' => 'Gemini 1.5 Flash',
-			'gemini-1.5-pro'   => 'Gemini 1.5 Pro',
+			'gemini-3.8-flash' => 'Gemini 3.8 Flash',
 		);
+	}
+
+	/**
+	 * Lists text-generation Gemini models available to this API key, cached.
+	 *
+	 * @return array<string,string> Model ID => label; empty on any failure.
+	 */
+	private function fetch_live_models(): array {
+		if ( '' === $this->api_key ) {
+			return array();
+		}
+
+		$cache_key = 'ai_seo_autopilot_gemini_models_' . md5( $this->api_key );
+		$cached    = get_transient( $cache_key );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$response = wp_safe_remote_get(
+			self::API_BASE . '/models?pageSize=100',
+			array(
+				'timeout' => 10,
+				'headers' => array( 'x-goog-api-key' => $this->api_key ),
+			)
+		);
+
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			return array();
+		}
+
+		$body   = json_decode( wp_remote_retrieve_body( $response ), true );
+		$models = array();
+
+		foreach ( (array) ( $body['models'] ?? array() ) as $model ) {
+			$id = isset( $model['name'] ) ? preg_replace( '#^models/#', '', (string) $model['name'] ) : '';
+
+			if (
+				0 !== strpos( $id, 'gemini-' )
+				|| ! in_array( 'generateContent', (array) ( $model['supportedGenerationMethods'] ?? array() ), true )
+				|| preg_match( '/embed|image|tts|audio|live|vision|exp|preview|latest/', $id )
+			) {
+				continue;
+			}
+
+			$models[ $id ] = (string) ( $model['displayName'] ?? $id );
+		}
+
+		// Newest first so the default (first entry) is the latest model.
+		krsort( $models, SORT_NATURAL );
+
+		if ( ! empty( $models ) ) {
+			set_transient( $cache_key, $models, DAY_IN_SECONDS );
+		}
+
+		return $models;
 	}
 
 	public function generate( string $system_prompt, string $user_prompt, array $options = array() ) {

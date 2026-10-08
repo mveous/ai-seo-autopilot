@@ -34,6 +34,36 @@ final class Settings implements Registrable {
 		add_action( 'admin_post_ai_seo_autopilot_save_settings', array( $this, 'handle_save_settings' ) );
 		add_action( 'admin_post_ai_seo_autopilot_save_api_key', array( $this, 'handle_save_api_key' ) );
 		add_action( 'admin_post_ai_seo_autopilot_delete_api_key', array( $this, 'handle_delete_api_key' ) );
+		add_action( 'wp_ajax_ai_seo_autopilot_fetch_models', array( $this, 'handle_fetch_models' ) );
+	}
+
+	/**
+	 * AJAX: list the models a freshly typed API key can use, so the model
+	 * dropdown can be populated before the key is saved.
+	 */
+	public function handle_fetch_models(): void {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'ai_seo_autopilot_settings' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'ai-seo-autopilot' ) ), 403 );
+		}
+
+		/** @var CapabilityManager|null $capabilities */
+		$capabilities = Plugin::instance()->get( 'capabilities' );
+
+		if ( ! $capabilities || ! $capabilities->current_user_can( 'manage_settings' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You do not have permission to do this.', 'ai-seo-autopilot' ) ), 403 );
+		}
+
+		$provider = isset( $_POST['provider'] ) ? sanitize_key( wp_unslash( $_POST['provider'] ) ) : '';
+		$api_key  = isset( $_POST['api_key'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['api_key'] ) ) ) : '';
+
+		/** @var AIProviderManager|null $manager */
+		$manager = Plugin::instance()->get( 'ai.providers' );
+
+		if ( ! $manager || '' === $api_key ) {
+			wp_send_json_error( array( 'message' => __( 'Enter an API key first.', 'ai-seo-autopilot' ) ), 400 );
+		}
+
+		wp_send_json_success( array( 'models' => $manager->get_models_for_key( $provider, $api_key ) ) );
 	}
 
 	/**
@@ -148,7 +178,14 @@ final class Settings implements Registrable {
 
 		/** @var AIProviderManager|null $manager */
 		$manager = Plugin::instance()->get( 'ai.providers' );
-		$result  = $manager ? $manager->save_api_key( $provider, $api_key ) : new \WP_Error( 'unavailable', 'AI provider manager unavailable.' );
+		if ( ! $manager ) {
+			$result = new \WP_Error( 'unavailable', 'AI provider manager unavailable.' );
+		} elseif ( '' === $api_key && $manager->has_api_key( $provider ) ) {
+			// Key already stored: the user is only switching model/provider.
+			$result = true;
+		} else {
+			$result = $manager->save_api_key( $provider, $api_key );
+		}
 
 		if ( is_wp_error( $result ) ) {
 			$this->redirect_back( 'ai', 'error', $result->get_error_message() );
