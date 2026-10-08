@@ -36,14 +36,10 @@ final class AiTab implements View {
 				$masked    = $providers->get_masked_key( $provider_id );
 				$models    = $providers->get_models( $provider_id );
 				$is_active = $active_provider === $provider_id;
-				$is_locked = $providers->is_provider_locked( $provider_id );
 				?>
-				<div class="ai-seo-provider-card <?php echo $is_active ? 'is-active' : ''; ?> <?php echo $is_locked ? 'is-locked' : ''; ?>">
+				<div class="ai-seo-provider-card <?php echo $is_active ? 'is-active' : ''; ?>">
 					<div class="ai-seo-provider-card__header">
 						<h3><?php echo esc_html( $label ); ?></h3>
-						<?php if ( $is_locked ) : ?>
-							<span class="ai-seo-badge ai-seo-badge--pro"><?php esc_html_e( 'PRO', 'ai-seo-autopilot' ); ?></span>
-						<?php endif; ?>
 						<?php if ( $has_key ) : ?>
 							<span class="ai-seo-badge ai-seo-badge--success"><?php esc_html_e( 'Connected', 'ai-seo-autopilot' ); ?></span>
 						<?php endif; ?>
@@ -56,14 +52,6 @@ final class AiTab implements View {
 						<p class="ai-seo-provider-card__key"><?php echo esc_html( $masked ); ?></p>
 					<?php endif; ?>
 
-					<?php if ( $is_locked ) : ?>
-						<p class="ai-seo-provider-card__locked-note">
-							<?php esc_html_e( 'Free is limited to Anthropic Claude. Upgrade to Pro to connect this provider.', 'ai-seo-autopilot' ); ?>
-						</p>
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=ai-seo-autopilot-upgrade' ) ); ?>" class="ai-seo-button ai-seo-button--secondary">
-							<?php esc_html_e( 'Unlock with Pro', 'ai-seo-autopilot' ); ?>
-						</a>
-					<?php else : ?>
 						<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="ai-seo-form ai-seo-form--inline">
 							<input type="hidden" name="action" value="ai_seo_autopilot_save_api_key" />
 							<input type="hidden" name="provider" value="<?php echo esc_attr( $provider_id ); ?>" />
@@ -94,7 +82,6 @@ final class AiTab implements View {
 								</button>
 							</form>
 						<?php endif; ?>
-					<?php endif; ?>
 				</div>
 			<?php endforeach; ?>
 		</div>

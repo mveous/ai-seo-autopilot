@@ -40,7 +40,6 @@ final class SchemaTab implements View {
 						<option value="<?php echo esc_attr( $type ); ?>" <?php selected( $schema['organization_type'], $type ); ?>><?php echo esc_html( $type ); ?></option>
 					<?php endforeach; ?>
 				</select>
-				<p class="ai-seo-field__help"><?php esc_html_e( 'LocalBusiness and full address/hours fields are available in Local SEO (Pro).', 'ai-seo-autopilot' ); ?></p>
 			</div>
 
 			<div class="ai-seo-field">

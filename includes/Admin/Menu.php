@@ -11,7 +11,6 @@ namespace AISEOAutopilot\Admin;
 use AISEOAutopilot\Admin\Views\DashboardView;
 use AISEOAutopilot\Admin\Views\IssuesView;
 use AISEOAutopilot\Admin\Views\SettingsView;
-use AISEOAutopilot\Admin\Views\UpgradeView;
 use AISEOAutopilot\Core\Plugin;
 use AISEOAutopilot\Core\Registrable;
 use AISEOAutopilot\Features\CapabilityManager;
@@ -66,15 +65,6 @@ final class Menu implements Registrable {
 			self::SETTINGS_SLUG,
 			array( $this, 'render_settings' )
 		);
-
-		add_submenu_page(
-			self::DASHBOARD_SLUG,
-			__( 'Upgrade to Pro', 'ai-seo-autopilot' ),
-			'<span style="color:#ffb900;">' . esc_html__( 'Upgrade to Pro', 'ai-seo-autopilot' ) . '</span>',
-			$capability,
-			'ai-seo-autopilot-upgrade',
-			array( $this, 'render_upgrade' )
-		);
 	}
 
 	public function render_dashboard(): void {
@@ -105,14 +95,6 @@ final class Menu implements Registrable {
 		}
 
 		( new SettingsView( $this->features, $settings ) )->render();
-	}
-
-	public function render_upgrade(): void {
-		if ( ! current_user_can( $this->capability( 'view_dashboard' ) ) ) {
-			wp_die( esc_html__( 'You do not have permission to access this page.', 'ai-seo-autopilot' ) );
-		}
-
-		( new UpgradeView( $this->features ) )->render();
 	}
 
 	private function capability( string $action ): string {

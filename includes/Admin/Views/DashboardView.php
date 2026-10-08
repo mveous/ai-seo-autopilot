@@ -26,7 +26,6 @@ final class DashboardView implements View {
 		$plugin    = Plugin::instance();
 		$auditor   = $plugin->get( 'seo.auditor' );
 		$usage     = $plugin->get( 'ai.usage' );
-		$upgrade   = $plugin->get( 'upgrade' );
 		$providers = $plugin->get( 'ai.providers' );
 
 		$summary = $auditor ? $auditor->get_latest_summary() : null;
@@ -151,42 +150,6 @@ final class DashboardView implements View {
 				</div>
 			</div>
 
-			<?php
-			$locked_pro_features = array();
-			foreach ( $features->all() as $key => $feature ) {
-				if ( empty( $feature['pro'] ) || $features->is_available( $key ) ) {
-					continue; // Free-tier feature, or Pro is active and renders the live feature elsewhere.
-				}
-				$locked_pro_features[ $key ] = $feature;
-			}
-			?>
-			<?php if ( ! empty( $locked_pro_features ) ) : ?>
-				<div class="ai-seo-pro-section">
-					<div class="ai-seo-pro-section__head">
-						<div>
-							<p class="ai-seo-pro-section__eyebrow">
-								<?php
-								printf(
-									/* translators: %d: number of Pro tools */
-									esc_html( _n( '%d tool included with Pro', '%d tools included with Pro', count( $locked_pro_features ), 'ai-seo-autopilot' ) ),
-									count( $locked_pro_features )
-								);
-								?>
-							</p>
-							<h2 class="ai-seo-pro-section__title"><?php esc_html_e( 'AI Autopilot & Pro Modules', 'ai-seo-autopilot' ); ?></h2>
-						</div>
-						<a class="ai-seo-button ai-seo-button--primary" href="<?php echo esc_url( $upgrade->pricing_url( 'dashboard_pro_modules' ) ); ?>" target="_blank" rel="noopener noreferrer">
-							<?php esc_html_e( 'Upgrade to Pro', 'ai-seo-autopilot' ); ?>
-							<span class="dashicons dashicons-arrow-right-alt2" aria-hidden="true"></span>
-						</a>
-					</div>
-					<div class="ai-seo-grid ai-seo-grid--pro-tiles">
-						<?php foreach ( $locked_pro_features as $key => $feature ) : ?>
-							<?php $upgrade->render_locked_feature_tile( $key, $feature ); ?>
-						<?php endforeach; ?>
-					</div>
-				</div>
-			<?php endif; ?>
 
 		</div>
 		<?php
