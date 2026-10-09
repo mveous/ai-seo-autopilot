@@ -2,7 +2,7 @@
 Contributors: aiseoautopilot
 Donate link: https://aiseoautopilot.com/
 Tags: seo, ai seo, schema, sitemap, meta tags
-Requires at least: 6.9
+Requires at least: 7.0
 Tested up to: 7.1
 Requires PHP: 8.1
 Stable tag: 1.0.0

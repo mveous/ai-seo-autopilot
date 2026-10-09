@@ -4,7 +4,7 @@
  * Plugin URI:        https://aiseoautopilot.com
  * Description:       AI-powered SEO agent for WordPress. Connect your own AI provider, scan your site, and let AI analyze and improve your SEO.
  * Version:           1.0.0
- * Requires at least: 6.9
+ * Requires at least: 7.0
  * Requires PHP:      8.1
  * Author:            AI SEO Autopilot
  * Author URI:        https://aiseoautopilot.com
