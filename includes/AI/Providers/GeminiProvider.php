@@ -8,6 +8,7 @@
 
 namespace AISEOAutopilot\AI\Providers;
 
+use WordPress\AiClient\Providers\Http\Contracts\RequestAuthenticationInterface;
 use WordPress\GoogleAiProvider\Authentication\GoogleApiKeyRequestAuthentication;
 use WordPress\GoogleAiProvider\Provider\GoogleProvider as AiClientGoogleProvider;
 
@@ -25,12 +26,12 @@ final class GeminiProvider extends AbstractProvider {
 		return __( 'Google Gemini', 'ai-seo-autopilot' );
 	}
 
-	public function get_models(): array {
-		return array(
-			'gemini-3.8-flash' => 'Gemini 3.8 Flash',
-			'gemini-2.5-flash' => 'Gemini 2.5 Flash',
-			'gemini-2.5-pro'   => 'Gemini 2.5 Pro',
-		);
+	protected function ai_client_provider_class(): string {
+		return AiClientGoogleProvider::class;
+	}
+
+	protected function make_authentication( string $api_key ): RequestAuthenticationInterface {
+		return new GoogleApiKeyRequestAuthentication( $api_key );
 	}
 
 	public function generate( string $system_prompt, string $user_prompt, array $options = array() ) {
@@ -48,32 +49,5 @@ final class GeminiProvider extends AbstractProvider {
 			AiClientGoogleProvider::class,
 			new GoogleApiKeyRequestAuthentication( $this->api_key )
 		);
-	}
-
-	public function validate_api_key( string $api_key ) {
-		if ( ! class_exists( GoogleApiKeyRequestAuthentication::class ) ) {
-			return new \WP_Error(
-				'ai_seo_autopilot_ai_client_missing',
-				__( 'The bundled AI Client SDK could not be loaded.', 'ai-seo-autopilot' )
-			);
-		}
-
-		$result = $this->complete_via_ai_client(
-			'Respond with the word OK only.',
-			'Test the Gemini API connection.',
-			array( 'max_tokens' => 5 ),
-			AiClientGoogleProvider::class,
-			new GoogleApiKeyRequestAuthentication( $api_key )
-		);
-
-		if ( is_wp_error( $result ) ) {
-			return new \WP_Error(
-				'ai_seo_autopilot_ai_invalid_key',
-				__( 'This Gemini API key could not be verified.', 'ai-seo-autopilot' ),
-				array( 'previous_error' => $result )
-			);
-		}
-
-		return true;
 	}
 }

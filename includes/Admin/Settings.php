@@ -32,38 +32,8 @@ final class Settings implements Registrable {
 
 	public function register(): void {
 		add_action( 'admin_post_ai_seo_autopilot_save_settings', array( $this, 'handle_save_settings' ) );
-		add_action( 'admin_post_ai_seo_autopilot_save_api_key', array( $this, 'handle_save_api_key' ) );
+		add_action( 'admin_post_ai_seo_autopilot_save_ai_providers', array( $this, 'handle_save_ai_providers' ) );
 		add_action( 'admin_post_ai_seo_autopilot_delete_api_key', array( $this, 'handle_delete_api_key' ) );
-		add_action( 'wp_ajax_ai_seo_autopilot_fetch_models', array( $this, 'handle_fetch_models' ) );
-	}
-
-	/**
-	 * AJAX: list the models a freshly typed API key can use, so the model
-	 * dropdown can be populated before the key is saved.
-	 */
-	public function handle_fetch_models(): void {
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'ai_seo_autopilot_settings' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'ai-seo-autopilot' ) ), 403 );
-		}
-
-		/** @var CapabilityManager|null $capabilities */
-		$capabilities = Plugin::instance()->get( 'capabilities' );
-
-		if ( ! $capabilities || ! $capabilities->current_user_can( 'manage_settings' ) ) {
-			wp_send_json_error( array( 'message' => __( 'You do not have permission to do this.', 'ai-seo-autopilot' ) ), 403 );
-		}
-
-		$provider = isset( $_POST['provider'] ) ? sanitize_key( wp_unslash( $_POST['provider'] ) ) : '';
-		$api_key  = isset( $_POST['api_key'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['api_key'] ) ) ) : '';
-
-		/** @var AIProviderManager|null $manager */
-		$manager = Plugin::instance()->get( 'ai.providers' );
-
-		if ( ! $manager || '' === $api_key ) {
-			wp_send_json_error( array( 'message' => __( 'Enter an API key first.', 'ai-seo-autopilot' ) ), 400 );
-		}
-
-		wp_send_json_success( array( 'models' => $manager->get_models_for_key( $provider, $api_key ) ) );
 	}
 
 	/**
@@ -98,6 +68,7 @@ final class Settings implements Registrable {
 			'ai'      => array(
 				'active_provider'       => '',
 				'monthly_request_limit' => 0,
+				'models'                => array(),
 			),
 			'content' => array(
 				'focus_keyword_enabled' => true,
@@ -151,7 +122,6 @@ final class Settings implements Registrable {
 			'schema'  => array( $this, 'sanitize_schema' ),
 			'sitemap' => array( $this, 'sanitize_sitemap' ),
 			'social'  => array( $this, 'sanitize_social' ),
-			'ai'      => array( $this, 'sanitize_ai' ),
 			'advanced' => array( $this, 'sanitize_advanced' ),
 			'compatibility' => array( $this, 'sanitize_compatibility' ),
 		);
@@ -170,37 +140,68 @@ final class Settings implements Registrable {
 		$this->redirect_back( $tab, 'saved' );
 	}
 
-	public function handle_save_api_key(): void {
+	/**
+	 * Single "Save Changes" handler for the whole AI Providers tab: saves
+	 * and verifies every submitted API key (a blank field leaves an
+	 * already-connected provider's key untouched), persists each
+	 * provider's chosen model and the active provider, and the monthly
+	 * request limit — all in one action, like botisst-ai-chat-assistant's
+	 * combined save-and-verify flow.
+	 */
+	public function handle_save_ai_providers(): void {
 		$this->guard( 'manage_settings' );
-
-		$provider = isset( $_POST['provider'] ) ? sanitize_key( wp_unslash( $_POST['provider'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in guard() above.
-		$api_key  = isset( $_POST['api_key'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['api_key'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in guard() above.
 
 		/** @var AIProviderManager|null $manager */
 		$manager = Plugin::instance()->get( 'ai.providers' );
+
 		if ( ! $manager ) {
-			$result = new \WP_Error( 'unavailable', 'AI provider manager unavailable.' );
-		} elseif ( '' === $api_key && $manager->has_api_key( $provider ) ) {
-			// Key already stored: the user is only switching model/provider.
-			$result = true;
-		} else {
-			$result = $manager->save_api_key( $provider, $api_key );
+			$this->redirect_back( 'ai', 'error', __( 'AI provider manager unavailable.', 'ai-seo-autopilot' ) );
 		}
 
-		if ( is_wp_error( $result ) ) {
-			$this->redirect_back( 'ai', 'error', $result->get_error_message() );
+		$keys            = isset( $_POST['keys'] ) && is_array( $_POST['keys'] ) ? wp_unslash( $_POST['keys'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce verified in guard() above; each value is sanitized and validated individually below via save_api_key().
+		$models          = isset( $_POST['models'] ) && is_array( $_POST['models'] ) ? wp_unslash( $_POST['models'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce verified in guard() above; sanitized per provider below.
+		$active_provider = isset( $_POST['active_provider'] ) ? sanitize_key( wp_unslash( $_POST['active_provider'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in guard() above.
+		$monthly_limit   = isset( $_POST['settings']['monthly_request_limit'] ) ? absint( wp_unslash( $_POST['settings']['monthly_request_limit'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in guard() above.
+
+		$errors = array();
+
+		foreach ( $keys as $provider_id => $raw_key ) {
+			$provider_id = sanitize_key( $provider_id );
+			$api_key     = trim( sanitize_text_field( (string) $raw_key ) );
+
+			if ( '' === $api_key ) {
+				continue; // Blank: leave the existing key, if any, untouched.
+			}
+
+			$result = $manager->save_api_key( $provider_id, $api_key );
+
+			if ( is_wp_error( $result ) ) {
+				$errors[ $provider_id ] = $result->get_error_message();
+			}
 		}
 
-		$model = isset( $_POST['model'] ) ? sanitize_text_field( wp_unslash( $_POST['model'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in guard() above.
-		if ( '' !== $model ) {
-			$all               = $this->get_all();
-			$all['ai']['active_provider'] = $provider;
-			$all['ai']['model'] = $model;
-			update_option( self::OPTION, $all );
-		} else {
-			$all                           = $this->get_all();
-			$all['ai']['active_provider']  = $provider;
-			update_option( self::OPTION, $all );
+		$all = $this->get_all();
+
+		foreach ( $models as $provider_id => $model_id ) {
+			$provider_id = sanitize_key( $provider_id );
+
+			if ( ! $manager->has_api_key( $provider_id ) ) {
+				continue; // No key connected for this provider: nothing to pick a model for.
+			}
+
+			$all['ai']['models'][ $provider_id ] = sanitize_text_field( (string) $model_id );
+		}
+
+		if ( '' !== $active_provider && $manager->has_provider( $active_provider ) && $manager->has_api_key( $active_provider ) ) {
+			$all['ai']['active_provider'] = $active_provider;
+		}
+
+		$all['ai']['monthly_request_limit'] = $monthly_limit;
+
+		update_option( self::OPTION, $all );
+
+		if ( ! empty( $errors ) ) {
+			$this->redirect_back( 'ai', 'error', implode( ' | ', $errors ) );
 		}
 
 		$this->redirect_back( 'ai', 'saved' );
@@ -308,12 +309,6 @@ final class Settings implements Registrable {
 			'default_og_image' => isset( $raw['default_og_image'] ) ? esc_url_raw( $raw['default_og_image'] ) : '',
 			'facebook_app_id'  => isset( $raw['facebook_app_id'] ) ? sanitize_text_field( $raw['facebook_app_id'] ) : '',
 			'twitter_username' => isset( $raw['twitter_username'] ) ? sanitize_text_field( ltrim( $raw['twitter_username'], '@' ) ) : '',
-		);
-	}
-
-	private function sanitize_ai( array $raw ): array {
-		return array(
-			'monthly_request_limit' => isset( $raw['monthly_request_limit'] ) ? max( 0, absint( $raw['monthly_request_limit'] ) ) : 0,
 		);
 	}
 

@@ -27,10 +27,132 @@ abstract class AbstractProvider implements AIProviderInterface {
 		$this->api_key = $api_key;
 	}
 
+	/**
+	 * The AI Client SDK provider class backing this adapter.
+	 *
+	 * @return class-string<\WordPress\AiClient\Providers\Contracts\ProviderInterface>
+	 */
+	abstract protected function ai_client_provider_class(): string;
+
+	/**
+	 * Builds the SDK authentication object for a given API key.
+	 */
+	abstract protected function make_authentication( string $api_key ): RequestAuthenticationInterface;
+
 	public function get_default_model(): string {
 		$models = $this->get_models();
 
 		return (string) array_key_first( $models );
+	}
+
+	/**
+	 * Live model list for this provider, as seen by $this->api_key.
+	 * Fetched from the provider's real API (not a static/curated list) and
+	 * cached in a transient keyed by provider + key, since it only changes
+	 * when the key changes or the provider adds/removes models.
+	 *
+	 * @return array<string,string> model id => human label
+	 */
+	public function get_models(): array {
+		if ( '' === $this->api_key ) {
+			return array();
+		}
+
+		$provider_class = $this->ai_client_provider_class();
+
+		if ( ! class_exists( AiClient::class ) || ! class_exists( $provider_class ) ) {
+			return array();
+		}
+
+		$cache_key = 'ai_seo_autopilot_models_' . $this->get_id() . '_' . md5( $this->api_key );
+		$cached    = get_transient( $cache_key );
+
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
+		try {
+			$this->register_and_authenticate( $provider_class, $this->make_authentication( $this->api_key ) );
+
+			$models = array();
+
+			foreach ( $provider_class::modelMetadataDirectory()->listModelMetadata() as $model ) {
+				$models[ $model->getId() ] = $model->getName();
+			}
+		} catch ( \Throwable $e ) {
+			return array();
+		}
+
+		set_transient( $cache_key, $models, HOUR_IN_SECONDS );
+
+		return $models;
+	}
+
+	/**
+	 * Verify an API key by attempting to list the provider's available
+	 * models — the same low-cost probe WordPress core's own AI connector
+	 * settings use, rather than running an actual completion (which can
+	 * fail for reasons unrelated to the key, e.g. a "thinking" model
+	 * consuming its whole token budget on hidden reasoning).
+	 *
+	 * @return true|\WP_Error
+	 */
+	public function validate_api_key( string $api_key ) {
+		$provider_class = $this->ai_client_provider_class();
+
+		if ( ! class_exists( AiClient::class ) || ! class_exists( $provider_class ) ) {
+			return new \WP_Error(
+				'ai_seo_autopilot_ai_client_missing',
+				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-seo-autopilot' )
+			);
+		}
+
+		try {
+			$this->register_and_authenticate( $provider_class, $this->make_authentication( $api_key ) );
+
+			$models = $provider_class::modelMetadataDirectory()->listModelMetadata();
+
+			if ( empty( $models ) ) {
+				return new \WP_Error(
+					'ai_seo_autopilot_ai_invalid_key',
+					/* translators: %s: AI provider label, e.g. "OpenAI". */
+					sprintf( __( 'Invalid or unauthorized API key for %s.', 'ai-seo-autopilot' ), $this->get_label() )
+				);
+			}
+		} catch ( \Throwable $e ) {
+			$message = strtolower( $e->getMessage() );
+
+			foreach ( array( '401', '403', 'incorrect api key', 'unauthorized', 'invalid', 'key not found' ) as $needle ) {
+				if ( false !== strpos( $message, $needle ) ) {
+					return new \WP_Error(
+						'ai_seo_autopilot_ai_invalid_key',
+						/* translators: %s: AI provider label, e.g. "OpenAI". */
+						sprintf( __( 'Invalid API key for %s. Please check your credentials.', 'ai-seo-autopilot' ), $this->get_label() )
+					);
+				}
+			}
+
+			return new \WP_Error( 'ai_seo_autopilot_ai_client_error', $e->getMessage() );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Registers the provider with the shared SDK registry (if not already)
+	 * and attaches this request's authentication, returning its provider id.
+	 */
+	private function register_and_authenticate( string $provider_class, RequestAuthenticationInterface $authentication ): string {
+		$registry    = AiClient::defaultRegistry();
+		$provider_id = $provider_class::metadata()->getId();
+
+		if ( ! $registry->hasProvider( $provider_id ) ) {
+			$registry->registerProvider( $provider_class );
+		}
+
+		$registry->setProviderRequestAuthentication( $provider_id, $authentication );
+
+		return $provider_id;
 	}
 
 	/**
@@ -58,15 +180,8 @@ abstract class AbstractProvider implements AIProviderInterface {
 		$model = (string) ( $options['model'] ?? $this->get_default_model() );
 
 		try {
-			$registry    = AiClient::defaultRegistry();
-			$provider_id = $ai_client_provider_class::metadata()->getId();
-
-			if ( ! $registry->hasProvider( $provider_id ) ) {
-				$registry->registerProvider( $ai_client_provider_class );
-			}
-
-			$registry->setProviderRequestAuthentication( $provider_id, $authentication );
-
+			$provider_id    = $this->register_and_authenticate( $ai_client_provider_class, $authentication );
+			$registry       = AiClient::defaultRegistry();
 			$model_instance = $registry->getProviderModel( $provider_id, $model );
 
 			$prompt = AiClient::prompt( $user_prompt )

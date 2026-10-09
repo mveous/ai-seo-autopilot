@@ -63,11 +63,11 @@ final class SettingsView implements View {
 		<div class="ai-seo-page ai-seo-page--settings">
 
 			<?php if ( 'saved' === $status ) : ?>
-				<div class="ai-seo-notice ai-seo-notice--success"><?php esc_html_e( 'Settings saved.', 'ai-seo-autopilot' ); ?></div>
+				<?php $this->render_toast( __( 'Settings saved.', 'ai-seo-autopilot' ), 'success' ); ?>
 			<?php elseif ( 'deleted' === $status ) : ?>
-				<div class="ai-seo-notice ai-seo-notice--success"><?php esc_html_e( 'API key removed.', 'ai-seo-autopilot' ); ?></div>
+				<?php $this->render_toast( __( 'API key removed.', 'ai-seo-autopilot' ), 'success' ); ?>
 			<?php elseif ( 'error' === $status ) : ?>
-				<div class="ai-seo-notice ai-seo-notice--error"><?php echo esc_html( $message ?: __( 'Something went wrong.', 'ai-seo-autopilot' ) ); ?></div>
+				<?php $this->render_toast( $message ?: __( 'Something went wrong.', 'ai-seo-autopilot' ), 'error' ); ?>
 			<?php endif; ?>
 
 			<div class="ai-seo-settings-layout">
@@ -105,5 +105,49 @@ final class SettingsView implements View {
 		};
 
 		$tab_view->render();
+	}
+
+	/**
+	 * A transient toast notice — auto-dismisses after 10 seconds or on
+	 * manual close, and strips status/message from the URL immediately so
+	 * refreshing the page never re-shows a past submission's notice. The
+	 * $status/$message query args exist only to survive the redirect from
+	 * the admin-post handler; they are not meant to be a permanent part of
+	 * this page's URL.
+	 */
+	private function render_toast( string $message, string $type ): void {
+		?>
+		<div id="ai-seo-toast" class="ai-seo-toast ai-seo-toast--<?php echo esc_attr( $type ); ?>" role="status">
+			<span class="ai-seo-toast__message"><?php echo esc_html( $message ); ?></span>
+			<button type="button" class="ai-seo-toast__close" aria-label="<?php esc_attr_e( 'Dismiss', 'ai-seo-autopilot' ); ?>">&times;</button>
+		</div>
+		<style>
+			.ai-seo-toast { position: fixed; top: 40px; right: 20px; z-index: 100000; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.15); font-size: 14px; background: #fff; border-left: 4px solid #46b450; transition: opacity .3s ease, transform .3s ease; }
+			.ai-seo-toast--error { border-left-color: #dc3232; }
+			.ai-seo-toast.is-hidden { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+			.ai-seo-toast__close { background: none; border: none; cursor: pointer; font-size: 18px; line-height: 1; color: #666; padding: 0; }
+		</style>
+		<script>
+			( function () {
+				var toast = document.getElementById( 'ai-seo-toast' );
+				if ( ! toast ) {
+					return;
+				}
+
+				var url = new URL( window.location.href );
+				url.searchParams.delete( 'status' );
+				url.searchParams.delete( 'message' );
+				window.history.replaceState( {}, '', url );
+
+				function dismiss() {
+					toast.classList.add( 'is-hidden' );
+					setTimeout( function () { toast.remove(); }, 300 );
+				}
+
+				toast.querySelector( '.ai-seo-toast__close' ).addEventListener( 'click', dismiss );
+				setTimeout( dismiss, 10000 );
+			}() );
+		</script>
+		<?php
 	}
 }
