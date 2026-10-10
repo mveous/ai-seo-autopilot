@@ -1,6 +1,5 @@
 === AI SEO Autopilot ===
-Contributors: aiseoautopilot
-Donate link: https://aiseoautopilot.com/
+Contributors: deep7197, mveous
 Tags: seo, ai seo, schema, sitemap, meta tags
 Requires at least: 7.0
 Tested up to: 7.1
