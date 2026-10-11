@@ -1,5 +1,5 @@
 {
-    "name": "ai-seo-autopilot/ai-seo-autopilot",
+    "name": "ai-autopilot-seo-assistant/ai-autopilot-seo-assistant",
     "description": "AI-powered SEO agent for WordPress.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
@@ -14,12 +14,12 @@
     },
     "autoload": {
         "psr-4": {
-            "AISEOAutopilot\\": "includes/"
+            "Aasa\\": "includes/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "AISEOAutopilot\\Tests\\": "tests/"
+            "Aasa\\Tests\\": "tests/"
         }
     },
     "config": {

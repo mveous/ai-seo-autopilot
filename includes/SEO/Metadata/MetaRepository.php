@@ -1,14 +1,14 @@
 <?php
 /**
  * Single source of truth for reading/writing per-post SEO metadata.
- * Every field is stored under a `_ai_seo_*` postmeta key with a
+ * Every field is stored under a `_aasa_*` postmeta key with a
  * dedicated sanitizer, so nothing else in the plugin touches
  * get_post_meta()/update_post_meta() directly for these fields.
  *
- * @package AISEOAutopilot\SEO\Metadata
+ * @package Aasa\SEO\Metadata
  */
 
-namespace AISEOAutopilot\SEO\Metadata;
+namespace Aasa\SEO\Metadata;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class MetaRepository {
 
-	private const PREFIX = '_ai_seo_';
+	private const PREFIX = '_aasa_';
 
 	/**
 	 * Field => sanitizer callback. Single source of truth for both the

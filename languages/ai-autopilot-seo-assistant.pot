@@ -1,14 +1,14 @@
-# Copyright (C) 2026 AI SEO Autopilot
+# Copyright (C) 2026 AI Autopilot SEO Assistant
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: AI SEO Autopilot\n"
+"Project-Id-Version: AI Autopilot SEO Assistant\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-23 11:23+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Domain: ai-seo-autopilot\n"
+"X-Domain: ai-autopilot-seo-assistant\n"
 
 #: includes/SEO/Audit/SiteAuditor.php:232
 msgid "%d H1 headings were found; use only one per page."
@@ -55,27 +55,27 @@ msgstr ""
 #: includes/Admin/Menu.php:39
 #: includes/Features/FeatureManager.php:180
 #: includes/SEO/Metadata/MetaboxManager.php:68
-msgid "AI SEO Autopilot"
+msgid "AI Autopilot SEO Assistant"
 msgstr ""
 
 #: admin/views/upgrade.php:35
-msgid "AI SEO Autopilot Free vs Pro"
+msgid "AI Autopilot SEO Assistant Free vs Pro"
 msgstr ""
 
 #: includes/Compatibility/ProBridge.php:77
-msgid "AI SEO Autopilot Pro is installed but is not currently licensed or active. Pro features are locked until a valid license is activated."
+msgid "AI Autopilot SEO Assistant Pro is installed but is not currently licensed or active. Pro features are locked until a valid license is activated."
 msgstr ""
 
 #: admin/views/settings-tabs/compatibility.php:51
-msgid "AI SEO Autopilot controls %s"
+msgid "AI Autopilot SEO Assistant controls %s"
 msgstr ""
 
 #: includes/Compatibility/SeoPluginDetector.php:109
-msgid "AI SEO Autopilot detected another active SEO plugin (%s). To avoid duplicate titles, meta tags, or sitemaps, choose which plugin controls each area."
+msgid "AI Autopilot SEO Assistant detected another active SEO plugin (%s). To avoid duplicate titles, meta tags, or sitemaps, choose which plugin controls each area."
 msgstr ""
 
-#: ai-seo-autopilot.php:55
-msgid "AI SEO Autopilot requires PHP %1$s or higher. You are running PHP %2$s. The plugin has been disabled."
+#: ai-autopilot-seo-assistant.php:55
+msgid "AI Autopilot SEO Assistant requires PHP %1$s or higher. You are running PHP %2$s. The plugin has been disabled."
 msgstr ""
 
 #: admin/views/dashboard.php:123
@@ -303,7 +303,7 @@ msgid "Est. Cost"
 msgstr ""
 
 #: includes/Cron/Scheduler.php:41
-msgid "Every 15 Minutes (AI SEO Autopilot)"
+msgid "Every 15 Minutes (AI Autopilot SEO Assistant)"
 msgstr ""
 
 #: includes/Features/FeatureManager.php:186
@@ -573,7 +573,7 @@ msgid "No meta description is set."
 msgstr ""
 
 #: admin/views/settings-tabs/compatibility.php:36
-msgid "No other active SEO plugin detected. AI SEO Autopilot controls all areas below by default."
+msgid "No other active SEO plugin detected. AI Autopilot SEO Assistant controls all areas below by default."
 msgstr ""
 
 #: admin/views/dashboard.php:64
@@ -900,11 +900,11 @@ msgid "Thin content"
 msgstr ""
 
 #: includes/AI/AIProviderManager.php:230
-msgid "This AI provider requires AI SEO Autopilot Pro. Switch to Anthropic Claude, or upgrade to Pro."
+msgid "This AI provider requires AI Autopilot SEO Assistant Pro. Switch to Anthropic Claude, or upgrade to Pro."
 msgstr ""
 
 #: includes/AI/AIProviderManager.php:141
-msgid "This AI provider requires AI SEO Autopilot Pro. The Free plan is limited to Anthropic Claude."
+msgid "This AI provider requires AI Autopilot SEO Assistant Pro. The Free plan is limited to Anthropic Claude."
 msgstr ""
 
 #: includes/AI/Providers/AnthropicProvider.php:110
@@ -1054,7 +1054,7 @@ msgid "You are analyzing on-page SEO. Identify missing topics, weak structure, a
 msgstr ""
 
 #: includes/AI/PromptManager.php:172
-msgid "You are the AI SEO assistant inside the AI SEO Autopilot WordPress plugin, working on the website \"%1$s\". Respond in the site's content language (%2$s). Be precise, factual, and never invent information not present in the provided context. [prompt v%3$s]"
+msgid "You are the AI SEO assistant inside the AI Autopilot SEO Assistant WordPress plugin, working on the website \"%1$s\". Respond in the site's content language (%2$s). Be precise, factual, and never invent information not present in the provided context. [prompt v%3$s]"
 msgstr ""
 
 #: includes/REST/Controllers/AIController.php:92

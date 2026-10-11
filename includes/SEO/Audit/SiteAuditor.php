@@ -5,16 +5,16 @@
  * request (one batch, for instant dashboard feedback) or from WP-Cron
  * (repeated batches until the queue drains).
  *
- * @package AISEOAutopilot\SEO\Audit
+ * @package Aasa\SEO\Audit
  */
 
-namespace AISEOAutopilot\SEO\Audit;
+namespace Aasa\SEO\Audit;
 
-use AISEOAutopilot\Admin\Settings;
-use AISEOAutopilot\Content\Analyzer\ContentScanner;
-use AISEOAutopilot\Content\Analyzer\SeoAnalyzer;
-use AISEOAutopilot\Database\Migrator;
-use AISEOAutopilot\SEO\Metadata\MetaRepository;
+use Aasa\Admin\Settings;
+use Aasa\Content\Analyzer\ContentScanner;
+use Aasa\Content\Analyzer\SeoAnalyzer;
+use Aasa\Database\Migrator;
+use Aasa\SEO\Metadata\MetaRepository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,10 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class SiteAuditor {
 
-	private const QUEUE_OPTION       = 'ai_seo_autopilot_scan_queue';
-	private const ACCUMULATOR_OPTION = 'ai_seo_autopilot_scan_accumulator';
-	private const CURRENT_SCAN_OPTION = 'ai_seo_autopilot_current_scan_id';
-	private const SUMMARY_OPTION     = 'ai_seo_autopilot_last_scan_summary';
+	private const QUEUE_OPTION       = 'aasa_scan_queue';
+	private const ACCUMULATOR_OPTION = 'aasa_scan_accumulator';
+	private const CURRENT_SCAN_OPTION = 'aasa_current_scan_id';
+	private const SUMMARY_OPTION     = 'aasa_last_scan_summary';
 
 	private const CATEGORY_WEIGHTS = array(
 		'technical' => 20,
@@ -218,18 +218,18 @@ final class SiteAuditor {
 		$issues = array();
 
 		if ( '' === trim( $title ) ) {
-			$issues[] = $this->issue( $post, 'missing_title', 'on_page', 'high', __( 'Missing SEO title', 'ai-seo-autopilot' ), __( 'This page has no SEO title set and no fallback title could be derived.', 'ai-seo-autopilot' ) );
+			$issues[] = $this->issue( $post, 'missing_title', 'on_page', 'high', __( 'Missing SEO title', 'ai-autopilot-seo-assistant' ), __( 'This page has no SEO title set and no fallback title could be derived.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		if ( '' === trim( $description ) ) {
-			$issues[] = $this->issue( $post, 'missing_description', 'on_page', 'medium', __( 'Missing meta description', 'ai-seo-autopilot' ), __( 'This page has no meta description set.', 'ai-seo-autopilot' ) );
+			$issues[] = $this->issue( $post, 'missing_description', 'on_page', 'medium', __( 'Missing meta description', 'ai-autopilot-seo-assistant' ), __( 'This page has no meta description set.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$h1_count = count( array_filter( $structure['headings'], static fn( $h ) => 1 === $h['level'] ) );
 		if ( 0 === $h1_count ) {
-			$issues[] = $this->issue( $post, 'missing_h1', 'on_page', 'medium', __( 'Missing H1 heading', 'ai-seo-autopilot' ), __( 'No H1 heading was found in the content.', 'ai-seo-autopilot' ) );
+			$issues[] = $this->issue( $post, 'missing_h1', 'on_page', 'medium', __( 'Missing H1 heading', 'ai-autopilot-seo-assistant' ), __( 'No H1 heading was found in the content.', 'ai-autopilot-seo-assistant' ) );
 		} elseif ( $h1_count > 1 ) {
-			$issues[] = $this->issue( $post, 'multiple_h1', 'on_page', 'low', __( 'Multiple H1 headings', 'ai-seo-autopilot' ), sprintf( /* translators: %d: number of H1 headings */ __( '%d H1 headings were found; use only one per page.', 'ai-seo-autopilot' ), $h1_count ) );
+			$issues[] = $this->issue( $post, 'multiple_h1', 'on_page', 'low', __( 'Multiple H1 headings', 'ai-autopilot-seo-assistant' ), sprintf( /* translators: %d: number of H1 headings */ __( '%d H1 headings were found; use only one per page.', 'ai-autopilot-seo-assistant' ), $h1_count ) );
 		}
 
 		$missing_alt = array_values( array_filter( $structure['images'], static fn( $img ) => ! $img['has_alt'] ) );
@@ -239,15 +239,15 @@ final class SiteAuditor {
 				'missing_alt',
 				'images',
 				'low',
-				__( 'Images missing ALT text', 'ai-seo-autopilot' ),
-				sprintf( /* translators: %d: number of images */ __( '%d image(s) are missing ALT text.', 'ai-seo-autopilot' ), count( $missing_alt ) ),
+				__( 'Images missing ALT text', 'ai-autopilot-seo-assistant' ),
+				sprintf( /* translators: %d: number of images */ __( '%d image(s) are missing ALT text.', 'ai-autopilot-seo-assistant' ), count( $missing_alt ) ),
 				array( 'images' => array_slice( wp_list_pluck( $missing_alt, 'src' ), 0, 10 ) )
 			);
 		}
 
 		if ( $structure['word_count'] > 0 && $structure['word_count'] < 300 ) {
 			$severity = $structure['word_count'] < 100 ? 'high' : 'medium';
-			$issues[] = $this->issue( $post, 'thin_content', 'content', $severity, __( 'Thin content', 'ai-seo-autopilot' ), sprintf( /* translators: %d: word count */ __( 'This page has only %d words.', 'ai-seo-autopilot' ), $structure['word_count'] ) );
+			$issues[] = $this->issue( $post, 'thin_content', 'content', $severity, __( 'Thin content', 'ai-autopilot-seo-assistant' ), sprintf( /* translators: %d: word count */ __( 'This page has only %d words.', 'ai-autopilot-seo-assistant' ), $structure['word_count'] ) );
 		}
 
 		$broken = $this->find_broken_links( $structure['links'] );
@@ -257,14 +257,14 @@ final class SiteAuditor {
 				'broken_internal_link',
 				'technical',
 				'medium',
-				__( 'Broken internal link', 'ai-seo-autopilot' ),
-				sprintf( /* translators: %d: number of broken links */ __( '%d internal link(s) appear to point to pages that no longer exist.', 'ai-seo-autopilot' ), count( $broken ) ),
+				__( 'Broken internal link', 'ai-autopilot-seo-assistant' ),
+				sprintf( /* translators: %d: number of broken links */ __( '%d internal link(s) appear to point to pages that no longer exist.', 'ai-autopilot-seo-assistant' ), count( $broken ) ),
 				array( 'links' => array_slice( $broken, 0, 10 ) )
 			);
 		}
 
 		if ( $this->repository->get( $post->ID, 'robots_noindex' ) ) {
-			$issues[] = $this->issue( $post, 'noindex_page', 'technical', 'low', __( 'Page set to noindex', 'ai-seo-autopilot' ), __( 'This page is excluded from search engine indexing.', 'ai-seo-autopilot' ) );
+			$issues[] = $this->issue( $post, 'noindex_page', 'technical', 'low', __( 'Page set to noindex', 'ai-autopilot-seo-assistant' ), __( 'This page is excluded from search engine indexing.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		if ( ! empty( $issues ) ) {
@@ -454,7 +454,7 @@ final class SiteAuditor {
 				'event_type'  => 'scan_completed',
 				'description' => sprintf(
 					/* translators: 1: number of pages scanned, 2: number of open issues */
-					__( 'SEO scan completed: %1$d pages scanned, %2$d issues found.', 'ai-seo-autopilot' ),
+					__( 'SEO scan completed: %1$d pages scanned, %2$d issues found.', 'ai-autopilot-seo-assistant' ),
 					$count,
 					array_sum( $issue_counts )
 				),
@@ -479,8 +479,8 @@ final class SiteAuditor {
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$issues_table} WHERE issue_type = %s", 'duplicate_title' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $issues_table is from Migrator::table(), custom plugin table, no core API exists.
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$issues_table} WHERE issue_type = %s", 'duplicate_description' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $issues_table is from Migrator::table(), custom plugin table, no core API exists.
 
-		$this->insert_duplicate_issues( 'title', 'duplicate_title', __( 'Duplicate SEO title', 'ai-seo-autopilot' ), __( 'This title is used by more than one page.', 'ai-seo-autopilot' ) );
-		$this->insert_duplicate_issues( 'description_hash', 'duplicate_description', __( 'Duplicate meta description', 'ai-seo-autopilot' ), __( 'This meta description is used by more than one page.', 'ai-seo-autopilot' ) );
+		$this->insert_duplicate_issues( 'title', 'duplicate_title', __( 'Duplicate SEO title', 'ai-autopilot-seo-assistant' ), __( 'This title is used by more than one page.', 'ai-autopilot-seo-assistant' ) );
+		$this->insert_duplicate_issues( 'description_hash', 'duplicate_description', __( 'Duplicate meta description', 'ai-autopilot-seo-assistant' ), __( 'This meta description is used by more than one page.', 'ai-autopilot-seo-assistant' ) );
 	}
 
 	private function insert_duplicate_issues( string $column, string $issue_type, string $title, string $description ): void {

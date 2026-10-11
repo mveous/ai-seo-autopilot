@@ -1,14 +1,14 @@
 /**
- * AI SEO Autopilot — admin dashboard/settings behavior.
+ * AI Autopilot SEO Assistant — admin dashboard/settings behavior.
  * No build step: plain ES2017, loaded only on the plugin's own screens.
  */
 ( function () {
 	'use strict';
 
-	var config = window.aiSeoAutopilot || {};
+	var config = window.aasa || {};
 
 	function setScoreRings() {
-		document.querySelectorAll( '.ai-seo-score-ring' ).forEach( function ( el ) {
+		document.querySelectorAll( '.aasa-score-ring' ).forEach( function ( el ) {
 			var score = parseInt( el.getAttribute( 'data-score' ), 10 ) || 0;
 			el.style.setProperty( '--score', Math.max( 0, Math.min( 100, score ) ) );
 		} );
@@ -34,7 +34,7 @@
 	}
 
 	function initRunScan() {
-		var button = document.getElementById( 'ai-seo-run-scan' );
+		var button = document.getElementById( 'aasa-run-scan' );
 		if ( ! button ) {
 			return;
 		}
@@ -61,7 +61,7 @@
 	}
 
 	function initFixIssue() {
-		document.querySelectorAll( '.ai-seo-fix-issue' ).forEach( function ( button ) {
+		document.querySelectorAll( '.aasa-fix-issue' ).forEach( function ( button ) {
 			button.addEventListener( 'click', function () {
 				var cell = button.parentNode;
 				var originalText = button.innerHTML;
@@ -75,7 +75,7 @@
 						var label = 'title' === data.field ? config.i18n.newTitle : config.i18n.newDescription;
 
 						var status = document.createElement( 'span' );
-						status.className = 'ai-seo-issue-fixed';
+						status.className = 'aasa-issue-fixed';
 						status.textContent = '✓ ' + config.i18n.fixed;
 
 						var value = document.createElement( 'span' );
@@ -98,7 +98,7 @@
 	}
 
 	function initSettingsToast() {
-		var toast = document.getElementById( 'ai-seo-toast' );
+		var toast = document.getElementById( 'aasa-toast' );
 		if ( ! toast ) {
 			return;
 		}
@@ -113,19 +113,19 @@
 			setTimeout( function () { toast.remove(); }, 300 );
 		}
 
-		toast.querySelector( '.ai-seo-toast__close' ).addEventListener( 'click', dismiss );
+		toast.querySelector( '.aasa-toast__close' ).addEventListener( 'click', dismiss );
 		setTimeout( dismiss, 10000 );
 	}
 
 	function initRemoveApiKey() {
-		document.querySelectorAll( '.ai-seo-remove-key' ).forEach( function ( button ) {
+		document.querySelectorAll( '.aasa-remove-key' ).forEach( function ( button ) {
 			button.addEventListener( 'click', function () {
 				if ( ! window.confirm( config.i18n.confirmRemoveKey ) ) {
 					return;
 				}
 
 				var body = new URLSearchParams( {
-					action: 'ai_seo_autopilot_delete_api_key',
+					action: 'aasa_delete_api_key',
 					_wpnonce: config.settingsNonce,
 					provider: button.dataset.provider,
 				} );

@@ -10,10 +10,10 @@
  * mirrors how the SDK's own packages expect to be bundled, so this plugin
  * can't fatal if another plugin on the same site also bundles it.
  *
- * @package AISEOAutopilot\AI
+ * @package Aasa\AI
  */
 
-namespace AISEOAutopilot\AI;
+namespace Aasa\AI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -76,14 +76,14 @@ final class AIClient {
 		// any WordPress\AI_Client\* class at all, and rely entirely on
 		// core's already-configured registry instead.
 		if ( ! $has_native ) {
-			$sdk_autoload = AI_SEO_AUTOPILOT_DIR . 'vendor/wordpress/wp-ai-client/autoload.php';
+			$sdk_autoload = AASA_DIR . 'vendor/wordpress/wp-ai-client/autoload.php';
 
 			if ( file_exists( $sdk_autoload ) ) {
 				require_once $sdk_autoload;
 			}
 		}
 
-		$providers_autoload = AI_SEO_AUTOPILOT_DIR . 'includes/ai-providers/vendor/autoload.php';
+		$providers_autoload = AASA_DIR . 'includes/ai-providers/vendor/autoload.php';
 
 		if ( file_exists( $providers_autoload ) ) {
 			require_once $providers_autoload;

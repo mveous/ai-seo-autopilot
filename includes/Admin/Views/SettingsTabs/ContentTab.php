@@ -2,12 +2,12 @@
 /**
  * "Content" settings tab.
  *
- * @package AISEOAutopilot\Admin\Views\SettingsTabs
+ * @package Aasa\Admin\Views\SettingsTabs
  */
 
-namespace AISEOAutopilot\Admin\Views\SettingsTabs;
+namespace Aasa\Admin\Views\SettingsTabs;
 
-use AISEOAutopilot\Admin\Views\View;
+use Aasa\Admin\Views\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,19 +23,19 @@ final class ContentTab implements View {
 	public function render(): void {
 		$content = $this->values['content'];
 		?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="ai-seo-form">
-			<input type="hidden" name="action" value="ai_seo_autopilot_save_settings" />
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="aasa-form">
+			<input type="hidden" name="action" value="aasa_save_settings" />
 			<input type="hidden" name="tab" value="content" />
-			<?php wp_nonce_field( 'ai_seo_autopilot_settings' ); ?>
+			<?php wp_nonce_field( 'aasa_settings' ); ?>
 
-			<div class="ai-seo-field ai-seo-field--checkbox">
+			<div class="aasa-field aasa-field--checkbox">
 				<label>
 					<input type="checkbox" name="settings[focus_keyword_enabled]" value="1" <?php checked( ! empty( $content['focus_keyword_enabled'] ) ); ?> />
-					<?php esc_html_e( 'Enable focus keyword field and keyword-based content analysis in the editor', 'ai-seo-autopilot' ); ?>
+					<?php esc_html_e( 'Enable focus keyword field and keyword-based content analysis in the editor', 'ai-autopilot-seo-assistant' ); ?>
 				</label>
 			</div>
 
-			<button type="submit" class="ai-seo-button ai-seo-button--primary"><?php esc_html_e( 'Save Changes', 'ai-seo-autopilot' ); ?></button>
+			<button type="submit" class="aasa-button aasa-button--primary"><?php esc_html_e( 'Save Changes', 'ai-autopilot-seo-assistant' ); ?></button>
 		</form>
 		<?php
 	}

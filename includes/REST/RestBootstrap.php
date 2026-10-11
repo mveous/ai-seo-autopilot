@@ -1,20 +1,20 @@
 <?php
 /**
- * Registers all REST controllers under the ai-seo/v1 namespace.
+ * Registers all REST controllers under the aasa/v1 namespace.
  *
- * @package AISEOAutopilot\REST
+ * @package Aasa\REST
  */
 
-namespace AISEOAutopilot\REST;
+namespace Aasa\REST;
 
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Core\Registrable;
-use AISEOAutopilot\REST\Controllers\AIController;
-use AISEOAutopilot\REST\Controllers\AnalyzeController;
-use AISEOAutopilot\REST\Controllers\DashboardController;
-use AISEOAutopilot\REST\Controllers\ScanController;
-use AISEOAutopilot\REST\Controllers\SchemaController;
-use AISEOAutopilot\REST\Controllers\SettingsController;
+use Aasa\Core\Plugin;
+use Aasa\Core\Registrable;
+use Aasa\REST\Controllers\AIController;
+use Aasa\REST\Controllers\AnalyzeController;
+use Aasa\REST\Controllers\DashboardController;
+use Aasa\REST\Controllers\ScanController;
+use Aasa\REST\Controllers\SchemaController;
+use Aasa\REST\Controllers\SettingsController;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -43,13 +43,13 @@ final class RestBootstrap implements Registrable {
 		);
 
 		/**
-		 * Allows Pro to inject additional REST controllers into the same
-		 * bootstrap pass.
+		 * Allows third parties to inject additional REST controllers into
+		 * the same bootstrap pass.
 		 *
 		 * @param array<int,object> $controllers
 		 * @param Plugin             $plugin
 		 */
-		$controllers = (array) apply_filters( 'ai_seo_autopilot/rest_controllers', $controllers, $this->plugin );
+		$controllers = (array) apply_filters( 'aasa/rest_controllers', $controllers, $this->plugin );
 
 		foreach ( $controllers as $controller ) {
 			$controller->register_routes();

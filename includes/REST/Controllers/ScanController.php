@@ -1,18 +1,18 @@
 <?php
 /**
- * POST /ai-seo/v1/scan — run one batch of the site audit.
- * GET  /ai-seo/v1/issues — list open issues.
- * POST /ai-seo/v1/issues/{id}/fix — fix a title/description issue with AI.
+ * POST /aasa/v1/scan — run one batch of the site audit.
+ * GET  /aasa/v1/issues — list open issues.
+ * POST /aasa/v1/issues/{id}/fix — fix a title/description issue with AI.
  *
- * @package AISEOAutopilot\REST\Controllers
+ * @package Aasa\REST\Controllers
  */
 
-namespace AISEOAutopilot\REST\Controllers;
+namespace Aasa\REST\Controllers;
 
-use AISEOAutopilot\AI\Generators\MetaDescriptionGenerator;
-use AISEOAutopilot\AI\Generators\TitleGenerator;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\SEO\Audit\SiteAuditor;
+use Aasa\AI\Generators\MetaDescriptionGenerator;
+use Aasa\AI\Generators\TitleGenerator;
+use Aasa\Core\Plugin;
+use Aasa\SEO\Audit\SiteAuditor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -83,23 +83,23 @@ final class ScanController extends AbstractController {
 		$usage      = $this->plugin->get( 'ai.usage' );
 
 		if ( ! $auditor || ! $repository || ! $providers || ! $prompts || ! $usage ) {
-			return $this->error( new \WP_Error( 'unavailable', __( 'AI services are unavailable.', 'ai-seo-autopilot' ) ), 500 );
+			return $this->error( new \WP_Error( 'unavailable', __( 'AI services are unavailable.', 'ai-autopilot-seo-assistant' ) ), 500 );
 		}
 
 		$issue = $auditor->get_issue( (int) $request->get_param( 'id' ) );
 		if ( ! $issue || 'open' !== $issue['status'] ) {
-			return $this->error( new \WP_Error( 'not_found', __( 'Issue not found or already resolved.', 'ai-seo-autopilot' ) ), 404 );
+			return $this->error( new \WP_Error( 'not_found', __( 'Issue not found or already resolved.', 'ai-autopilot-seo-assistant' ) ), 404 );
 		}
 
 		$field   = SiteAuditor::ai_fix_field( (string) $issue['issue_type'] );
 		$post_id = (int) $issue['object_id'];
 
 		if ( ! $field || ! $post_id ) {
-			return $this->error( new \WP_Error( 'not_fixable', __( 'This issue cannot be fixed automatically.', 'ai-seo-autopilot' ) ), 422 );
+			return $this->error( new \WP_Error( 'not_fixable', __( 'This issue cannot be fixed automatically.', 'ai-autopilot-seo-assistant' ) ), 422 );
 		}
 
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'ai-seo-autopilot' ) ), 403 );
+			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'ai-autopilot-seo-assistant' ) ), 403 );
 		}
 
 		$generator = 'title' === $field
@@ -113,7 +113,7 @@ final class ScanController extends AbstractController {
 		}
 
 		if ( '' === $value ) {
-			return $this->error( new \WP_Error( 'empty_result', __( 'The AI returned an empty result. Please try again.', 'ai-seo-autopilot' ) ), 422 );
+			return $this->error( new \WP_Error( 'empty_result', __( 'The AI returned an empty result. Please try again.', 'ai-autopilot-seo-assistant' ) ), 422 );
 		}
 
 		$repository->update( $post_id, array( $field => $value ) );
@@ -131,7 +131,7 @@ final class ScanController extends AbstractController {
 		$auditor = $this->plugin->get( 'seo.auditor' );
 
 		if ( ! $auditor ) {
-			return $this->error( new \WP_Error( 'unavailable', __( 'Site auditor is unavailable.', 'ai-seo-autopilot' ) ), 500 );
+			return $this->error( new \WP_Error( 'unavailable', __( 'Site auditor is unavailable.', 'ai-autopilot-seo-assistant' ) ), 500 );
 		}
 
 		$result = $auditor->run_batch( 50 );
@@ -143,7 +143,7 @@ final class ScanController extends AbstractController {
 		$auditor = $this->plugin->get( 'seo.auditor' );
 
 		if ( ! $auditor ) {
-			return $this->error( new \WP_Error( 'unavailable', __( 'Site auditor is unavailable.', 'ai-seo-autopilot' ) ), 500 );
+			return $this->error( new \WP_Error( 'unavailable', __( 'Site auditor is unavailable.', 'ai-autopilot-seo-assistant' ) ), 500 );
 		}
 
 		$per_page = min( 100, max( 1, (int) $request->get_param( 'per_page' ) ) );

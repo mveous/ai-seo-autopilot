@@ -2,35 +2,32 @@
 /**
  * Main plugin orchestrator (singleton).
  *
- * @package AISEOAutopilot\Core
+ * @package Aasa\Core
  */
 
-namespace AISEOAutopilot\Core;
+namespace Aasa\Core;
 
-use AISEOAutopilot\AI\AIClient;
-use AISEOAutopilot\AI\AIProviderManager;
-use AISEOAutopilot\AI\PromptManager;
-use AISEOAutopilot\AI\UsageTracker;
-use AISEOAutopilot\Admin\Assets;
-use AISEOAutopilot\Admin\Menu;
-use AISEOAutopilot\Admin\Settings;
-use AISEOAutopilot\Compatibility\ProBridge;
-use AISEOAutopilot\Compatibility\SeoPluginDetector;
-use AISEOAutopilot\Content\Analyzer\SeoAnalyzer;
-use AISEOAutopilot\Cron\Scheduler;
-use AISEOAutopilot\Database\Migrator;
-use AISEOAutopilot\Features\CapabilityManager;
-use AISEOAutopilot\Features\FeatureManager;
-use AISEOAutopilot\Features\UpgradeManager;
-use AISEOAutopilot\REST\RestBootstrap;
-use AISEOAutopilot\SEO\Audit\SiteAuditor;
-use AISEOAutopilot\SEO\Breadcrumbs\BreadcrumbsGenerator;
-use AISEOAutopilot\SEO\Metadata\MetaboxManager;
-use AISEOAutopilot\SEO\Metadata\MetaOutput;
-use AISEOAutopilot\SEO\Metadata\MetaRepository;
-use AISEOAutopilot\Schema\SchemaGenerator;
-use AISEOAutopilot\Sitemap\RobotsTxt;
-use AISEOAutopilot\Sitemap\SitemapGenerator;
+use Aasa\AI\AIClient;
+use Aasa\AI\AIProviderManager;
+use Aasa\AI\PromptManager;
+use Aasa\AI\UsageTracker;
+use Aasa\Admin\Assets;
+use Aasa\Admin\Menu;
+use Aasa\Admin\Settings;
+use Aasa\Compatibility\SeoPluginDetector;
+use Aasa\Content\Analyzer\SeoAnalyzer;
+use Aasa\Cron\Scheduler;
+use Aasa\Database\Migrator;
+use Aasa\Features\CapabilityManager;
+use Aasa\REST\RestBootstrap;
+use Aasa\SEO\Audit\SiteAuditor;
+use Aasa\SEO\Breadcrumbs\BreadcrumbsGenerator;
+use Aasa\SEO\Metadata\MetaboxManager;
+use Aasa\SEO\Metadata\MetaOutput;
+use Aasa\SEO\Metadata\MetaRepository;
+use Aasa\Schema\SchemaGenerator;
+use Aasa\Sitemap\RobotsTxt;
+use Aasa\Sitemap\SitemapGenerator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -73,12 +70,12 @@ final class Plugin {
 		$this->register_services();
 
 		/**
-		 * Fires once AI SEO Autopilot (Free) core services are registered.
-		 * Pro uses this to detect Free and register its own services.
+		 * Fires once AI Autopilot SEO Assistant's core services are registered.
+		 * Third-party extensions use this to register their own services.
 		 *
 		 * @param Plugin $plugin
 		 */
-		do_action( 'ai_seo_autopilot/loaded', $this );
+		do_action( 'aasa/loaded', $this );
 	}
 
 	/**
@@ -86,25 +83,23 @@ final class Plugin {
 	 * Handles upgrades that happen without a fresh activation (e.g. plugin update).
 	 */
 	private function maybe_upgrade(): void {
-		$installed = get_option( 'ai_seo_autopilot_db_version', '' );
+		$installed = get_option( 'aasa_db_version', '' );
 
-		if ( $installed !== AI_SEO_AUTOPILOT_DB_VERSION ) {
+		if ( $installed !== AASA_DB_VERSION ) {
 			Migrator::install();
-			update_option( 'ai_seo_autopilot_db_version', AI_SEO_AUTOPILOT_DB_VERSION );
+			update_option( 'aasa_db_version', AASA_DB_VERSION );
 		}
 	}
 
 	private function register_services(): void {
-		// Cross-cutting: feature locking, capabilities, upgrade messaging.
-		$this->set( 'features', new FeatureManager() );
+		// Cross-cutting: capabilities.
 		$this->set( 'capabilities', new CapabilityManager() );
-		$this->set( 'upgrade', new UpgradeManager() );
 
 		// AI subsystem.
 		AIClient::init();
 		$this->set( 'ai.usage', new UsageTracker() );
 		$this->set( 'ai.prompts', new PromptManager() );
-		$this->set( 'ai.providers', new AIProviderManager( $this->get( 'features' ) ) );
+		$this->set( 'ai.providers', new AIProviderManager() );
 
 		// SEO data layer.
 		$this->set( 'seo.meta_repository', new MetaRepository() );
@@ -119,13 +114,12 @@ final class Plugin {
 		$this->set( 'sitemap.robots', new RobotsTxt() );
 
 		$this->set( 'compat.seo_plugins', new SeoPluginDetector() );
-		$this->set( 'compat.pro_bridge', new ProBridge() );
 
 		$this->set( 'cron.scheduler', new Scheduler() );
 
 		if ( is_admin() ) {
-			$this->set( 'admin.settings', new Settings( $this->get( 'features' ) ) );
-			$this->set( 'admin.menu', new Menu( $this->get( 'features' ) ) );
+			$this->set( 'admin.settings', new Settings() );
+			$this->set( 'admin.menu', new Menu() );
 			$this->set( 'admin.assets', new Assets() );
 		}
 
@@ -143,8 +137,8 @@ final class Plugin {
 	}
 
 	/**
-	 * Fetch a registered service by id. Used internally and by Pro via
-	 * ai_seo_autopilot()->get( 'service.id' ).
+	 * Fetch a registered service by id. Used internally and by third-party
+	 * extensions via aasa()->get( 'service.id' ).
 	 */
 	public function get( string $id ): ?object {
 		return $this->services[ $id ] ?? null;

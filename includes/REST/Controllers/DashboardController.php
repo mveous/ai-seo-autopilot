@@ -1,13 +1,13 @@
 <?php
 /**
- * GET /ai-seo/v1/dashboard — summary data for the admin dashboard.
+ * GET /aasa/v1/dashboard — summary data for the admin dashboard.
  *
- * @package AISEOAutopilot\REST\Controllers
+ * @package Aasa\REST\Controllers
  */
 
-namespace AISEOAutopilot\REST\Controllers;
+namespace Aasa\REST\Controllers;
 
-use AISEOAutopilot\Core\Plugin;
+use Aasa\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

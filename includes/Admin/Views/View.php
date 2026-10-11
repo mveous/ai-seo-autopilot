@@ -2,10 +2,10 @@
 /**
  * Contract every admin-page renderer implements.
  *
- * @package AISEOAutopilot\Admin\Views
+ * @package Aasa\Admin\Views
  */
 
-namespace AISEOAutopilot\Admin\Views;
+namespace Aasa\Admin\Views;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

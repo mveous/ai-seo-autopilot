@@ -6,10 +6,10 @@
  * fatals in environments where `composer install` hasn't been run. If a
  * Composer autoloader is present it is loaded first and takes precedence.
  *
- * @package AISEOAutopilot\Core
+ * @package Aasa\Core
  */
 
-namespace AISEOAutopilot\Core;
+namespace Aasa\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

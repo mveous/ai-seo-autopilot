@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       AI SEO Autopilot
+ * Plugin Name:       AI Autopilot SEO Assistant
  * Description:       AI-powered SEO agent for WordPress. Connect your own AI provider, scan your site, and let AI analyze and improve your SEO.
  * Version:           1.0.0
  * Requires at least: 7.0
@@ -9,13 +9,13 @@
  * Author URI:        https://mveous.com
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       ai-seo-autopilot
+ * Text Domain:       ai-autopilot-seo-assistant
  * Domain Path:       /languages
  *
- * @package AISEOAutopilot
+ * @package Aasa
  */
 
-namespace AISEOAutopilot;
+namespace Aasa;
 
 if (!defined('ABSPATH')) {
 	exit;
@@ -25,21 +25,21 @@ if (!defined('ABSPATH')) {
 // Core constants.
 // -----------------------------------------------------------------------
 
-define('AI_SEO_AUTOPILOT_VERSION', '1.0.0');
-define('AI_SEO_AUTOPILOT_DB_VERSION', '1.0.0');
-define('AI_SEO_AUTOPILOT_FILE', __FILE__);
-define('AI_SEO_AUTOPILOT_DIR', plugin_dir_path(__FILE__));
-define('AI_SEO_AUTOPILOT_URL', plugin_dir_url(__FILE__));
-define('AI_SEO_AUTOPILOT_BASENAME', plugin_basename(__FILE__));
-define('AI_SEO_AUTOPILOT_TEXT_DOMAIN', 'ai-seo-autopilot');
-define('AI_SEO_AUTOPILOT_MIN_PHP', '8.0');
-define('AI_SEO_AUTOPILOT_MIN_WP', '6.0');
+define('AASA_VERSION', '1.0.0');
+define('AASA_DB_VERSION', '1.0.0');
+define('AASA_FILE', __FILE__);
+define('AASA_DIR', plugin_dir_path(__FILE__));
+define('AASA_URL', plugin_dir_url(__FILE__));
+define('AASA_BASENAME', plugin_basename(__FILE__));
+define('AASA_TEXT_DOMAIN', 'ai-autopilot-seo-assistant');
+define('AASA_MIN_PHP', '8.0');
+define('AASA_MIN_WP', '6.0');
 
 // -----------------------------------------------------------------------
 // Environment guard. Fail soft, never fatal.
 // -----------------------------------------------------------------------
 
-if (version_compare(PHP_VERSION, AI_SEO_AUTOPILOT_MIN_PHP, '<')) {
+if (version_compare(PHP_VERSION, AASA_MIN_PHP, '<')) {
 	add_action(
 		'admin_notices',
 		function () {
@@ -51,8 +51,8 @@ if (version_compare(PHP_VERSION, AI_SEO_AUTOPILOT_MIN_PHP, '<')) {
 				esc_html(
 					sprintf(
 						/* translators: 1: required PHP version, 2: current PHP version */
-						__('AI SEO Autopilot requires PHP %1$s or higher. You are running PHP %2$s. The plugin has been disabled.', 'ai-seo-autopilot'),
-						AI_SEO_AUTOPILOT_MIN_PHP,
+						__('AI Autopilot SEO Assistant requires PHP %1$s or higher. You are running PHP %2$s. The plugin has been disabled.', 'ai-autopilot-seo-assistant'),
+						AASA_MIN_PHP,
 						PHP_VERSION
 					)
 				)
@@ -66,12 +66,12 @@ if (version_compare(PHP_VERSION, AI_SEO_AUTOPILOT_MIN_PHP, '<')) {
 // Autoloading.
 // -----------------------------------------------------------------------
 
-if (file_exists(AI_SEO_AUTOPILOT_DIR . 'vendor/autoload.php')) {
-	require_once AI_SEO_AUTOPILOT_DIR . 'vendor/autoload.php';
+if (file_exists(AASA_DIR . 'vendor/autoload.php')) {
+	require_once AASA_DIR . 'vendor/autoload.php';
 }
 
-require_once AI_SEO_AUTOPILOT_DIR . 'includes/Core/Autoloader.php';
-Core\Autoloader::register('AISEOAutopilot\\', AI_SEO_AUTOPILOT_DIR . 'includes/');
+require_once AASA_DIR . 'includes/Core/Autoloader.php';
+Core\Autoloader::register('Aasa\\', AASA_DIR . 'includes/');
 
 // -----------------------------------------------------------------------
 // Activation / deactivation.
@@ -87,12 +87,12 @@ register_deactivation_hook(__FILE__, array(Core\Deactivator::class, 'deactivate'
 /**
  * Returns the single plugin instance.
  *
- * Exposed as a function (not a global) so Pro and third parties have a
+ * Exposed as a function (not a global) so third-party extensions have a
  * stable, documented entry point without reaching into globals.
  *
  * @return Core\Plugin
  */
-function ai_seo_autopilot(): Core\Plugin
+function aasa(): Core\Plugin
 {
 	return Core\Plugin::instance();
 }
@@ -100,7 +100,7 @@ function ai_seo_autopilot(): Core\Plugin
 add_action(
 	'plugins_loaded',
 	static function () {
-		ai_seo_autopilot()->boot();
+		aasa()->boot();
 	},
 	5
 );

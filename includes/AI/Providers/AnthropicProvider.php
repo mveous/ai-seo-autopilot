@@ -3,10 +3,10 @@
  * Anthropic Claude adapter, backed by the bundled WordPress AI Client SDK's
  * Anthropic provider.
  *
- * @package AISEOAutopilot\AI\Providers
+ * @package Aasa\AI\Providers
  */
 
-namespace AISEOAutopilot\AI\Providers;
+namespace Aasa\AI\Providers;
 
 use WordPress\AiClient\Providers\Http\Contracts\RequestAuthenticationInterface;
 use WordPress\AnthropicAiProvider\Authentication\AnthropicApiKeyRequestAuthentication;
@@ -26,7 +26,7 @@ final class AnthropicProvider extends AbstractProvider
 
 	public function get_label(): string
 	{
-		return __('Anthropic Claude', 'ai-seo-autopilot');
+		return __('Anthropic Claude', 'ai-autopilot-seo-assistant');
 	}
 
 	protected function ai_client_provider_class(): string
@@ -43,13 +43,13 @@ final class AnthropicProvider extends AbstractProvider
 	{
 		if (!class_exists(AnthropicApiKeyRequestAuthentication::class)) {
 			return new \WP_Error(
-				'ai_seo_autopilot_ai_client_missing',
-				__('The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-seo-autopilot')
+				'aasa_ai_client_missing',
+				__('The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-autopilot-seo-assistant')
 			);
 		}
 
 		if (!empty($options['json'])) {
-			$system_prompt .= "\n\n" . __('Respond with valid JSON only. Do not include markdown code fences or any commentary outside the JSON object.', 'ai-seo-autopilot');
+			$system_prompt .= "\n\n" . __('Respond with valid JSON only. Do not include markdown code fences or any commentary outside the JSON object.', 'ai-autopilot-seo-assistant');
 		}
 
 		return $this->complete_via_ai_client(

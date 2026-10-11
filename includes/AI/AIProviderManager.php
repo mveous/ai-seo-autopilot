@@ -11,15 +11,14 @@
  * core and any other plugin built on the same SDK, and vice versa. See
  * get_api_key()/persist_api_key()/delete_api_key() below.
  *
- * @package AISEOAutopilot\AI
+ * @package Aasa\AI
  */
 
-namespace AISEOAutopilot\AI;
+namespace Aasa\AI;
 
-use AISEOAutopilot\AI\Providers\AnthropicProvider;
-use AISEOAutopilot\AI\Providers\GeminiProvider;
-use AISEOAutopilot\AI\Providers\OpenAIProvider;
-use AISEOAutopilot\Features\FeatureManager;
+use Aasa\AI\Providers\AnthropicProvider;
+use Aasa\AI\Providers\GeminiProvider;
+use Aasa\AI\Providers\OpenAIProvider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,21 +29,17 @@ final class AIProviderManager {
 	/** @var array<string,class-string<AIProviderInterface>> */
 	private array $providers = array();
 
-	private FeatureManager $features;
-
-	public function __construct( FeatureManager $features ) {
-		$this->features = $features;
-
+	public function __construct() {
 		$this->register_provider( 'openai', OpenAIProvider::class );
 		$this->register_provider( 'gemini', GeminiProvider::class );
 		$this->register_provider( 'anthropic', AnthropicProvider::class );
 
 		/**
-		 * Allows Pro or third parties to register additional AI providers.
+		 * Allows third parties to register additional AI providers.
 		 *
 		 * @param AIProviderManager $manager
 		 */
-		do_action( 'ai_seo_autopilot/register_ai_providers', $this );
+		do_action( 'aasa/register_ai_providers', $this );
 	}
 
 	/**
@@ -94,15 +89,6 @@ final class AIProviderManager {
 	}
 
 	/**
-	 * Whether this provider requires Pro to connect. Every registered
-	 * provider (Anthropic, OpenAI, Gemini, and any Pro-registered ones)
-	 * is available on Free.
-	 */
-	public function is_provider_locked( string $provider_id ): bool {
-		return false;
-	}
-
-	/**
 	 * Instantiate a provider adapter with an API key.
 	 */
 	private function make_provider( string $provider_id, string $api_key ): ?AIProviderInterface {
@@ -130,19 +116,12 @@ final class AIProviderManager {
 		$provider = $this->make_provider( $provider_id, $api_key );
 
 		if ( null === $provider ) {
-			return new \WP_Error( 'ai_seo_autopilot_unknown_provider', __( 'Unknown AI provider.', 'ai-seo-autopilot' ) );
-		}
-
-		if ( $this->is_provider_locked( $provider_id ) ) {
-			return new \WP_Error(
-				'ai_seo_autopilot_provider_locked',
-				__( 'This AI provider requires AI SEO Autopilot Pro. The Free plan is limited to Anthropic Claude.', 'ai-seo-autopilot' )
-			);
+			return new \WP_Error( 'aasa_unknown_provider', __( 'Unknown AI provider.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$api_key = trim( $api_key );
 		if ( '' === $api_key ) {
-			return new \WP_Error( 'ai_seo_autopilot_empty_key', __( 'API key cannot be empty.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'aasa_empty_key', __( 'API key cannot be empty.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$valid = $provider->validate_api_key( $api_key );
@@ -250,7 +229,7 @@ final class AIProviderManager {
 	// -------------------------------------------------------------
 
 	public function get_active_provider_id(): string {
-		$settings = get_option( 'ai_seo_autopilot_settings', array() );
+		$settings = get_option( 'aasa_settings', array() );
 
 		return (string) ( $settings['ai']['active_provider'] ?? '' );
 	}
@@ -267,7 +246,7 @@ final class AIProviderManager {
 	 * default in that case).
 	 */
 	public function get_selected_model( string $provider_id ): string {
-		$settings = get_option( 'ai_seo_autopilot_settings', array() );
+		$settings = get_option( 'aasa_settings', array() );
 
 		return (string) ( $settings['ai']['models'][ $provider_id ] ?? '' );
 	}
@@ -287,26 +266,19 @@ final class AIProviderManager {
 		$provider_id = $options['provider'] ?? $this->get_active_provider_id();
 
 		if ( '' === $provider_id ) {
-			return new \WP_Error( 'ai_seo_autopilot_no_provider', __( 'No AI provider is configured. Add an API key in AI SEO → Settings → AI Providers.', 'ai-seo-autopilot' ) );
-		}
-
-		if ( $this->is_provider_locked( $provider_id ) ) {
-			return new \WP_Error(
-				'ai_seo_autopilot_provider_locked',
-				__( 'This AI provider requires AI SEO Autopilot Pro. Switch to Anthropic Claude, or upgrade to Pro.', 'ai-seo-autopilot' )
-			);
+			return new \WP_Error( 'aasa_no_provider', __( 'No AI provider is configured. Add an API key in AI SEO → Settings → AI Providers.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$api_key = $this->get_api_key( $provider_id );
 
 		if ( null === $api_key ) {
-			return new \WP_Error( 'ai_seo_autopilot_no_key', __( 'No API key is stored for the selected AI provider.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'aasa_no_key', __( 'No API key is stored for the selected AI provider.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$provider = $this->make_provider( $provider_id, $api_key );
 
 		if ( null === $provider ) {
-			return new \WP_Error( 'ai_seo_autopilot_unknown_provider', __( 'Unknown AI provider.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'aasa_unknown_provider', __( 'Unknown AI provider.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		if ( empty( $options['model'] ) ) {
@@ -327,7 +299,7 @@ final class AIProviderManager {
 		 * @param string               $feature
 		 * @param string               $provider_id
 		 */
-		do_action( 'ai_seo_autopilot/ai_request_completed', $response, $feature, $provider_id );
+		do_action( 'aasa/ai_request_completed', $response, $feature, $provider_id );
 
 		return $response;
 	}

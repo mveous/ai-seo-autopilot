@@ -2,25 +2,25 @@
 /**
  * Basic schema.org JSON-LD output: WebPage, Article/BlogPosting,
  * Organization, and BreadcrumbList. Advanced types (Product, Event,
- * Recipe, FAQ, HowTo, LocalBusiness, …) are a Pro feature — see
- * FeatureManager::is_available( 'advanced_schema' ).
+ * Recipe, FAQ, HowTo, LocalBusiness, …) can be added via the
+ * `aasa/schema_graph` filter below.
  *
- * A per-post AI-generated override (`_ai_seo_schema_json`) is honored
+ * A per-post AI-generated override (`_aasa_schema_json`) is honored
  * verbatim when present — it was already validated as well-formed JSON
  * at write time by MetaRepository — otherwise a safe default graph is
  * built from known, trusted post data only.
  *
- * @package AISEOAutopilot\Schema
+ * @package Aasa\Schema
  */
 
-namespace AISEOAutopilot\Schema;
+namespace Aasa\Schema;
 
-use AISEOAutopilot\Admin\Settings;
-use AISEOAutopilot\Compatibility\SeoPluginDetector;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Core\Registrable;
-use AISEOAutopilot\SEO\Breadcrumbs\BreadcrumbsGenerator;
-use AISEOAutopilot\SEO\Metadata\MetaRepository;
+use Aasa\Admin\Settings;
+use Aasa\Compatibility\SeoPluginDetector;
+use Aasa\Core\Plugin;
+use Aasa\Core\Registrable;
+use Aasa\SEO\Breadcrumbs\BreadcrumbsGenerator;
+use Aasa\SEO\Metadata\MetaRepository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -224,12 +224,13 @@ final class SchemaGenerator implements Registrable {
 		}
 
 		/**
-		 * Filters the default schema @graph before output. Pro uses this
-		 * to inject advanced schema types (Product, Event, LocalBusiness…).
+		 * Filters the default schema @graph before output. Third-party
+		 * extensions use this to inject advanced schema types (Product,
+		 * Event, LocalBusiness…).
 		 *
 		 * @param array<int,array<string,mixed>> $graph
 		 * @param int                             $post_id
 		 */
-		return (array) apply_filters( 'ai_seo_autopilot/schema_graph', $graph, $post_id );
+		return (array) apply_filters( 'aasa/schema_graph', $graph, $post_id );
 	}
 }

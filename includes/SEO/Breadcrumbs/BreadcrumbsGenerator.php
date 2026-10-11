@@ -3,12 +3,12 @@
  * Basic breadcrumb trail: home → taxonomy/parent chain → current item.
  * Exposed as a shortcode and a template tag for theme integration.
  *
- * @package AISEOAutopilot\SEO\Breadcrumbs
+ * @package Aasa\SEO\Breadcrumbs
  */
 
-namespace AISEOAutopilot\SEO\Breadcrumbs;
+namespace Aasa\SEO\Breadcrumbs;
 
-use AISEOAutopilot\Core\Registrable;
+use Aasa\Core\Registrable;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class BreadcrumbsGenerator implements Registrable {
 
 	public function register(): void {
-		add_shortcode( 'ai_seo_breadcrumbs', array( $this, 'shortcode' ) );
+		add_shortcode( 'aasa_breadcrumbs', array( $this, 'shortcode' ) );
 	}
 
 	/**
@@ -26,7 +26,7 @@ final class BreadcrumbsGenerator implements Registrable {
 	public function get_trail(): array {
 		$trail = array(
 			array(
-				'label' => __( 'Home', 'ai-seo-autopilot' ),
+				'label' => __( 'Home', 'ai-autopilot-seo-assistant' ),
 				'url'   => home_url( '/' ),
 			),
 		);
@@ -87,12 +87,12 @@ final class BreadcrumbsGenerator implements Registrable {
 		} elseif ( is_search() ) {
 			$trail[] = array(
 				/* translators: %s: search query */
-				'label' => sprintf( __( 'Search results for "%s"', 'ai-seo-autopilot' ), get_search_query() ),
+				'label' => sprintf( __( 'Search results for "%s"', 'ai-autopilot-seo-assistant' ), get_search_query() ),
 				'url'   => '',
 			);
 		} elseif ( is_404() ) {
 			$trail[] = array(
-				'label' => __( 'Page not found', 'ai-seo-autopilot' ),
+				'label' => __( 'Page not found', 'ai-autopilot-seo-assistant' ),
 				'url'   => '',
 			);
 		}
@@ -102,7 +102,7 @@ final class BreadcrumbsGenerator implements Registrable {
 		 *
 		 * @param array<int,array{label:string,url:string}> $trail
 		 */
-		return (array) apply_filters( 'ai_seo_autopilot/breadcrumbs_trail', $trail );
+		return (array) apply_filters( 'aasa/breadcrumbs_trail', $trail );
 	}
 
 	public function render(): void {
@@ -111,12 +111,12 @@ final class BreadcrumbsGenerator implements Registrable {
 			return;
 		}
 
-		echo '<nav class="ai-seo-breadcrumbs" aria-label="' . esc_attr__( 'Breadcrumb', 'ai-seo-autopilot' ) . '">';
+		echo '<nav class="aasa-breadcrumbs" aria-label="' . esc_attr__( 'Breadcrumb', 'ai-autopilot-seo-assistant' ) . '">';
 		$last = count( $trail ) - 1;
 
 		foreach ( $trail as $index => $item ) {
 			if ( $index > 0 ) {
-				echo '<span class="ai-seo-breadcrumbs__sep"> › </span>';
+				echo '<span class="aasa-breadcrumbs__sep"> › </span>';
 			}
 
 			if ( '' !== $item['url'] && $index !== $last ) {

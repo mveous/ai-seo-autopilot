@@ -2,10 +2,10 @@
 /**
  * Value object returned by every AI provider adapter.
  *
- * @package AISEOAutopilot\AI
+ * @package Aasa\AI
  */
 
-namespace AISEOAutopilot\AI;
+namespace Aasa\AI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

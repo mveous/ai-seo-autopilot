@@ -2,14 +2,14 @@
 /**
  * All open SEO issues, paginated.
  *
- * @package AISEOAutopilot\Admin\Views
+ * @package Aasa\Admin\Views
  */
 
-namespace AISEOAutopilot\Admin\Views;
+namespace Aasa\Admin\Views;
 
-use AISEOAutopilot\Admin\Menu;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\SEO\Audit\SiteAuditor;
+use Aasa\Admin\Menu;
+use Aasa\Core\Plugin;
+use Aasa\SEO\Audit\SiteAuditor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,33 +38,33 @@ final class IssuesView implements View {
 		$base_url = admin_url( 'admin.php?page=' . Menu::DASHBOARD_SLUG . '&view=issues' );
 
 		$severity_labels = array(
-			'high'   => __( 'High', 'ai-seo-autopilot' ),
-			'medium' => __( 'Medium', 'ai-seo-autopilot' ),
-			'low'    => __( 'Low', 'ai-seo-autopilot' ),
+			'high'   => __( 'High', 'ai-autopilot-seo-assistant' ),
+			'medium' => __( 'Medium', 'ai-autopilot-seo-assistant' ),
+			'low'    => __( 'Low', 'ai-autopilot-seo-assistant' ),
 		);
 		$category_labels = array(
-			'technical' => __( 'Technical SEO', 'ai-seo-autopilot' ),
-			'on_page'   => __( 'On-Page SEO', 'ai-seo-autopilot' ),
-			'content'   => __( 'Content', 'ai-seo-autopilot' ),
-			'schema'    => __( 'Schema', 'ai-seo-autopilot' ),
-			'images'    => __( 'Images', 'ai-seo-autopilot' ),
+			'technical' => __( 'Technical SEO', 'ai-autopilot-seo-assistant' ),
+			'on_page'   => __( 'On-Page SEO', 'ai-autopilot-seo-assistant' ),
+			'content'   => __( 'Content', 'ai-autopilot-seo-assistant' ),
+			'schema'    => __( 'Schema', 'ai-autopilot-seo-assistant' ),
+			'images'    => __( 'Images', 'ai-autopilot-seo-assistant' ),
 		);
 		?>
-		<div class="ai-seo-page">
+		<div class="aasa-page">
 
 			<p>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::DASHBOARD_SLUG ) ); ?>" class="ai-seo-link">
-					← <?php esc_html_e( 'Back to dashboard', 'ai-seo-autopilot' ); ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::DASHBOARD_SLUG ) ); ?>" class="aasa-link">
+					← <?php esc_html_e( 'Back to dashboard', 'ai-autopilot-seo-assistant' ); ?>
 				</a>
 			</p>
 
-			<div class="ai-seo-card">
-				<div class="ai-seo-card__header">
-					<h3 class="ai-seo-card__title">
+			<div class="aasa-card">
+				<div class="aasa-card__header">
+					<h3 class="aasa-card__title">
 						<?php
 						printf(
 							/* translators: %s: number of open issues */
-							esc_html__( 'Open Issues (%s)', 'ai-seo-autopilot' ),
+							esc_html__( 'Open Issues (%s)', 'ai-autopilot-seo-assistant' ),
 							esc_html( number_format_i18n( $total ) )
 						);
 						?>
@@ -72,19 +72,19 @@ final class IssuesView implements View {
 				</div>
 
 				<?php if ( empty( $issues ) ) : ?>
-					<p class="ai-seo-card__description">
-						<?php esc_html_e( 'No open issues. Run an SEO scan from the dashboard to check your site.', 'ai-seo-autopilot' ); ?>
+					<p class="aasa-card__description">
+						<?php esc_html_e( 'No open issues. Run an SEO scan from the dashboard to check your site.', 'ai-autopilot-seo-assistant' ); ?>
 					</p>
 				<?php else : ?>
-					<table class="widefat striped ai-seo-issues-table">
+					<table class="widefat striped aasa-issues-table">
 						<thead>
 							<tr>
-								<th scope="col"><?php esc_html_e( 'Severity', 'ai-seo-autopilot' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Issue', 'ai-seo-autopilot' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Page', 'ai-seo-autopilot' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Category', 'ai-seo-autopilot' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Detected', 'ai-seo-autopilot' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Action', 'ai-seo-autopilot' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Severity', 'ai-autopilot-seo-assistant' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Issue', 'ai-autopilot-seo-assistant' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Page', 'ai-autopilot-seo-assistant' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Category', 'ai-autopilot-seo-assistant' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Detected', 'ai-autopilot-seo-assistant' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Action', 'ai-autopilot-seo-assistant' ); ?></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -98,7 +98,7 @@ final class IssuesView implements View {
 								?>
 								<tr>
 									<td>
-										<span class="ai-seo-issue-severity ai-seo-issue-severity--<?php echo esc_attr( $severity ); ?>">
+										<span class="aasa-issue-severity aasa-issue-severity--<?php echo esc_attr( $severity ); ?>">
 											<?php echo esc_html( $severity_labels[ $severity ] ?? $severity ); ?>
 										</span>
 									</td>
@@ -122,25 +122,25 @@ final class IssuesView implements View {
 										<?php
 										printf(
 											/* translators: %s: human-readable time difference */
-											esc_html__( '%s ago', 'ai-seo-autopilot' ),
+											esc_html__( '%s ago', 'ai-autopilot-seo-assistant' ),
 											esc_html( human_time_diff( strtotime( (string) $issue['detected_at'] ) ) )
 										);
 										?>
 									</td>
-									<td class="ai-seo-issue-action">
+									<td class="aasa-issue-action">
 										<?php if ( $ai_field && $object_id && $can_use_ai && current_user_can( 'edit_post', $object_id ) ) : ?>
 											<?php if ( $ai_configured ) : ?>
-												<button type="button" class="ai-seo-button ai-seo-button--secondary ai-seo-fix-issue" data-issue-id="<?php echo esc_attr( (string) $issue['id'] ); ?>">
+												<button type="button" class="aasa-button aasa-button--secondary aasa-fix-issue" data-issue-id="<?php echo esc_attr( (string) $issue['id'] ); ?>">
 													<span class="dashicons dashicons-superhero-alt" aria-hidden="true"></span>
-													<?php esc_html_e( 'Fix with AI', 'ai-seo-autopilot' ); ?>
+													<?php esc_html_e( 'Fix with AI', 'ai-autopilot-seo-assistant' ); ?>
 												</button>
 											<?php else : ?>
-												<a class="ai-seo-link" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::SETTINGS_SLUG . '&tab=ai' ) ); ?>">
-													<?php esc_html_e( 'Connect AI to fix', 'ai-seo-autopilot' ); ?>
+												<a class="aasa-link" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::SETTINGS_SLUG . '&tab=ai' ) ); ?>">
+													<?php esc_html_e( 'Connect AI to fix', 'ai-autopilot-seo-assistant' ); ?>
 												</a>
 											<?php endif; ?>
 										<?php elseif ( $edit_link ) : ?>
-											<a class="ai-seo-link" href="<?php echo esc_url( $edit_link ); ?>"><?php esc_html_e( 'Edit page', 'ai-seo-autopilot' ); ?></a>
+											<a class="aasa-link" href="<?php echo esc_url( $edit_link ); ?>"><?php esc_html_e( 'Edit page', 'ai-autopilot-seo-assistant' ); ?></a>
 										<?php endif; ?>
 									</td>
 								</tr>

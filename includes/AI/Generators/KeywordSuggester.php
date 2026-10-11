@@ -1,9 +1,9 @@
 <?php
 /**
- * @package AISEOAutopilot\AI\Generators
+ * @package Aasa\AI\Generators
  */
 
-namespace AISEOAutopilot\AI\Generators;
+namespace Aasa\AI\Generators;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -20,7 +20,7 @@ final class KeywordSuggester extends AbstractGenerator {
 	public function generate_for_post( int $post_id ) {
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return new \WP_Error( 'ai_seo_autopilot_not_found', __( 'Post not found.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'aasa_not_found', __( 'Post not found.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$context = $this->build_post_context( $post );
@@ -33,7 +33,7 @@ final class KeywordSuggester extends AbstractGenerator {
 
 		$json = $result->json();
 		if ( null === $json || empty( $json['keywords'] ) || ! is_array( $json['keywords'] ) ) {
-			return new \WP_Error( 'ai_seo_autopilot_invalid_ai_response', __( 'The AI response could not be parsed as keyword suggestions.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'aasa_invalid_ai_response', __( 'The AI response could not be parsed as keyword suggestions.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$keywords = array();

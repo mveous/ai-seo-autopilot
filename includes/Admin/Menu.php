@@ -1,20 +1,19 @@
 <?php
 /**
  * Registers the wp-admin menu pages and delegates rendering to the
- * class-based views in AISEOAutopilot\Admin\Views.
+ * class-based views in Aasa\Admin\Views.
  *
- * @package AISEOAutopilot\Admin
+ * @package Aasa\Admin
  */
 
-namespace AISEOAutopilot\Admin;
+namespace Aasa\Admin;
 
-use AISEOAutopilot\Admin\Views\DashboardView;
-use AISEOAutopilot\Admin\Views\IssuesView;
-use AISEOAutopilot\Admin\Views\SettingsView;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Core\Registrable;
-use AISEOAutopilot\Features\CapabilityManager;
-use AISEOAutopilot\Features\FeatureManager;
+use Aasa\Admin\Views\DashboardView;
+use Aasa\Admin\Views\IssuesView;
+use Aasa\Admin\Views\SettingsView;
+use Aasa\Core\Plugin;
+use Aasa\Core\Registrable;
+use Aasa\Features\CapabilityManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,14 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Menu implements Registrable {
 
-	public const DASHBOARD_SLUG = 'ai-seo-autopilot';
-	public const SETTINGS_SLUG  = 'ai-seo-autopilot-settings';
-
-	private FeatureManager $features;
-
-	public function __construct( FeatureManager $features ) {
-		$this->features = $features;
-	}
+	public const DASHBOARD_SLUG = 'ai-autopilot-seo-assistant';
+	public const SETTINGS_SLUG  = 'ai-autopilot-seo-assistant-settings';
 
 	public function register(): void {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
@@ -39,8 +32,8 @@ final class Menu implements Registrable {
 		$capability = $this->capability( 'view_dashboard' );
 
 		add_menu_page(
-			__( 'AI SEO Autopilot', 'ai-seo-autopilot' ),
-			__( 'AI SEO', 'ai-seo-autopilot' ),
+			__( 'AI Autopilot SEO Assistant', 'ai-autopilot-seo-assistant' ),
+			__( 'AI SEO', 'ai-autopilot-seo-assistant' ),
 			$capability,
 			self::DASHBOARD_SLUG,
 			array( $this, 'render_dashboard' ),
@@ -50,8 +43,8 @@ final class Menu implements Registrable {
 
 		add_submenu_page(
 			self::DASHBOARD_SLUG,
-			__( 'Dashboard', 'ai-seo-autopilot' ),
-			__( 'Dashboard', 'ai-seo-autopilot' ),
+			__( 'Dashboard', 'ai-autopilot-seo-assistant' ),
+			__( 'Dashboard', 'ai-autopilot-seo-assistant' ),
 			$capability,
 			self::DASHBOARD_SLUG,
 			array( $this, 'render_dashboard' )
@@ -59,8 +52,8 @@ final class Menu implements Registrable {
 
 		add_submenu_page(
 			self::DASHBOARD_SLUG,
-			__( 'Settings', 'ai-seo-autopilot' ),
-			__( 'Settings', 'ai-seo-autopilot' ),
+			__( 'Settings', 'ai-autopilot-seo-assistant' ),
+			__( 'Settings', 'ai-autopilot-seo-assistant' ),
 			$this->capability( 'manage_settings' ),
 			self::SETTINGS_SLUG,
 			array( $this, 'render_settings' )
@@ -69,7 +62,7 @@ final class Menu implements Registrable {
 
 	public function render_dashboard(): void {
 		if ( ! current_user_can( $this->capability( 'view_dashboard' ) ) ) {
-			wp_die( esc_html__( 'You do not have permission to access this page.', 'ai-seo-autopilot' ) );
+			wp_die( esc_html__( 'You do not have permission to access this page.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$view = isset( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view switch, no state change.
@@ -79,12 +72,12 @@ final class Menu implements Registrable {
 			return;
 		}
 
-		( new DashboardView( $this->features ) )->render();
+		( new DashboardView() )->render();
 	}
 
 	public function render_settings(): void {
 		if ( ! current_user_can( $this->capability( 'manage_settings' ) ) ) {
-			wp_die( esc_html__( 'You do not have permission to access this page.', 'ai-seo-autopilot' ) );
+			wp_die( esc_html__( 'You do not have permission to access this page.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		/** @var Settings|null $settings */
@@ -94,7 +87,7 @@ final class Menu implements Registrable {
 			return;
 		}
 
-		( new SettingsView( $this->features, $settings ) )->render();
+		( new SettingsView( $settings ) )->render();
 	}
 
 	private function capability( string $action ): string {

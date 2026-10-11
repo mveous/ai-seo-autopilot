@@ -2,24 +2,23 @@
 /**
  * Settings page: tabbed, one <form> per tab, posts to admin-post.php.
  *
- * @package AISEOAutopilot\Admin\Views
+ * @package Aasa\Admin\Views
  */
 
-namespace AISEOAutopilot\Admin\Views;
+namespace Aasa\Admin\Views;
 
-use AISEOAutopilot\Admin\Menu;
-use AISEOAutopilot\Admin\Settings;
-use AISEOAutopilot\Admin\Views\SettingsTabs\AdvancedTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\AiTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\CompatibilityTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\ContentTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\GeneralTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\SchemaTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\SitemapTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\SocialTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\SeoTab;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Features\FeatureManager;
+use Aasa\Admin\Menu;
+use Aasa\Admin\Settings;
+use Aasa\Admin\Views\SettingsTabs\AdvancedTab;
+use Aasa\Admin\Views\SettingsTabs\AiTab;
+use Aasa\Admin\Views\SettingsTabs\CompatibilityTab;
+use Aasa\Admin\Views\SettingsTabs\ContentTab;
+use Aasa\Admin\Views\SettingsTabs\GeneralTab;
+use Aasa\Admin\Views\SettingsTabs\SchemaTab;
+use Aasa\Admin\Views\SettingsTabs\SitemapTab;
+use Aasa\Admin\Views\SettingsTabs\SocialTab;
+use Aasa\Admin\Views\SettingsTabs\SeoTab;
+use Aasa\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,26 +27,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class SettingsView implements View {
 
 	public function __construct(
-		private readonly FeatureManager $features,
 		private readonly Settings $settings
 	) {}
 
 	public function render(): void {
 		( new HeaderPartial( 'settings' ) )->render();
 
-		$features = $this->features;
 		$plugin   = Plugin::instance();
 
 		$tabs = array(
-			'general'   => array( 'label' => __( 'General', 'ai-seo-autopilot' ) ),
-			'ai'        => array( 'label' => __( 'AI Providers', 'ai-seo-autopilot' ) ),
-			'seo'       => array( 'label' => __( 'SEO', 'ai-seo-autopilot' ) ),
-			'content'   => array( 'label' => __( 'Content', 'ai-seo-autopilot' ) ),
-			'schema'    => array( 'label' => __( 'Schema', 'ai-seo-autopilot' ) ),
-			'sitemap'   => array( 'label' => __( 'Sitemap', 'ai-seo-autopilot' ) ),
-			'social'    => array( 'label' => __( 'Social', 'ai-seo-autopilot' ) ),
-			'compatibility' => array( 'label' => __( 'Compatibility', 'ai-seo-autopilot' ) ),
-			'advanced'  => array( 'label' => __( 'Advanced', 'ai-seo-autopilot' ) ),
+			'general'   => array( 'label' => __( 'General', 'ai-autopilot-seo-assistant' ) ),
+			'ai'        => array( 'label' => __( 'AI Providers', 'ai-autopilot-seo-assistant' ) ),
+			'seo'       => array( 'label' => __( 'SEO', 'ai-autopilot-seo-assistant' ) ),
+			'content'   => array( 'label' => __( 'Content', 'ai-autopilot-seo-assistant' ) ),
+			'schema'    => array( 'label' => __( 'Schema', 'ai-autopilot-seo-assistant' ) ),
+			'sitemap'   => array( 'label' => __( 'Sitemap', 'ai-autopilot-seo-assistant' ) ),
+			'social'    => array( 'label' => __( 'Social', 'ai-autopilot-seo-assistant' ) ),
+			'compatibility' => array( 'label' => __( 'Compatibility', 'ai-autopilot-seo-assistant' ) ),
+			'advanced'  => array( 'label' => __( 'Advanced', 'ai-autopilot-seo-assistant' ) ),
 		);
 
 		$current = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'general'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -60,27 +57,27 @@ final class SettingsView implements View {
 
 		$values = $this->settings->get_all();
 		?>
-		<div class="ai-seo-page ai-seo-page--settings">
+		<div class="aasa-page aasa-page--settings">
 
 			<?php if ( 'saved' === $status ) : ?>
-				<?php $this->render_toast( __( 'Settings saved.', 'ai-seo-autopilot' ), 'success' ); ?>
+				<?php $this->render_toast( __( 'Settings saved.', 'ai-autopilot-seo-assistant' ), 'success' ); ?>
 			<?php elseif ( 'deleted' === $status ) : ?>
-				<?php $this->render_toast( __( 'API key removed.', 'ai-seo-autopilot' ), 'success' ); ?>
+				<?php $this->render_toast( __( 'API key removed.', 'ai-autopilot-seo-assistant' ), 'success' ); ?>
 			<?php elseif ( 'error' === $status ) : ?>
-				<?php $this->render_toast( $message ?: __( 'Something went wrong.', 'ai-seo-autopilot' ), 'error' ); ?>
+				<?php $this->render_toast( $message ?: __( 'Something went wrong.', 'ai-autopilot-seo-assistant' ), 'error' ); ?>
 			<?php endif; ?>
 
-			<div class="ai-seo-settings-layout">
-				<nav class="ai-seo-settings-nav">
+			<div class="aasa-settings-layout">
+				<nav class="aasa-settings-nav">
 					<?php foreach ( $tabs as $key => $tab ) : ?>
-						<a class="ai-seo-settings-nav__link <?php echo $current === $key ? 'is-active' : ''; ?>"
+						<a class="aasa-settings-nav__link <?php echo $current === $key ? 'is-active' : ''; ?>"
 							href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::SETTINGS_SLUG . '&tab=' . $key ) ); ?>">
 							<?php echo esc_html( $tab['label'] ); ?>
 						</a>
 					<?php endforeach; ?>
 				</nav>
 
-				<div class="ai-seo-settings-content">
+				<div class="aasa-settings-content">
 					<?php $this->render_tab( $current, $values, $plugin ); ?>
 				</div>
 			</div>
@@ -117,9 +114,9 @@ final class SettingsView implements View {
 	 */
 	private function render_toast( string $message, string $type ): void {
 		?>
-		<div id="ai-seo-toast" class="ai-seo-toast ai-seo-toast--<?php echo esc_attr( $type ); ?>" role="status">
-			<span class="ai-seo-toast__message"><?php echo esc_html( $message ); ?></span>
-			<button type="button" class="ai-seo-toast__close" aria-label="<?php esc_attr_e( 'Dismiss', 'ai-seo-autopilot' ); ?>">&times;</button>
+		<div id="aasa-toast" class="aasa-toast aasa-toast--<?php echo esc_attr( $type ); ?>" role="status">
+			<span class="aasa-toast__message"><?php echo esc_html( $message ); ?></span>
+			<button type="button" class="aasa-toast__close" aria-label="<?php esc_attr_e( 'Dismiss', 'ai-autopilot-seo-assistant' ); ?>">&times;</button>
 		</div>
 		<?php
 		// Styling and dismiss behavior live in admin/css/admin.css and

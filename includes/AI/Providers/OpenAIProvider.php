@@ -3,10 +3,10 @@
  * OpenAI adapter, backed by the bundled WordPress AI Client SDK's OpenAI
  * provider.
  *
- * @package AISEOAutopilot\AI\Providers
+ * @package Aasa\AI\Providers
  */
 
-namespace AISEOAutopilot\AI\Providers;
+namespace Aasa\AI\Providers;
 
 use WordPress\AiClient\Providers\Http\Contracts\RequestAuthenticationInterface;
 use WordPress\AiClient\Providers\Http\DTO\ApiKeyRequestAuthentication;
@@ -23,7 +23,7 @@ final class OpenAIProvider extends AbstractProvider {
 	}
 
 	public function get_label(): string {
-		return __( 'OpenAI', 'ai-seo-autopilot' );
+		return __( 'OpenAI', 'ai-autopilot-seo-assistant' );
 	}
 
 	protected function ai_client_provider_class(): string {
@@ -37,8 +37,8 @@ final class OpenAIProvider extends AbstractProvider {
 	public function generate( string $system_prompt, string $user_prompt, array $options = array() ) {
 		if ( ! class_exists( ApiKeyRequestAuthentication::class ) ) {
 			return new \WP_Error(
-				'ai_seo_autopilot_ai_client_missing',
-				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-seo-autopilot' )
+				'aasa_ai_client_missing',
+				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-autopilot-seo-assistant' )
 			);
 		}
 

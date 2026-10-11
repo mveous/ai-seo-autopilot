@@ -2,15 +2,12 @@
 /**
  * AI-assisted schema.org JSON-LD generation for a single post, for any
  * schema.org type the caller requests — the underlying prompt and AI
- * response are generic, not type-specific. Pro's Advanced Schema module
- * builds on this with automatic per-page type detection and site-wide
- * validation; it does not unlock any type this generator can't already
- * produce.
+ * response are generic, not type-specific.
  *
- * @package AISEOAutopilot\AI\Generators
+ * @package Aasa\AI\Generators
  */
 
-namespace AISEOAutopilot\AI\Generators;
+namespace Aasa\AI\Generators;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,7 +23,7 @@ final class SchemaAIGenerator extends AbstractGenerator {
 
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return new \WP_Error( 'ai_seo_autopilot_not_found', __( 'Post not found.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'aasa_not_found', __( 'Post not found.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$context                = $this->build_post_context( $post );
@@ -41,7 +38,7 @@ final class SchemaAIGenerator extends AbstractGenerator {
 
 		$json = $result->json();
 		if ( null === $json ) {
-			return new \WP_Error( 'ai_seo_autopilot_invalid_ai_response', __( 'The AI response could not be parsed as schema JSON.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'aasa_invalid_ai_response', __( 'The AI response could not be parsed as schema JSON.', 'ai-autopilot-seo-assistant' ) );
 		}
 
 		$clean         = $this->sanitize_deep( $json );

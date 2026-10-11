@@ -1,14 +1,14 @@
 <?php
 /**
- * GET /ai-seo/v1/schema/{post_id} — preview the schema.org JSON-LD graph
+ * GET /aasa/v1/schema/{post_id} — preview the schema.org JSON-LD graph
  * that would be output for a post, used by the editor sidebar.
  *
- * @package AISEOAutopilot\REST\Controllers
+ * @package Aasa\REST\Controllers
  */
 
-namespace AISEOAutopilot\REST\Controllers;
+namespace Aasa\REST\Controllers;
 
-use AISEOAutopilot\Core\Plugin;
+use Aasa\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,12 +44,12 @@ final class SchemaController extends AbstractController {
 		$post_id = (int) $request->get_param( 'post_id' );
 
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
-			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'ai-seo-autopilot' ) ), 403 );
+			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'ai-autopilot-seo-assistant' ) ), 403 );
 		}
 
 		$schema = $this->plugin->get( 'schema.generator' );
 		if ( ! $schema ) {
-			return $this->error( new \WP_Error( 'unavailable', __( 'Schema generator is unavailable.', 'ai-seo-autopilot' ) ), 500 );
+			return $this->error( new \WP_Error( 'unavailable', __( 'Schema generator is unavailable.', 'ai-autopilot-seo-assistant' ) ), 500 );
 		}
 
 		return $this->success(

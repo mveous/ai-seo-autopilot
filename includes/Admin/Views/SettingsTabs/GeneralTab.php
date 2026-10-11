@@ -2,12 +2,12 @@
 /**
  * "General" settings tab.
  *
- * @package AISEOAutopilot\Admin\Views\SettingsTabs
+ * @package Aasa\Admin\Views\SettingsTabs
  */
 
-namespace AISEOAutopilot\Admin\Views\SettingsTabs;
+namespace Aasa\Admin\Views\SettingsTabs;
 
-use AISEOAutopilot\Admin\Views\View;
+use Aasa\Admin\Views\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,22 +23,22 @@ final class GeneralTab implements View {
 	public function render(): void {
 		$general = $this->values['general'];
 		?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="ai-seo-form">
-			<input type="hidden" name="action" value="ai_seo_autopilot_save_settings" />
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="aasa-form">
+			<input type="hidden" name="action" value="aasa_save_settings" />
 			<input type="hidden" name="tab" value="general" />
-			<?php wp_nonce_field( 'ai_seo_autopilot_settings' ); ?>
+			<?php wp_nonce_field( 'aasa_settings' ); ?>
 
-			<div class="ai-seo-field">
-				<label for="site_type"><?php esc_html_e( 'What kind of website is this?', 'ai-seo-autopilot' ); ?></label>
+			<div class="aasa-field">
+				<label for="site_type"><?php esc_html_e( 'What kind of website is this?', 'ai-autopilot-seo-assistant' ); ?></label>
 				<select name="settings[site_type]" id="site_type">
 					<?php
 					$options = array(
-						'blog'      => __( 'Blog', 'ai-seo-autopilot' ),
-						'business'  => __( 'Business website', 'ai-seo-autopilot' ),
-						'ecommerce' => __( 'Online store', 'ai-seo-autopilot' ),
-						'portfolio' => __( 'Portfolio', 'ai-seo-autopilot' ),
-						'news'      => __( 'News / publisher', 'ai-seo-autopilot' ),
-						'local'     => __( 'Local business', 'ai-seo-autopilot' ),
+						'blog'      => __( 'Blog', 'ai-autopilot-seo-assistant' ),
+						'business'  => __( 'Business website', 'ai-autopilot-seo-assistant' ),
+						'ecommerce' => __( 'Online store', 'ai-autopilot-seo-assistant' ),
+						'portfolio' => __( 'Portfolio', 'ai-autopilot-seo-assistant' ),
+						'news'      => __( 'News / publisher', 'ai-autopilot-seo-assistant' ),
+						'local'     => __( 'Local business', 'ai-autopilot-seo-assistant' ),
 					);
 					foreach ( $options as $value => $label ) :
 						?>
@@ -47,17 +47,17 @@ final class GeneralTab implements View {
 						</option>
 					<?php endforeach; ?>
 				</select>
-				<p class="ai-seo-field__help"><?php esc_html_e( 'Helps AI tailor recommendations and schema types to your site.', 'ai-seo-autopilot' ); ?></p>
+				<p class="aasa-field__help"><?php esc_html_e( 'Helps AI tailor recommendations and schema types to your site.', 'ai-autopilot-seo-assistant' ); ?></p>
 			</div>
 
-			<div class="ai-seo-field ai-seo-field--checkbox">
+			<div class="aasa-field aasa-field--checkbox">
 				<label>
 					<input type="checkbox" name="settings[disable_seo_plugin_notices]" value="1" <?php checked( ! empty( $general['disable_seo_plugin_notices'] ) ); ?> />
-					<?php esc_html_e( 'Hide notices about other active SEO plugins', 'ai-seo-autopilot' ); ?>
+					<?php esc_html_e( 'Hide notices about other active SEO plugins', 'ai-autopilot-seo-assistant' ); ?>
 				</label>
 			</div>
 
-			<button type="submit" class="ai-seo-button ai-seo-button--primary"><?php esc_html_e( 'Save Changes', 'ai-seo-autopilot' ); ?></button>
+			<button type="submit" class="aasa-button aasa-button--primary"><?php esc_html_e( 'Save Changes', 'ai-autopilot-seo-assistant' ); ?></button>
 		</form>
 		<?php
 	}

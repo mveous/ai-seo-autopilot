@@ -1,18 +1,18 @@
 <?php
 /**
- * GET /ai-seo/v1/settings — read-only settings snapshot for editor UI.
+ * GET /aasa/v1/settings — read-only settings snapshot for editor UI.
  * Writes go through the classic admin-post form handlers in
  * Admin\Settings, which additionally validate each AI provider key
  * against the provider itself before saving. Nothing sensitive (API
  * keys are stored in a separate, never-exposed option) is included here.
  *
- * @package AISEOAutopilot\REST\Controllers
+ * @package Aasa\REST\Controllers
  */
 
-namespace AISEOAutopilot\REST\Controllers;
+namespace Aasa\REST\Controllers;
 
-use AISEOAutopilot\Admin\Settings;
-use AISEOAutopilot\Core\Plugin;
+use Aasa\Admin\Settings;
+use Aasa\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -42,13 +42,11 @@ final class SettingsController extends AbstractController {
 		/** @var Settings|null $settings */
 		$settings  = $this->plugin->get( 'admin.settings' );
 		$providers = $this->plugin->get( 'ai.providers' );
-		$features  = $this->plugin->get( 'features' );
 
 		return $this->success(
 			array(
 				'settings'      => $settings ? $settings->get_all() : array(),
 				'ai_configured' => $providers ? $providers->is_configured() : false,
-				'pro_active'    => $features ? $features->pro_active() : false,
 			)
 		);
 	}

@@ -4,10 +4,10 @@
  * a site owner can remap "who is allowed to do what" via a single filter
  * instead of hunting through every controller for a current_user_can() call.
  *
- * @package AISEOAutopilot\Features
+ * @package Aasa\Features
  */
 
-namespace AISEOAutopilot\Features;
+namespace Aasa\Features;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,7 +24,6 @@ final class CapabilityManager {
 		'use_ai_generation' => 'edit_posts',
 		'manage_redirects'  => 'manage_options',
 		'approve_actions'   => 'manage_options',
-		'manage_license'    => 'manage_options',
 	);
 
 	/**
@@ -43,7 +42,7 @@ final class CapabilityManager {
 		 * @param string $capability
 		 * @param string $action
 		 */
-		return (string) apply_filters( 'ai_seo_autopilot/capability', $default, $action );
+		return (string) apply_filters( 'aasa/capability', $default, $action );
 	}
 
 	public function current_user_can( string $action ): bool {

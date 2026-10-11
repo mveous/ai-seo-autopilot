@@ -2,12 +2,12 @@
 /**
  * "Advanced" settings tab.
  *
- * @package AISEOAutopilot\Admin\Views\SettingsTabs
+ * @package Aasa\Admin\Views\SettingsTabs
  */
 
-namespace AISEOAutopilot\Admin\Views\SettingsTabs;
+namespace Aasa\Admin\Views\SettingsTabs;
 
-use AISEOAutopilot\Admin\Views\View;
+use Aasa\Admin\Views\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,20 +23,20 @@ final class AdvancedTab implements View {
 	public function render(): void {
 		$advanced = $this->values['advanced'];
 		?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="ai-seo-form">
-			<input type="hidden" name="action" value="ai_seo_autopilot_save_settings" />
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="aasa-form">
+			<input type="hidden" name="action" value="aasa_save_settings" />
 			<input type="hidden" name="tab" value="advanced" />
-			<?php wp_nonce_field( 'ai_seo_autopilot_settings' ); ?>
+			<?php wp_nonce_field( 'aasa_settings' ); ?>
 
-			<div class="ai-seo-field ai-seo-field--checkbox">
+			<div class="aasa-field aasa-field--checkbox">
 				<label>
 					<input type="checkbox" name="settings[remove_data_on_uninstall]" value="1" <?php checked( ! empty( $advanced['remove_data_on_uninstall'] ) ); ?> />
-					<?php esc_html_e( 'Remove all plugin data when the plugin is deleted', 'ai-seo-autopilot' ); ?>
+					<?php esc_html_e( 'Remove all plugin data when the plugin is deleted', 'ai-autopilot-seo-assistant' ); ?>
 				</label>
-				<p class="ai-seo-field__help"><?php esc_html_e( 'Deletes all scans, issues, activity history, redirects, AI usage records and SEO metadata. This cannot be undone.', 'ai-seo-autopilot' ); ?></p>
+				<p class="aasa-field__help"><?php esc_html_e( 'Deletes all scans, issues, activity history, redirects, AI usage records and SEO metadata. This cannot be undone.', 'ai-autopilot-seo-assistant' ); ?></p>
 			</div>
 
-			<button type="submit" class="ai-seo-button ai-seo-button--primary"><?php esc_html_e( 'Save Changes', 'ai-seo-autopilot' ); ?></button>
+			<button type="submit" class="aasa-button aasa-button--primary"><?php esc_html_e( 'Save Changes', 'ai-autopilot-seo-assistant' ); ?></button>
 		</form>
 		<?php
 	}

@@ -3,12 +3,12 @@
  * Enqueues CSS/JS for the plugin's own admin screens only — never
  * globally on every wp-admin page.
  *
- * @package AISEOAutopilot\Admin
+ * @package Aasa\Admin
  */
 
-namespace AISEOAutopilot\Admin;
+namespace Aasa\Admin;
 
-use AISEOAutopilot\Core\Registrable;
+use Aasa\Core\Registrable;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Assets implements Registrable {
 
-	private const HANDLE = 'ai-seo-autopilot-admin';
+	private const HANDLE = 'ai-autopilot-seo-assistant-admin';
 
 	public function register(): void {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
@@ -29,42 +29,42 @@ final class Assets implements Registrable {
 
 		wp_enqueue_style(
 			self::HANDLE,
-			AI_SEO_AUTOPILOT_URL . 'admin/css/admin.css',
+			AASA_URL . 'admin/css/admin.css',
 			array(),
-			AI_SEO_AUTOPILOT_VERSION
+			AASA_VERSION
 		);
 
 		wp_enqueue_script(
 			self::HANDLE,
-			AI_SEO_AUTOPILOT_URL . 'admin/js/admin.js',
+			AASA_URL . 'admin/js/admin.js',
 			array( 'wp-i18n' ),
-			AI_SEO_AUTOPILOT_VERSION,
+			AASA_VERSION,
 			true
 		);
 
 		wp_localize_script(
 			self::HANDLE,
-			'aiSeoAutopilot',
+			'aasa',
 			array(
-				'restUrl'       => esc_url_raw( rest_url( 'ai-seo/v1' ) ),
+				'restUrl'       => esc_url_raw( rest_url( 'aasa/v1' ) ),
 				'nonce'         => wp_create_nonce( 'wp_rest' ),
 				'canManage'     => current_user_can( 'manage_options' ),
 				'adminPostUrl'  => esc_url_raw( admin_url( 'admin-post.php' ) ),
-				'settingsNonce' => wp_create_nonce( 'ai_seo_autopilot_settings' ),
+				'settingsNonce' => wp_create_nonce( 'aasa_settings' ),
 				'i18n'          => array(
-					'confirmRunScan'   => __( 'Run a full SEO scan now? This runs in the background and may take a few minutes on large sites.', 'ai-seo-autopilot' ),
-					'genericError'     => __( 'Something went wrong. Please try again.', 'ai-seo-autopilot' ),
-					'fixing'           => __( 'Fixing…', 'ai-seo-autopilot' ),
-					'fixed'            => __( 'Fixed', 'ai-seo-autopilot' ),
-					'newTitle'         => __( 'New title:', 'ai-seo-autopilot' ),
-					'newDescription'   => __( 'New description:', 'ai-seo-autopilot' ),
-					'confirmRemoveKey' => __( 'Remove this API key?', 'ai-seo-autopilot' ),
+					'confirmRunScan'   => __( 'Run a full SEO scan now? This runs in the background and may take a few minutes on large sites.', 'ai-autopilot-seo-assistant' ),
+					'genericError'     => __( 'Something went wrong. Please try again.', 'ai-autopilot-seo-assistant' ),
+					'fixing'           => __( 'Fixing…', 'ai-autopilot-seo-assistant' ),
+					'fixed'            => __( 'Fixed', 'ai-autopilot-seo-assistant' ),
+					'newTitle'         => __( 'New title:', 'ai-autopilot-seo-assistant' ),
+					'newDescription'   => __( 'New description:', 'ai-autopilot-seo-assistant' ),
+					'confirmRemoveKey' => __( 'Remove this API key?', 'ai-autopilot-seo-assistant' ),
 				),
 			)
 		);
 	}
 
 	private function is_plugin_screen( string $hook ): bool {
-		return false !== strpos( $hook, 'ai-seo-autopilot' );
+		return false !== strpos( $hook, 'ai-autopilot-seo-assistant' );
 	}
 }

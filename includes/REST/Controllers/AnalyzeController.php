@@ -1,14 +1,14 @@
 <?php
 /**
- * POST /ai-seo/v1/analyze — live SEO analysis for a single post, used by
+ * POST /aasa/v1/analyze — live SEO analysis for a single post, used by
  * the block editor sidebar.
  *
- * @package AISEOAutopilot\REST\Controllers
+ * @package Aasa\REST\Controllers
  */
 
-namespace AISEOAutopilot\REST\Controllers;
+namespace Aasa\REST\Controllers;
 
-use AISEOAutopilot\Core\Plugin;
+use Aasa\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,12 +44,12 @@ final class AnalyzeController extends AbstractController {
 		$post_id = (int) $request->get_param( 'post_id' );
 
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
-			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'ai-seo-autopilot' ) ), 403 );
+			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'ai-autopilot-seo-assistant' ) ), 403 );
 		}
 
 		$analyzer = $this->plugin->get( 'seo.analyzer' );
 		if ( ! $analyzer ) {
-			return $this->error( new \WP_Error( 'unavailable', __( 'SEO analyzer is unavailable.', 'ai-seo-autopilot' ) ), 500 );
+			return $this->error( new \WP_Error( 'unavailable', __( 'SEO analyzer is unavailable.', 'ai-autopilot-seo-assistant' ) ), 500 );
 		}
 
 		return $this->success( $analyzer->analyze_post( $post_id ) );

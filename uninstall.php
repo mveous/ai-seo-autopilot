@@ -7,58 +7,56 @@
  * "Remove all data on uninstall" setting, to avoid silently destroying
  * SEO metadata, scan history and activity logs.
  *
- * @package AISEOAutopilot
+ * @package Aasa
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$ai_seo_autopilot_settings    = get_option( 'ai_seo_autopilot_settings', array() );
-$ai_seo_autopilot_remove_data = ! empty( $ai_seo_autopilot_settings['advanced']['remove_data_on_uninstall'] );
+$aasa_settings    = get_option( 'aasa_settings', array() );
+$aasa_remove_data = ! empty( $aasa_settings['advanced']['remove_data_on_uninstall'] );
 
-if ( ! $ai_seo_autopilot_remove_data ) {
+if ( ! $aasa_remove_data ) {
 	return;
 }
 
 global $wpdb;
 
-$ai_seo_autopilot_tables = array(
-	$wpdb->prefix . 'ai_seo_scans',
-	$wpdb->prefix . 'ai_seo_issues',
-	$wpdb->prefix . 'ai_seo_actions',
-	$wpdb->prefix . 'ai_seo_activity',
-	$wpdb->prefix . 'ai_seo_index',
-	$wpdb->prefix . 'ai_seo_keywords',
-	$wpdb->prefix . 'ai_seo_redirects',
-	$wpdb->prefix . 'ai_seo_ai_usage',
+$aasa_tables = array(
+	$wpdb->prefix . 'aasa_scans',
+	$wpdb->prefix . 'aasa_issues',
+	$wpdb->prefix . 'aasa_actions',
+	$wpdb->prefix . 'aasa_activity',
+	$wpdb->prefix . 'aasa_index',
+	$wpdb->prefix . 'aasa_keywords',
+	$wpdb->prefix . 'aasa_redirects',
+	$wpdb->prefix . 'aasa_ai_usage',
 );
 
-foreach ( $ai_seo_autopilot_tables as $ai_seo_autopilot_table ) {
+foreach ( $aasa_tables as $aasa_table ) {
 	// Table names are built from a fixed, hardcoded list above — never from
 	// user input — so this is safe without a placeholder-based prepare().
-	$wpdb->query( "DROP TABLE IF EXISTS `{$ai_seo_autopilot_table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- $ai_seo_autopilot_table is from the fixed, hardcoded list above, never user input; dropping the plugin's own tables is uninstall.php's entire purpose, gated behind the opt-in "remove data on uninstall" setting checked above.
+	$wpdb->query( "DROP TABLE IF EXISTS `{$aasa_table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- $aasa_table is from the fixed, hardcoded list above, never user input; dropping the plugin's own tables is uninstall.php's entire purpose, gated behind the opt-in "remove data on uninstall" setting checked above.
 }
 
-$ai_seo_autopilot_options = array(
-	'ai_seo_autopilot_settings',
-	'ai_seo_autopilot_db_version',
-	'ai_seo_autopilot_activated_at',
-	'ai_seo_autopilot_flush_rewrite',
-	'ai_seo_autopilot_license_key',
-	'ai_seo_autopilot_license_status',
+$aasa_options = array(
+	'aasa_settings',
+	'aasa_db_version',
+	'aasa_activated_at',
+	'aasa_flush_rewrite',
 );
 
-foreach ( $ai_seo_autopilot_options as $ai_seo_autopilot_option ) {
-	delete_option( $ai_seo_autopilot_option );
-	delete_site_option( $ai_seo_autopilot_option );
+foreach ( $aasa_options as $aasa_option ) {
+	delete_option( $aasa_option );
+	delete_site_option( $aasa_option );
 }
 
 // Remove plugin-owned postmeta.
 $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- bulk-deleting the plugin's own postmeta by LIKE pattern; no core API exists for pattern-based postmeta deletion.
 	$wpdb->prepare(
 		"DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE %s",
-		$wpdb->esc_like( '_ai_seo_' ) . '%'
+		$wpdb->esc_like( '_aasa_' ) . '%'
 	)
 );
 
