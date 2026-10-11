@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       AI Autopilot SEO Assistant
  * Description:       AI-powered SEO agent for WordPress. Connect your own AI provider, scan your site, and let AI analyze and improve your SEO.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 7.0
  * Requires PHP:      8.1
  * Author:            Mveous
@@ -25,7 +25,7 @@ if (!defined('ABSPATH')) {
 // Core constants.
 // -----------------------------------------------------------------------
 
-define('AASA_VERSION', '1.0.0');
+define('AASA_VERSION', '1.0.1');
 define('AASA_DB_VERSION', '1.0.0');
 define('AASA_FILE', __FILE__);
 define('AASA_DIR', plugin_dir_path(__FILE__));

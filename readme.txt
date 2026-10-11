@@ -4,7 +4,7 @@ Tags: seo, ai seo, schema, sitemap, meta tags
 Requires at least: 7.0
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,8 @@ Your API key for each provider is stored in your own WordPress database and is s
 4. Content editor SEO & Schema meta box with AI generation tools.
 
 == Changelog ==
+= 1.0.1 =
+* Code Improvements.
 
 = 1.0.0 =
 * Initial release of AI Autopilot SEO Assistant.
