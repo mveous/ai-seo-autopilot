@@ -97,9 +97,57 @@
 		} );
 	}
 
+	function initSettingsToast() {
+		var toast = document.getElementById( 'ai-seo-toast' );
+		if ( ! toast ) {
+			return;
+		}
+
+		var url = new URL( window.location.href );
+		url.searchParams.delete( 'status' );
+		url.searchParams.delete( 'message' );
+		window.history.replaceState( {}, '', url );
+
+		function dismiss() {
+			toast.classList.add( 'is-hidden' );
+			setTimeout( function () { toast.remove(); }, 300 );
+		}
+
+		toast.querySelector( '.ai-seo-toast__close' ).addEventListener( 'click', dismiss );
+		setTimeout( dismiss, 10000 );
+	}
+
+	function initRemoveApiKey() {
+		document.querySelectorAll( '.ai-seo-remove-key' ).forEach( function ( button ) {
+			button.addEventListener( 'click', function () {
+				if ( ! window.confirm( config.i18n.confirmRemoveKey ) ) {
+					return;
+				}
+
+				var body = new URLSearchParams( {
+					action: 'ai_seo_autopilot_delete_api_key',
+					_wpnonce: config.settingsNonce,
+					provider: button.dataset.provider,
+				} );
+
+				button.disabled = true;
+
+				fetch( config.adminPostUrl, { method: 'POST', credentials: 'same-origin', body: body } )
+					.then( function () {
+						var url = new URL( window.location.href );
+						url.searchParams.set( 'status', 'deleted' );
+						window.location.href = url.toString();
+					} )
+					.catch( function () { button.disabled = false; } );
+			} );
+		} );
+	}
+
 	document.addEventListener( 'DOMContentLoaded', function () {
 		setScoreRings();
 		initRunScan();
 		initFixIssue();
+		initSettingsToast();
+		initRemoveApiKey();
 	} );
 } )();

@@ -75,10 +75,11 @@ final class SchemaGenerator implements Registrable {
 		}
 
 		// wp_json_encode already produces safe JSON; script tag content is
-		// additionally hardened against premature </script> closure.
+		// additionally hardened against premature </script> closure,
+		// case-insensitively (a JSON string value could contain "</SCRIPT>").
 		printf(
 			"<script type=\"application/ld+json\">%s</script>\n",
-			str_replace( '</', '<\\/', $json ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode() output for a JSON-LD script tag; esc_html() would corrupt the JSON.
+			preg_replace( '#</#i', '<\\/', $json ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode() output for a JSON-LD script tag; esc_html() would corrupt the JSON.
 		);
 	}
 

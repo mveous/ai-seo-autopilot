@@ -347,4 +347,9 @@
 .ai-seo-issue-action .description { white-space: normal; }
 .ai-seo-issue-fixed { color: var(--ai-seo-success); font-weight: 600; }
 .ai-seo-issues-table tr.is-fixed td { opacity: .7; }
+
+.ai-seo-toast { position: fixed; top: 40px; right: 20px; z-index: 100000; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.15); font-size: 14px; background: #fff; border-left: 4px solid #46b450; transition: opacity .3s ease, transform .3s ease; }
+.ai-seo-toast--error { border-left-color: #dc3232; }
+.ai-seo-toast.is-hidden { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+.ai-seo-toast__close { background: none; border: none; cursor: pointer; font-size: 18px; line-height: 1; color: #666; padding: 0; }
 @keyframes spin { to { transform: rotate(360deg); } }

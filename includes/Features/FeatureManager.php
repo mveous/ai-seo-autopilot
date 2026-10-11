@@ -21,7 +21,27 @@ final class FeatureManager {
 	/** @var array<string,array<string,mixed>> */
 	private array $features = array();
 
+	private bool $registered = false;
+
 	public function __construct() {
+		// Registration is deferred to init(): it runs __() on every feature
+		// name/description, and doing that during plugins_loaded (when this
+		// is constructed) trips WordPress' _load_textdomain_just_in_time
+		// notice, since translations for this text domain aren't loaded yet.
+		add_action( 'init', array( $this, 'ensure_registered' ), 0 );
+	}
+
+	/**
+	 * Registers the core feature set exactly once. Public so it can also be
+	 * called directly by anything that needs feature data before init has
+	 * fired; everywhere else it runs via the init hook above.
+	 */
+	public function ensure_registered(): void {
+		if ( $this->registered ) {
+			return;
+		}
+		$this->registered = true;
+
 		$this->register_core_features();
 
 		/**
@@ -64,6 +84,8 @@ final class FeatureManager {
 	 * @return array<string,mixed>|null
 	 */
 	public function get( string $key ): ?array {
+		$this->ensure_registered();
+
 		return $this->features[ $key ] ?? null;
 	}
 
@@ -71,6 +93,8 @@ final class FeatureManager {
 	 * @return array<string,array<string,mixed>>
 	 */
 	public function all(): array {
+		$this->ensure_registered();
+
 		return $this->features;
 	}
 
@@ -78,6 +102,8 @@ final class FeatureManager {
 	 * @return array<string,array<string,mixed>>
 	 */
 	public function in_category( string $category ): array {
+		$this->ensure_registered();
+
 		return array_filter(
 			$this->features,
 			static fn( array $feature ) => $feature['category'] === $category
@@ -229,7 +255,7 @@ final class FeatureManager {
 			'advanced_schema',
 			array(
 				'name'        => __( 'Advanced Schema Markup', 'ai-seo-autopilot' ),
-				'description' => __( 'AI-detected schema for Product, Service, LocalBusiness, Event, Recipe, FAQ, HowTo and more.', 'ai-seo-autopilot' ),
+				'description' => __( 'Automatically detects the right schema.org type per page — Product, Service, LocalBusiness, Event, Recipe, FAQ, HowTo and more — and keeps it validated as content changes, across the whole site.', 'ai-seo-autopilot' ),
 				'category'    => 'schema',
 				'pro'         => true,
 				'icon'        => 'dashicons-editor-code',

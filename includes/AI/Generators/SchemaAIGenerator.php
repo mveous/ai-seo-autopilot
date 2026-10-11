@@ -1,9 +1,11 @@
 <?php
 /**
- * AI-assisted basic schema generation (Free tier). Restricted to simple,
- * low-risk content types — Product, Event, Recipe, FAQ, HowTo,
- * LocalBusiness and other rich types are Pro's Advanced Schema module,
- * which adds its own validation on top of this.
+ * AI-assisted schema.org JSON-LD generation for a single post, for any
+ * schema.org type the caller requests — the underlying prompt and AI
+ * response are generic, not type-specific. Pro's Advanced Schema module
+ * builds on this with automatic per-page type detection and site-wide
+ * validation; it does not unlock any type this generator can't already
+ * produce.
  *
  * @package AISEOAutopilot\AI\Generators
  */
@@ -16,15 +18,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class SchemaAIGenerator extends AbstractGenerator {
 
-	private const ALLOWED_TYPES = array( 'Article', 'BlogPosting', 'WebPage' );
-
 	/**
 	 * @return array<string,mixed>|\WP_Error
 	 */
 	public function generate_for_post( int $post_id, string $schema_type = 'Article' ) {
-		if ( ! in_array( $schema_type, self::ALLOWED_TYPES, true ) ) {
-			$schema_type = 'Article';
-		}
+		$schema_type = $this->sanitize_schema_type( $schema_type );
 
 		$post = get_post( $post_id );
 		if ( ! $post ) {
@@ -54,5 +52,16 @@ final class SchemaAIGenerator extends AbstractGenerator {
 		}
 
 		return $clean;
+	}
+
+	/**
+	 * schema.org type names are a bare CamelCase token (e.g. "LocalBusiness");
+	 * strip anything else so the value can't break the prompt or the
+	 * resulting "@type" field.
+	 */
+	private function sanitize_schema_type( string $schema_type ): string {
+		$schema_type = preg_replace( '/[^A-Za-z]/', '', $schema_type );
+
+		return '' !== $schema_type ? $schema_type : 'Article';
 	}
 }

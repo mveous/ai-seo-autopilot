@@ -1,7 +1,8 @@
 phpunit.xml.dist
 phpcs.xml.dist
-composer.json
-composer.lock
+# composer.json/composer.lock (root and includes/ai-providers/) ship in the
+# release: they're the configuration needed to rebuild/obtain the bundled
+# libraries, not dev tooling, so they stay.
 # vendor/ ships in the release: it carries the WordPress AI Client SDK
 # (wordpress/wp-ai-client + wordpress/ai-provider-for-{openai,google,anthropic}
 # and their runtime deps), a required runtime dependency. Only the
@@ -19,6 +20,9 @@ vendor/squizlabs/
 vendor/theseer/
 vendor/wp-coding-standards/
 vendor/yoast/
+# Bundled AI provider SDKs carry their own unit test suites upstream;
+# strip them the same way the root vendor/ dev tooling is stripped above.
+includes/ai-providers/vendor/wordpress/*/tests/
 node_modules/
 .git*
 .editorconfig

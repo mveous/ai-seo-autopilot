@@ -121,33 +121,8 @@ final class SettingsView implements View {
 			<span class="ai-seo-toast__message"><?php echo esc_html( $message ); ?></span>
 			<button type="button" class="ai-seo-toast__close" aria-label="<?php esc_attr_e( 'Dismiss', 'ai-seo-autopilot' ); ?>">&times;</button>
 		</div>
-		<style>
-			.ai-seo-toast { position: fixed; top: 40px; right: 20px; z-index: 100000; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.15); font-size: 14px; background: #fff; border-left: 4px solid #46b450; transition: opacity .3s ease, transform .3s ease; }
-			.ai-seo-toast--error { border-left-color: #dc3232; }
-			.ai-seo-toast.is-hidden { opacity: 0; transform: translateY(-8px); pointer-events: none; }
-			.ai-seo-toast__close { background: none; border: none; cursor: pointer; font-size: 18px; line-height: 1; color: #666; padding: 0; }
-		</style>
-		<script>
-			( function () {
-				var toast = document.getElementById( 'ai-seo-toast' );
-				if ( ! toast ) {
-					return;
-				}
-
-				var url = new URL( window.location.href );
-				url.searchParams.delete( 'status' );
-				url.searchParams.delete( 'message' );
-				window.history.replaceState( {}, '', url );
-
-				function dismiss() {
-					toast.classList.add( 'is-hidden' );
-					setTimeout( function () { toast.remove(); }, 300 );
-				}
-
-				toast.querySelector( '.ai-seo-toast__close' ).addEventListener( 'click', dismiss );
-				setTimeout( dismiss, 10000 );
-			}() );
-		</script>
 		<?php
+		// Styling and dismiss behavior live in admin/css/admin.css and
+		// admin/js/admin.js (enqueued by Admin\Assets) — never inline here.
 	}
 }

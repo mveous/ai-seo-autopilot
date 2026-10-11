@@ -46,16 +46,19 @@ final class Assets implements Registrable {
 			self::HANDLE,
 			'aiSeoAutopilot',
 			array(
-				'restUrl'   => esc_url_raw( rest_url( 'ai-seo/v1' ) ),
-				'nonce'     => wp_create_nonce( 'wp_rest' ),
-				'canManage' => current_user_can( 'manage_options' ),
-				'i18n'      => array(
-					'confirmRunScan' => __( 'Run a full SEO scan now? This runs in the background and may take a few minutes on large sites.', 'ai-seo-autopilot' ),
-					'genericError'   => __( 'Something went wrong. Please try again.', 'ai-seo-autopilot' ),
-					'fixing'         => __( 'Fixing…', 'ai-seo-autopilot' ),
-					'fixed'          => __( 'Fixed', 'ai-seo-autopilot' ),
-					'newTitle'       => __( 'New title:', 'ai-seo-autopilot' ),
-					'newDescription' => __( 'New description:', 'ai-seo-autopilot' ),
+				'restUrl'       => esc_url_raw( rest_url( 'ai-seo/v1' ) ),
+				'nonce'         => wp_create_nonce( 'wp_rest' ),
+				'canManage'     => current_user_can( 'manage_options' ),
+				'adminPostUrl'  => esc_url_raw( admin_url( 'admin-post.php' ) ),
+				'settingsNonce' => wp_create_nonce( 'ai_seo_autopilot_settings' ),
+				'i18n'          => array(
+					'confirmRunScan'   => __( 'Run a full SEO scan now? This runs in the background and may take a few minutes on large sites.', 'ai-seo-autopilot' ),
+					'genericError'     => __( 'Something went wrong. Please try again.', 'ai-seo-autopilot' ),
+					'fixing'           => __( 'Fixing…', 'ai-seo-autopilot' ),
+					'fixed'            => __( 'Fixed', 'ai-seo-autopilot' ),
+					'newTitle'         => __( 'New title:', 'ai-seo-autopilot' ),
+					'newDescription'   => __( 'New description:', 'ai-seo-autopilot' ),
+					'confirmRemoveKey' => __( 'Remove this API key?', 'ai-seo-autopilot' ),
 				),
 			)
 		);

@@ -105,37 +105,9 @@ final class AiTab implements View {
 			<button type="submit" class="ai-seo-button ai-seo-button--primary"><?php esc_html_e( 'Save Changes', 'ai-seo-autopilot' ); ?></button>
 		</form>
 
-		<script>
-			( function () {
-				var ajaxUrl = <?php echo wp_json_encode( admin_url( 'admin-post.php' ) ); ?>;
-				var nonce = <?php echo wp_json_encode( wp_create_nonce( 'ai_seo_autopilot_settings' ) ); ?>;
-				var confirmText = <?php echo wp_json_encode( __( 'Remove this API key?', 'ai-seo-autopilot' ) ); ?>;
-
-				document.querySelectorAll( '.ai-seo-remove-key' ).forEach( function ( button ) {
-					button.addEventListener( 'click', function () {
-						if ( ! window.confirm( confirmText ) ) {
-							return;
-						}
-
-						var body = new URLSearchParams( {
-							action: 'ai_seo_autopilot_delete_api_key',
-							_wpnonce: nonce,
-							provider: button.dataset.provider
-						} );
-
-						button.disabled = true;
-
-						fetch( ajaxUrl, { method: 'POST', credentials: 'same-origin', body: body } )
-							.then( function () {
-								var url = new URL( window.location.href );
-								url.searchParams.set( 'status', 'deleted' );
-								window.location.href = url.toString();
-							} )
-							.catch( function () { button.disabled = false; } );
-					} );
-				} );
-			}() );
-		</script>
 		<?php
+		// "Remove key" behavior lives in admin/js/admin.js (enqueued by
+		// Admin\Assets), driven by the aiSeoAutopilot.adminPostUrl /
+		// settingsNonce localized there — never inline here.
 	}
 }

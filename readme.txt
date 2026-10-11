@@ -1,5 +1,5 @@
 === AI SEO Autopilot ===
-Contributors: deep7197, mveous
+Contributors: deep7197
 Tags: seo, ai seo, schema, sitemap, meta tags
 Requires at least: 7.0
 Tested up to: 7.1
@@ -18,7 +18,7 @@ Bring Your Own Key (BYOK) to connect directly with leading AI providers—includ
 
 ### Key Features
 
-* **Bring Your Own Key (BYOK)**: Connect directly to OpenAI, Anthropic Claude, or Google Gemini. Your API keys are encrypted and stored safely on your own server.
+* **Bring Your Own Key (BYOK)**: Connect directly to OpenAI, Anthropic Claude, or Google Gemini. Your API keys are stored in your own WordPress database and are never sent anywhere except the AI provider you configure.
 * **Full-Site SEO Audits**: Automatically detect technical SEO problems, missing meta tags, broken structures, and content opportunities across your entire site.
 * **AI Meta Title & Description Generator**: Generate catchy, keyword-rich meta tags tailored to your content's topic and tone.
 * **Automated Image ALT Text**: Analyze images and generate descriptive, accessibility-compliant, and SEO-friendly ALT attributes.
@@ -42,13 +42,30 @@ Bring Your Own Key (BYOK) to connect directly with leading AI providers—includ
 Basic SEO features like XML Sitemaps, Schema generation, and standard metadata work out of the box. To utilize the AI generation features (meta titles, descriptions, ALT text), you will need an API key from OpenAI, Anthropic, or Google Gemini.
 
 = Are my API keys secure? =
-Yes. All API keys are encrypted at rest using WordPress security salts and stored securely in your database. Keys are never transmitted to third parties other than the official AI provider endpoint you configure.
+Your API keys are stored in your own WordPress database (the same options used by WordPress core's AI Client), never in plaintext in the page source, and are only ever transmitted to the official AI provider endpoint you configure — never to us or any other third party.
 
 = Which AI models are supported? =
 AI SEO Autopilot supports models from OpenAI (such as GPT-4o and GPT-4o-mini), Anthropic (Claude 3.5 Sonnet and Haiku), and Google Gemini (Gemini 1.5 Pro and Flash).
 
 = Does this plugin work with page builders? =
 Yes! AI SEO Autopilot is compatible with the WordPress Block Editor (Gutenberg), Classic Editor, Elementor, and major page builders.
+
+== External services ==
+
+This plugin is Bring-Your-Own-Key (BYOK): it does not call any AI service on its own, and never in the background. A request is sent only when you explicitly click an AI generation action (title, meta description, ALT text, keyword suggestions, or schema markup) in the editor or dashboard, for the one piece of content you're acting on, to whichever provider you have connected and selected as active. No request is ever made without that click.
+
+What is sent: the relevant content for the feature you triggered (e.g. the post title, excerpt/content, and permalink for a meta description request, or the image for ALT text) and the plugin's instructions to the AI model. No content is sent for posts you are not actively generating for.
+
+This plugin supports three providers; only the one(s) you add a key for are ever contacted:
+
+* **OpenAI** — used to generate titles, meta descriptions, ALT text, keyword suggestions, and schema markup when OpenAI is your selected provider.
+Terms of Use: https://openai.com/policies/row-terms-of-use/ — Privacy Policy: https://openai.com/policies/privacy-policy/
+* **Anthropic (Claude)** — same features, when Anthropic is your selected provider.
+Terms of Service: https://www.anthropic.com/legal/consumer-terms — Privacy Policy: https://www.anthropic.com/legal/privacy
+* **Google Gemini** — same features, when Google is your selected provider.
+Terms of Service: https://ai.google.dev/gemini-api/terms — Privacy Policy: https://policies.google.com/privacy
+
+Your API key for each provider is stored in your own WordPress database and is sent only to that provider's own API endpoint, never to us.
 
 == Screenshots ==
 
