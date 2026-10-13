@@ -2,10 +2,10 @@
 /**
  * Value object returned by every AI provider adapter.
  *
- * @package Aasa\AI
+ * @package Scvx\AI
  */
 
-namespace Aasa\AI;
+namespace Scvx\AI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

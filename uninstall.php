@@ -7,56 +7,56 @@
  * "Remove all data on uninstall" setting, to avoid silently destroying
  * SEO metadata, scan history and activity logs.
  *
- * @package Aasa
+ * @package Scvx
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$aasa_settings    = get_option( 'aasa_settings', array() );
-$aasa_remove_data = ! empty( $aasa_settings['advanced']['remove_data_on_uninstall'] );
+$scvx_settings    = get_option( 'scvx_settings', array() );
+$scvx_remove_data = ! empty( $scvx_settings['advanced']['remove_data_on_uninstall'] );
 
-if ( ! $aasa_remove_data ) {
+if ( ! $scvx_remove_data ) {
 	return;
 }
 
 global $wpdb;
 
-$aasa_tables = array(
-	$wpdb->prefix . 'aasa_scans',
-	$wpdb->prefix . 'aasa_issues',
-	$wpdb->prefix . 'aasa_actions',
-	$wpdb->prefix . 'aasa_activity',
-	$wpdb->prefix . 'aasa_index',
-	$wpdb->prefix . 'aasa_keywords',
-	$wpdb->prefix . 'aasa_redirects',
-	$wpdb->prefix . 'aasa_ai_usage',
+$scvx_tables = array(
+	$wpdb->prefix . 'scvx_scans',
+	$wpdb->prefix . 'scvx_issues',
+	$wpdb->prefix . 'scvx_actions',
+	$wpdb->prefix . 'scvx_activity',
+	$wpdb->prefix . 'scvx_index',
+	$wpdb->prefix . 'scvx_keywords',
+	$wpdb->prefix . 'scvx_redirects',
+	$wpdb->prefix . 'scvx_ai_usage',
 );
 
-foreach ( $aasa_tables as $aasa_table ) {
+foreach ( $scvx_tables as $scvx_table ) {
 	// Table names are built from a fixed, hardcoded list above — never from
 	// user input — so this is safe without a placeholder-based prepare().
-	$wpdb->query( "DROP TABLE IF EXISTS `{$aasa_table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- $aasa_table is from the fixed, hardcoded list above, never user input; dropping the plugin's own tables is uninstall.php's entire purpose, gated behind the opt-in "remove data on uninstall" setting checked above.
+	$wpdb->query( "DROP TABLE IF EXISTS `{$scvx_table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- $scvx_table is from the fixed, hardcoded list above, never user input; dropping the plugin's own tables is uninstall.php's entire purpose, gated behind the opt-in "remove data on uninstall" setting checked above.
 }
 
-$aasa_options = array(
-	'aasa_settings',
-	'aasa_db_version',
-	'aasa_activated_at',
-	'aasa_flush_rewrite',
+$scvx_options = array(
+	'scvx_settings',
+	'scvx_db_version',
+	'scvx_activated_at',
+	'scvx_flush_rewrite',
 );
 
-foreach ( $aasa_options as $aasa_option ) {
-	delete_option( $aasa_option );
-	delete_site_option( $aasa_option );
+foreach ( $scvx_options as $scvx_option ) {
+	delete_option( $scvx_option );
+	delete_site_option( $scvx_option );
 }
 
 // Remove plugin-owned postmeta.
 $wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- bulk-deleting the plugin's own postmeta by LIKE pattern; no core API exists for pattern-based postmeta deletion.
 	$wpdb->prepare(
 		"DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE %s",
-		$wpdb->esc_like( '_aasa_' ) . '%'
+		$wpdb->esc_like( '_scvx_' ) . '%'
 	)
 );
 

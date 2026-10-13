@@ -5,13 +5,13 @@
  * title tags, meta descriptions, sitemaps, schema, canonicals or Open
  * Graph tags alongside Yoast/Rank Math/AIOSEO/SEOPress.
  *
- * @package Aasa\Compatibility
+ * @package Scvx\Compatibility
  */
 
-namespace Aasa\Compatibility;
+namespace Scvx\Compatibility;
 
-use Aasa\Admin\Settings;
-use Aasa\Core\Registrable;
+use Scvx\Admin\Settings;
+use Scvx\Core\Registrable;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -94,23 +94,23 @@ final class SeoPluginDetector implements Registrable {
 		}
 
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( $screen && false === strpos( (string) $screen->id, 'ai-autopilot-seo-assistant' ) && 'plugins' !== $screen->id ) {
+		if ( $screen && false === strpos( (string) $screen->id, 'scanvexa-seo' ) && 'plugins' !== $screen->id ) {
 			return;
 		}
 
 		$others = implode( ', ', $this->get_active_conflicts() );
-		$url    = admin_url( 'admin.php?page=ai-autopilot-seo-assistant-settings&tab=compatibility' );
+		$url    = admin_url( 'admin.php?page=scanvexa-seo-settings&tab=compatibility' );
 		?>
 		<div class="notice notice-warning is-dismissible">
 			<p>
 				<?php
 				printf(
 					/* translators: %s: comma-separated list of other active SEO plugins */
-					esc_html__( 'AI Autopilot SEO Assistant detected another active SEO plugin (%s). To avoid duplicate titles, meta tags, or sitemaps, choose which plugin controls each area.', 'ai-autopilot-seo-assistant' ),
+					esc_html__( 'Scanvexa SEO — AI Website Analyzer detected another active SEO plugin (%s). To avoid duplicate titles, meta tags, or sitemaps, choose which plugin controls each area.', 'scanvexa-seo' ),
 					esc_html( $others )
 				);
 				?>
-				<a href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'Review compatibility settings', 'ai-autopilot-seo-assistant' ); ?></a>
+				<a href="<?php echo esc_url( $url ); ?>"><?php esc_html_e( 'Review compatibility settings', 'scanvexa-seo' ); ?></a>
 			</p>
 		</div>
 		<?php

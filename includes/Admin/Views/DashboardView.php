@@ -2,13 +2,13 @@
 /**
  * Main dashboard page.
  *
- * @package Aasa\Admin\Views
+ * @package Scvx\Admin\Views
  */
 
-namespace Aasa\Admin\Views;
+namespace Scvx\Admin\Views;
 
-use Aasa\Admin\Menu;
-use Aasa\Core\Plugin;
+use Scvx\Admin\Menu;
+use Scvx\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -43,103 +43,103 @@ final class DashboardView implements View {
 
 		$ai_configured = $providers ? $providers->is_configured() : false;
 		?>
-		<div class="aasa-page">
+		<div class="scvx-page">
 
-			<div class="aasa-hero">
-				<div class="aasa-hero__score">
-					<div class="aasa-score-ring" data-score="<?php echo esc_attr( $overall ?? 0 ); ?>">
-						<span class="aasa-score-ring__value"><?php echo null === $overall ? '—' : esc_html( (string) $overall ); ?></span>
+			<div class="scvx-hero">
+				<div class="scvx-hero__score">
+					<div class="scvx-score-ring" data-score="<?php echo esc_attr( $overall ?? 0 ); ?>">
+						<span class="scvx-score-ring__value"><?php echo null === $overall ? '—' : esc_html( (string) $overall ); ?></span>
 					</div>
 					<div>
-						<h1 class="aasa-hero__title"><?php esc_html_e( 'SEO Health Score', 'ai-autopilot-seo-assistant' ); ?></h1>
-						<p class="aasa-hero__subtitle">
+						<h1 class="scvx-hero__title"><?php esc_html_e( 'SEO Health Score', 'scanvexa-seo' ); ?></h1>
+						<p class="scvx-hero__subtitle">
 							<?php
 							if ( $last_scan_at ) {
 								printf(
 									/* translators: %s: human-readable time since last scan */
-									esc_html__( 'Last scanned %s ago', 'ai-autopilot-seo-assistant' ),
+									esc_html__( 'Last scanned %s ago', 'scanvexa-seo' ),
 									esc_html( human_time_diff( strtotime( $last_scan_at ) ) )
 								);
 							} else {
-								esc_html_e( 'No scan has run yet.', 'ai-autopilot-seo-assistant' );
+								esc_html_e( 'No scan has run yet.', 'scanvexa-seo' );
 							}
 							?>
 						</p>
 					</div>
 				</div>
-				<button type="button" class="aasa-button aasa-button--primary" id="aasa-run-scan">
+				<button type="button" class="scvx-button scvx-button--primary" id="scvx-run-scan">
 					<span class="dashicons dashicons-search" aria-hidden="true"></span>
-					<?php esc_html_e( 'Run SEO Scan', 'ai-autopilot-seo-assistant' ); ?>
+					<?php esc_html_e( 'Run SEO Scan', 'scanvexa-seo' ); ?>
 				</button>
 			</div>
 
-			<div class="aasa-grid aasa-grid--categories">
+			<div class="scvx-grid scvx-grid--categories">
 				<?php
 				$labels = array(
-					'technical' => __( 'Technical SEO', 'ai-autopilot-seo-assistant' ),
-					'on_page'   => __( 'On-Page SEO', 'ai-autopilot-seo-assistant' ),
-					'content'   => __( 'Content', 'ai-autopilot-seo-assistant' ),
-					'schema'    => __( 'Schema', 'ai-autopilot-seo-assistant' ),
-					'images'    => __( 'Images', 'ai-autopilot-seo-assistant' ),
+					'technical' => __( 'Technical SEO', 'scanvexa-seo' ),
+					'on_page'   => __( 'On-Page SEO', 'scanvexa-seo' ),
+					'content'   => __( 'Content', 'scanvexa-seo' ),
+					'schema'    => __( 'Schema', 'scanvexa-seo' ),
+					'images'    => __( 'Images', 'scanvexa-seo' ),
 				);
 				foreach ( $labels as $key => $label ) :
 					$value = $categories[ $key ] ?? null;
 					?>
-					<div class="aasa-mini-stat">
-						<span class="aasa-mini-stat__label"><?php echo esc_html( $label ); ?></span>
-						<span class="aasa-mini-stat__value"><?php echo null === $value ? '—' : esc_html( (string) $value ); ?></span>
+					<div class="scvx-mini-stat">
+						<span class="scvx-mini-stat__label"><?php echo esc_html( $label ); ?></span>
+						<span class="scvx-mini-stat__value"><?php echo null === $value ? '—' : esc_html( (string) $value ); ?></span>
 					</div>
 				<?php endforeach; ?>
 			</div>
 
-			<div class="aasa-columns">
-				<div class="aasa-card">
-					<div class="aasa-card__header">
-						<h3 class="aasa-card__title"><?php esc_html_e( 'Problems Found', 'ai-autopilot-seo-assistant' ); ?></h3>
+			<div class="scvx-columns">
+				<div class="scvx-card">
+					<div class="scvx-card__header">
+						<h3 class="scvx-card__title"><?php esc_html_e( 'Problems Found', 'scanvexa-seo' ); ?></h3>
 					</div>
-					<div class="aasa-severity-row">
-						<div class="aasa-severity aasa-severity--high">
-							<span class="aasa-severity__count"><?php echo esc_html( (string) $by_severity['high'] ); ?></span>
-							<span class="aasa-severity__label"><?php esc_html_e( 'High', 'ai-autopilot-seo-assistant' ); ?></span>
+					<div class="scvx-severity-row">
+						<div class="scvx-severity scvx-severity--high">
+							<span class="scvx-severity__count"><?php echo esc_html( (string) $by_severity['high'] ); ?></span>
+							<span class="scvx-severity__label"><?php esc_html_e( 'High', 'scanvexa-seo' ); ?></span>
 						</div>
-						<div class="aasa-severity aasa-severity--medium">
-							<span class="aasa-severity__count"><?php echo esc_html( (string) $by_severity['medium'] ); ?></span>
-							<span class="aasa-severity__label"><?php esc_html_e( 'Medium', 'ai-autopilot-seo-assistant' ); ?></span>
+						<div class="scvx-severity scvx-severity--medium">
+							<span class="scvx-severity__count"><?php echo esc_html( (string) $by_severity['medium'] ); ?></span>
+							<span class="scvx-severity__label"><?php esc_html_e( 'Medium', 'scanvexa-seo' ); ?></span>
 						</div>
-						<div class="aasa-severity aasa-severity--low">
-							<span class="aasa-severity__count"><?php echo esc_html( (string) $by_severity['low'] ); ?></span>
-							<span class="aasa-severity__label"><?php esc_html_e( 'Low', 'ai-autopilot-seo-assistant' ); ?></span>
+						<div class="scvx-severity scvx-severity--low">
+							<span class="scvx-severity__count"><?php echo esc_html( (string) $by_severity['low'] ); ?></span>
+							<span class="scvx-severity__label"><?php esc_html_e( 'Low', 'scanvexa-seo' ); ?></span>
 						</div>
 					</div>
-					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::DASHBOARD_SLUG . '&view=issues' ) ); ?>" class="aasa-link">
-						<?php esc_html_e( 'View all issues', 'ai-autopilot-seo-assistant' ); ?> →
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::DASHBOARD_SLUG . '&view=issues' ) ); ?>" class="scvx-link">
+						<?php esc_html_e( 'View all issues', 'scanvexa-seo' ); ?> →
 					</a>
 				</div>
 
-				<div class="aasa-card">
-					<div class="aasa-card__header">
-						<h3 class="aasa-card__title"><?php esc_html_e( 'AI Usage (last 30 days)', 'ai-autopilot-seo-assistant' ); ?></h3>
+				<div class="scvx-card">
+					<div class="scvx-card__header">
+						<h3 class="scvx-card__title"><?php esc_html_e( 'AI Usage (last 30 days)', 'scanvexa-seo' ); ?></h3>
 					</div>
 					<?php if ( ! $ai_configured ) : ?>
-						<p class="aasa-card__description">
-							<?php esc_html_e( 'Connect an AI provider to start generating titles, meta descriptions, ALT text and more.', 'ai-autopilot-seo-assistant' ); ?>
+						<p class="scvx-card__description">
+							<?php esc_html_e( 'Connect an AI provider to start generating titles, meta descriptions, ALT text and more.', 'scanvexa-seo' ); ?>
 						</p>
-						<a class="aasa-button aasa-button--secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::SETTINGS_SLUG . '&tab=ai' ) ); ?>">
-							<?php esc_html_e( 'Connect AI Provider', 'ai-autopilot-seo-assistant' ); ?>
+						<a class="scvx-button scvx-button--secondary" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::SETTINGS_SLUG . '&tab=ai' ) ); ?>">
+							<?php esc_html_e( 'Connect AI Provider', 'scanvexa-seo' ); ?>
 						</a>
 					<?php else : ?>
-						<div class="aasa-usage-row">
+						<div class="scvx-usage-row">
 							<div>
-								<span class="aasa-usage-row__value"><?php echo esc_html( (string) $usage_summary['requests'] ); ?></span>
-								<span class="aasa-usage-row__label"><?php esc_html_e( 'Requests', 'ai-autopilot-seo-assistant' ); ?></span>
+								<span class="scvx-usage-row__value"><?php echo esc_html( (string) $usage_summary['requests'] ); ?></span>
+								<span class="scvx-usage-row__label"><?php esc_html_e( 'Requests', 'scanvexa-seo' ); ?></span>
 							</div>
 							<div>
-								<span class="aasa-usage-row__value"><?php echo esc_html( number_format_i18n( $usage_summary['tokens'] ) ); ?></span>
-								<span class="aasa-usage-row__label"><?php esc_html_e( 'Tokens', 'ai-autopilot-seo-assistant' ); ?></span>
+								<span class="scvx-usage-row__value"><?php echo esc_html( number_format_i18n( $usage_summary['tokens'] ) ); ?></span>
+								<span class="scvx-usage-row__label"><?php esc_html_e( 'Tokens', 'scanvexa-seo' ); ?></span>
 							</div>
 							<div>
-								<span class="aasa-usage-row__value">$<?php echo esc_html( number_format( (float) $usage_summary['cost'], 2 ) ); ?></span>
-								<span class="aasa-usage-row__label"><?php esc_html_e( 'Est. Cost', 'ai-autopilot-seo-assistant' ); ?></span>
+								<span class="scvx-usage-row__value">$<?php echo esc_html( number_format( (float) $usage_summary['cost'], 2 ) ); ?></span>
+								<span class="scvx-usage-row__label"><?php esc_html_e( 'Est. Cost', 'scanvexa-seo' ); ?></span>
 							</div>
 						</div>
 					<?php endif; ?>

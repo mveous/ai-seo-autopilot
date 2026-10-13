@@ -6,10 +6,10 @@
  * fatals in environments where `composer install` hasn't been run. If a
  * Composer autoloader is present it is loaded first and takes precedence.
  *
- * @package Aasa\Core
+ * @package Scvx\Core
  */
 
-namespace Aasa\Core;
+namespace Scvx\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

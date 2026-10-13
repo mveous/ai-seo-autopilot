@@ -2,14 +2,14 @@
 /**
  * All open SEO issues, paginated.
  *
- * @package Aasa\Admin\Views
+ * @package Scvx\Admin\Views
  */
 
-namespace Aasa\Admin\Views;
+namespace Scvx\Admin\Views;
 
-use Aasa\Admin\Menu;
-use Aasa\Core\Plugin;
-use Aasa\SEO\Audit\SiteAuditor;
+use Scvx\Admin\Menu;
+use Scvx\Core\Plugin;
+use Scvx\SEO\Audit\SiteAuditor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,33 +38,33 @@ final class IssuesView implements View {
 		$base_url = admin_url( 'admin.php?page=' . Menu::DASHBOARD_SLUG . '&view=issues' );
 
 		$severity_labels = array(
-			'high'   => __( 'High', 'ai-autopilot-seo-assistant' ),
-			'medium' => __( 'Medium', 'ai-autopilot-seo-assistant' ),
-			'low'    => __( 'Low', 'ai-autopilot-seo-assistant' ),
+			'high'   => __( 'High', 'scanvexa-seo' ),
+			'medium' => __( 'Medium', 'scanvexa-seo' ),
+			'low'    => __( 'Low', 'scanvexa-seo' ),
 		);
 		$category_labels = array(
-			'technical' => __( 'Technical SEO', 'ai-autopilot-seo-assistant' ),
-			'on_page'   => __( 'On-Page SEO', 'ai-autopilot-seo-assistant' ),
-			'content'   => __( 'Content', 'ai-autopilot-seo-assistant' ),
-			'schema'    => __( 'Schema', 'ai-autopilot-seo-assistant' ),
-			'images'    => __( 'Images', 'ai-autopilot-seo-assistant' ),
+			'technical' => __( 'Technical SEO', 'scanvexa-seo' ),
+			'on_page'   => __( 'On-Page SEO', 'scanvexa-seo' ),
+			'content'   => __( 'Content', 'scanvexa-seo' ),
+			'schema'    => __( 'Schema', 'scanvexa-seo' ),
+			'images'    => __( 'Images', 'scanvexa-seo' ),
 		);
 		?>
-		<div class="aasa-page">
+		<div class="scvx-page">
 
 			<p>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::DASHBOARD_SLUG ) ); ?>" class="aasa-link">
-					← <?php esc_html_e( 'Back to dashboard', 'ai-autopilot-seo-assistant' ); ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::DASHBOARD_SLUG ) ); ?>" class="scvx-link">
+					← <?php esc_html_e( 'Back to dashboard', 'scanvexa-seo' ); ?>
 				</a>
 			</p>
 
-			<div class="aasa-card">
-				<div class="aasa-card__header">
-					<h3 class="aasa-card__title">
+			<div class="scvx-card">
+				<div class="scvx-card__header">
+					<h3 class="scvx-card__title">
 						<?php
 						printf(
 							/* translators: %s: number of open issues */
-							esc_html__( 'Open Issues (%s)', 'ai-autopilot-seo-assistant' ),
+							esc_html__( 'Open Issues (%s)', 'scanvexa-seo' ),
 							esc_html( number_format_i18n( $total ) )
 						);
 						?>
@@ -72,19 +72,19 @@ final class IssuesView implements View {
 				</div>
 
 				<?php if ( empty( $issues ) ) : ?>
-					<p class="aasa-card__description">
-						<?php esc_html_e( 'No open issues. Run an SEO scan from the dashboard to check your site.', 'ai-autopilot-seo-assistant' ); ?>
+					<p class="scvx-card__description">
+						<?php esc_html_e( 'No open issues. Run an SEO scan from the dashboard to check your site.', 'scanvexa-seo' ); ?>
 					</p>
 				<?php else : ?>
-					<table class="widefat striped aasa-issues-table">
+					<table class="widefat striped scvx-issues-table">
 						<thead>
 							<tr>
-								<th scope="col"><?php esc_html_e( 'Severity', 'ai-autopilot-seo-assistant' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Issue', 'ai-autopilot-seo-assistant' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Page', 'ai-autopilot-seo-assistant' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Category', 'ai-autopilot-seo-assistant' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Detected', 'ai-autopilot-seo-assistant' ); ?></th>
-								<th scope="col"><?php esc_html_e( 'Action', 'ai-autopilot-seo-assistant' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Severity', 'scanvexa-seo' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Issue', 'scanvexa-seo' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Page', 'scanvexa-seo' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Category', 'scanvexa-seo' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Detected', 'scanvexa-seo' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Action', 'scanvexa-seo' ); ?></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -98,7 +98,7 @@ final class IssuesView implements View {
 								?>
 								<tr>
 									<td>
-										<span class="aasa-issue-severity aasa-issue-severity--<?php echo esc_attr( $severity ); ?>">
+										<span class="scvx-issue-severity scvx-issue-severity--<?php echo esc_attr( $severity ); ?>">
 											<?php echo esc_html( $severity_labels[ $severity ] ?? $severity ); ?>
 										</span>
 									</td>
@@ -122,25 +122,25 @@ final class IssuesView implements View {
 										<?php
 										printf(
 											/* translators: %s: human-readable time difference */
-											esc_html__( '%s ago', 'ai-autopilot-seo-assistant' ),
+											esc_html__( '%s ago', 'scanvexa-seo' ),
 											esc_html( human_time_diff( strtotime( (string) $issue['detected_at'] ) ) )
 										);
 										?>
 									</td>
-									<td class="aasa-issue-action">
+									<td class="scvx-issue-action">
 										<?php if ( $ai_field && $object_id && $can_use_ai && current_user_can( 'edit_post', $object_id ) ) : ?>
 											<?php if ( $ai_configured ) : ?>
-												<button type="button" class="aasa-button aasa-button--secondary aasa-fix-issue" data-issue-id="<?php echo esc_attr( (string) $issue['id'] ); ?>">
+												<button type="button" class="scvx-button scvx-button--secondary scvx-fix-issue" data-issue-id="<?php echo esc_attr( (string) $issue['id'] ); ?>">
 													<span class="dashicons dashicons-superhero-alt" aria-hidden="true"></span>
-													<?php esc_html_e( 'Fix with AI', 'ai-autopilot-seo-assistant' ); ?>
+													<?php esc_html_e( 'Fix with AI', 'scanvexa-seo' ); ?>
 												</button>
 											<?php else : ?>
-												<a class="aasa-link" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::SETTINGS_SLUG . '&tab=ai' ) ); ?>">
-													<?php esc_html_e( 'Connect AI to fix', 'ai-autopilot-seo-assistant' ); ?>
+												<a class="scvx-link" href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::SETTINGS_SLUG . '&tab=ai' ) ); ?>">
+													<?php esc_html_e( 'Connect AI to fix', 'scanvexa-seo' ); ?>
 												</a>
 											<?php endif; ?>
 										<?php elseif ( $edit_link ) : ?>
-											<a class="aasa-link" href="<?php echo esc_url( $edit_link ); ?>"><?php esc_html_e( 'Edit page', 'ai-autopilot-seo-assistant' ); ?></a>
+											<a class="scvx-link" href="<?php echo esc_url( $edit_link ); ?>"><?php esc_html_e( 'Edit page', 'scanvexa-seo' ); ?></a>
 										<?php endif; ?>
 									</td>
 								</tr>

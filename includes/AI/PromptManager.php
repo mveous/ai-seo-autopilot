@@ -9,10 +9,10 @@
  * consistently token-optimized (all free-form content is truncated
  * before injection).
  *
- * @package Aasa\AI
+ * @package Scvx\AI
  */
 
-namespace Aasa\AI;
+namespace Scvx\AI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,10 +27,10 @@ final class PromptManager {
 	 */
 	public function for_title( array $context ): array {
 		$system = $this->base_system_prompt() . "\n"
-			. __( 'Write a single SEO title tag. 50-60 characters. No quotation marks. No clickbait. Reflect the page content and target keyword accurately.', 'ai-autopilot-seo-assistant' );
+			. __( 'Write a single SEO title tag. 50-60 characters. No quotation marks. No clickbait. Reflect the page content and target keyword accurately.', 'scanvexa-seo' );
 
 		$user = $this->render_context( $context, array( 'content_title', 'excerpt', 'focus_keyword', 'site_name' ) )
-			. "\n\n" . __( 'Return only the title text, nothing else.', 'ai-autopilot-seo-assistant' );
+			. "\n\n" . __( 'Return only the title text, nothing else.', 'scanvexa-seo' );
 
 		return array(
 			'system'  => $system,
@@ -48,10 +48,10 @@ final class PromptManager {
 	 */
 	public function for_meta_description( array $context ): array {
 		$system = $this->base_system_prompt() . "\n"
-			. __( 'Write a single SEO meta description. 140-160 characters. Active voice, includes the target keyword naturally, ends with a reason to click. No quotation marks.', 'ai-autopilot-seo-assistant' );
+			. __( 'Write a single SEO meta description. 140-160 characters. Active voice, includes the target keyword naturally, ends with a reason to click. No quotation marks.', 'scanvexa-seo' );
 
 		$user = $this->render_context( $context, array( 'content_title', 'excerpt', 'focus_keyword', 'site_name' ) )
-			. "\n\n" . __( 'Return only the meta description text, nothing else.', 'ai-autopilot-seo-assistant' );
+			. "\n\n" . __( 'Return only the meta description text, nothing else.', 'scanvexa-seo' );
 
 		return array(
 			'system'  => $system,
@@ -69,7 +69,7 @@ final class PromptManager {
 	 */
 	public function for_alt_text( array $context ): array {
 		$system = $this->base_system_prompt() . "\n"
-			. __( 'Write concise, descriptive ALT text for an image, for accessibility and SEO. Describe what is visually in the image. Under 125 characters. No "image of" or "picture of" prefixes. No filler.', 'ai-autopilot-seo-assistant' );
+			. __( 'Write concise, descriptive ALT text for an image, for accessibility and SEO. Describe what is visually in the image. Under 125 characters. No "image of" or "picture of" prefixes. No filler.', 'scanvexa-seo' );
 
 		$parts = array();
 		if ( ! empty( $context['file_name'] ) ) {
@@ -82,7 +82,7 @@ final class PromptManager {
 			$parts[] = sprintf( 'Page title: %s', $this->truncate( (string) $context['content_title'], 200 ) );
 		}
 
-		$user = implode( "\n", $parts ) . "\n\n" . __( 'Return only the ALT text, nothing else.', 'ai-autopilot-seo-assistant' );
+		$user = implode( "\n", $parts ) . "\n\n" . __( 'Return only the ALT text, nothing else.', 'scanvexa-seo' );
 
 		return array(
 			'system'  => $system,
@@ -100,10 +100,10 @@ final class PromptManager {
 	 */
 	public function for_keyword_suggestions( array $context ): array {
 		$system = $this->base_system_prompt() . "\n"
-			. __( 'Suggest relevant SEO keyword phrases for the given content. Mix short-tail and long-tail phrases. Favor realistic search intent over generic terms.', 'ai-autopilot-seo-assistant' );
+			. __( 'Suggest relevant SEO keyword phrases for the given content. Mix short-tail and long-tail phrases. Favor realistic search intent over generic terms.', 'scanvexa-seo' );
 
 		$user = $this->render_context( $context, array( 'content_title', 'excerpt', 'site_name' ) )
-			. "\n\n" . __( 'Return strict JSON: {"keywords": [{"keyword": string, "intent": "informational|transactional|navigational|commercial", "priority": "high|medium|low"}]}. Suggest at most 10 keywords.', 'ai-autopilot-seo-assistant' );
+			. "\n\n" . __( 'Return strict JSON: {"keywords": [{"keyword": string, "intent": "informational|transactional|navigational|commercial", "priority": "high|medium|low"}]}. Suggest at most 10 keywords.', 'scanvexa-seo' );
 
 		return array(
 			'system'  => $system,
@@ -124,12 +124,12 @@ final class PromptManager {
 		$system = $this->base_system_prompt() . "\n"
 			. sprintf(
 				/* translators: %s: schema.org type */
-				__( 'Generate schema.org JSON-LD of type "%s" for the given content. Use only fields you can support from the provided context — never invent facts, prices, ratings, or reviews.', 'ai-autopilot-seo-assistant' ),
+				__( 'Generate schema.org JSON-LD of type "%s" for the given content. Use only fields you can support from the provided context — never invent facts, prices, ratings, or reviews.', 'scanvexa-seo' ),
 				$type
 			);
 
 		$user = $this->render_context( $context, array( 'content_title', 'excerpt', 'url', 'author', 'published_date', 'modified_date', 'site_name' ) )
-			. "\n\n" . __( 'Return strict JSON representing only the value of "@graph" or the schema object itself — no markdown fences, no commentary.', 'ai-autopilot-seo-assistant' );
+			. "\n\n" . __( 'Return strict JSON representing only the value of "@graph" or the schema object itself — no markdown fences, no commentary.', 'scanvexa-seo' );
 
 		return array(
 			'system'  => $system,
@@ -147,10 +147,10 @@ final class PromptManager {
 	 */
 	public function for_content_analysis( array $context ): array {
 		$system = $this->base_system_prompt() . "\n"
-			. __( 'You are analyzing on-page SEO. Identify missing topics, weak structure, and search-intent mismatches. Be specific and actionable, not generic.', 'ai-autopilot-seo-assistant' );
+			. __( 'You are analyzing on-page SEO. Identify missing topics, weak structure, and search-intent mismatches. Be specific and actionable, not generic.', 'scanvexa-seo' );
 
 		$user = $this->render_context( $context, array( 'content_title', 'body', 'focus_keyword' ) )
-			. "\n\n" . __( 'Return strict JSON: {"summary": string, "issues": [string], "recommendations": [string]}. Limit to the 5 most important issues and 5 most important recommendations.', 'ai-autopilot-seo-assistant' );
+			. "\n\n" . __( 'Return strict JSON: {"summary": string, "issues": [string], "recommendations": [string]}. Limit to the 5 most important issues and 5 most important recommendations.', 'scanvexa-seo' );
 
 		return array(
 			'system'  => $system,
@@ -169,7 +169,7 @@ final class PromptManager {
 
 		$prompt = sprintf(
 			/* translators: 1: site name, 2: content language, 3: prompt version */
-			__( "You are the AI SEO assistant inside the AI Autopilot SEO Assistant WordPress plugin, working on the website \"%1\$s\". Respond in the site's content language (%2\$s). Be precise, factual, and never invent information not present in the provided context. [prompt v%3\$s]", 'ai-autopilot-seo-assistant' ),
+			__( "You are the AI SEO assistant inside the Scanvexa SEO — AI Website Analyzer WordPress plugin, working on the website \"%1\$s\". Respond in the site's content language (%2\$s). Be precise, factual, and never invent information not present in the provided context. [prompt v%3\$s]", 'scanvexa-seo' ),
 			$site_name,
 			$language,
 			self::PROMPT_VERSION
@@ -180,7 +180,7 @@ final class PromptManager {
 		 *
 		 * @param string $prompt
 		 */
-		return (string) apply_filters( 'aasa/base_system_prompt', $prompt );
+		return (string) apply_filters( 'scvx/base_system_prompt', $prompt );
 	}
 
 	/**

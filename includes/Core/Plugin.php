@@ -2,32 +2,32 @@
 /**
  * Main plugin orchestrator (singleton).
  *
- * @package Aasa\Core
+ * @package Scvx\Core
  */
 
-namespace Aasa\Core;
+namespace Scvx\Core;
 
-use Aasa\AI\AIClient;
-use Aasa\AI\AIProviderManager;
-use Aasa\AI\PromptManager;
-use Aasa\AI\UsageTracker;
-use Aasa\Admin\Assets;
-use Aasa\Admin\Menu;
-use Aasa\Admin\Settings;
-use Aasa\Compatibility\SeoPluginDetector;
-use Aasa\Content\Analyzer\SeoAnalyzer;
-use Aasa\Cron\Scheduler;
-use Aasa\Database\Migrator;
-use Aasa\Features\CapabilityManager;
-use Aasa\REST\RestBootstrap;
-use Aasa\SEO\Audit\SiteAuditor;
-use Aasa\SEO\Breadcrumbs\BreadcrumbsGenerator;
-use Aasa\SEO\Metadata\MetaboxManager;
-use Aasa\SEO\Metadata\MetaOutput;
-use Aasa\SEO\Metadata\MetaRepository;
-use Aasa\Schema\SchemaGenerator;
-use Aasa\Sitemap\RobotsTxt;
-use Aasa\Sitemap\SitemapGenerator;
+use Scvx\AI\AIClient;
+use Scvx\AI\AIProviderManager;
+use Scvx\AI\PromptManager;
+use Scvx\AI\UsageTracker;
+use Scvx\Admin\Assets;
+use Scvx\Admin\Menu;
+use Scvx\Admin\Settings;
+use Scvx\Compatibility\SeoPluginDetector;
+use Scvx\Content\Analyzer\SeoAnalyzer;
+use Scvx\Cron\Scheduler;
+use Scvx\Database\Migrator;
+use Scvx\Features\CapabilityManager;
+use Scvx\REST\RestBootstrap;
+use Scvx\SEO\Audit\SiteAuditor;
+use Scvx\SEO\Breadcrumbs\BreadcrumbsGenerator;
+use Scvx\SEO\Metadata\MetaboxManager;
+use Scvx\SEO\Metadata\MetaOutput;
+use Scvx\SEO\Metadata\MetaRepository;
+use Scvx\Schema\SchemaGenerator;
+use Scvx\Sitemap\RobotsTxt;
+use Scvx\Sitemap\SitemapGenerator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -70,12 +70,12 @@ final class Plugin {
 		$this->register_services();
 
 		/**
-		 * Fires once AI Autopilot SEO Assistant's core services are registered.
+		 * Fires once Scanvexa SEO — AI Website Analyzer's core services are registered.
 		 * Third-party extensions use this to register their own services.
 		 *
 		 * @param Plugin $plugin
 		 */
-		do_action( 'aasa/loaded', $this );
+		do_action( 'scvx/loaded', $this );
 	}
 
 	/**
@@ -83,11 +83,11 @@ final class Plugin {
 	 * Handles upgrades that happen without a fresh activation (e.g. plugin update).
 	 */
 	private function maybe_upgrade(): void {
-		$installed = get_option( 'aasa_db_version', '' );
+		$installed = get_option( 'scvx_db_version', '' );
 
-		if ( $installed !== AASA_DB_VERSION ) {
+		if ( $installed !== SCVX_DB_VERSION ) {
 			Migrator::install();
-			update_option( 'aasa_db_version', AASA_DB_VERSION );
+			update_option( 'scvx_db_version', SCVX_DB_VERSION );
 		}
 	}
 
@@ -138,7 +138,7 @@ final class Plugin {
 
 	/**
 	 * Fetch a registered service by id. Used internally and by third-party
-	 * extensions via aasa()->get( 'service.id' ).
+	 * extensions via scvx()->get( 'service.id' ).
 	 */
 	public function get( string $id ): ?object {
 		return $this->services[ $id ] ?? null;

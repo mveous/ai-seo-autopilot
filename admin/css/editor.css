@@ -1,10 +1,10 @@
-/* AI Autopilot SEO Assistant — block editor sidebar panel */
+/* Scanvexa SEO — AI Website Analyzer — block editor sidebar panel */
 
-.aasa-editor-panel .components-base-control {
+.scvx-editor-panel .components-base-control {
 	margin-bottom: 12px;
 }
 
-.aasa-metabox .description {
+.scvx-metabox .description {
 	color: #6b7280;
 	font-size: 12px;
 }

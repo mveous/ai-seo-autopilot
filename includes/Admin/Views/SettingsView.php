@@ -2,23 +2,23 @@
 /**
  * Settings page: tabbed, one <form> per tab, posts to admin-post.php.
  *
- * @package Aasa\Admin\Views
+ * @package Scvx\Admin\Views
  */
 
-namespace Aasa\Admin\Views;
+namespace Scvx\Admin\Views;
 
-use Aasa\Admin\Menu;
-use Aasa\Admin\Settings;
-use Aasa\Admin\Views\SettingsTabs\AdvancedTab;
-use Aasa\Admin\Views\SettingsTabs\AiTab;
-use Aasa\Admin\Views\SettingsTabs\CompatibilityTab;
-use Aasa\Admin\Views\SettingsTabs\ContentTab;
-use Aasa\Admin\Views\SettingsTabs\GeneralTab;
-use Aasa\Admin\Views\SettingsTabs\SchemaTab;
-use Aasa\Admin\Views\SettingsTabs\SitemapTab;
-use Aasa\Admin\Views\SettingsTabs\SocialTab;
-use Aasa\Admin\Views\SettingsTabs\SeoTab;
-use Aasa\Core\Plugin;
+use Scvx\Admin\Menu;
+use Scvx\Admin\Settings;
+use Scvx\Admin\Views\SettingsTabs\AdvancedTab;
+use Scvx\Admin\Views\SettingsTabs\AiTab;
+use Scvx\Admin\Views\SettingsTabs\CompatibilityTab;
+use Scvx\Admin\Views\SettingsTabs\ContentTab;
+use Scvx\Admin\Views\SettingsTabs\GeneralTab;
+use Scvx\Admin\Views\SettingsTabs\SchemaTab;
+use Scvx\Admin\Views\SettingsTabs\SitemapTab;
+use Scvx\Admin\Views\SettingsTabs\SocialTab;
+use Scvx\Admin\Views\SettingsTabs\SeoTab;
+use Scvx\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -36,15 +36,15 @@ final class SettingsView implements View {
 		$plugin   = Plugin::instance();
 
 		$tabs = array(
-			'general'   => array( 'label' => __( 'General', 'ai-autopilot-seo-assistant' ) ),
-			'ai'        => array( 'label' => __( 'AI Providers', 'ai-autopilot-seo-assistant' ) ),
-			'seo'       => array( 'label' => __( 'SEO', 'ai-autopilot-seo-assistant' ) ),
-			'content'   => array( 'label' => __( 'Content', 'ai-autopilot-seo-assistant' ) ),
-			'schema'    => array( 'label' => __( 'Schema', 'ai-autopilot-seo-assistant' ) ),
-			'sitemap'   => array( 'label' => __( 'Sitemap', 'ai-autopilot-seo-assistant' ) ),
-			'social'    => array( 'label' => __( 'Social', 'ai-autopilot-seo-assistant' ) ),
-			'compatibility' => array( 'label' => __( 'Compatibility', 'ai-autopilot-seo-assistant' ) ),
-			'advanced'  => array( 'label' => __( 'Advanced', 'ai-autopilot-seo-assistant' ) ),
+			'general'   => array( 'label' => __( 'General', 'scanvexa-seo' ) ),
+			'ai'        => array( 'label' => __( 'AI Providers', 'scanvexa-seo' ) ),
+			'seo'       => array( 'label' => __( 'SEO', 'scanvexa-seo' ) ),
+			'content'   => array( 'label' => __( 'Content', 'scanvexa-seo' ) ),
+			'schema'    => array( 'label' => __( 'Schema', 'scanvexa-seo' ) ),
+			'sitemap'   => array( 'label' => __( 'Sitemap', 'scanvexa-seo' ) ),
+			'social'    => array( 'label' => __( 'Social', 'scanvexa-seo' ) ),
+			'compatibility' => array( 'label' => __( 'Compatibility', 'scanvexa-seo' ) ),
+			'advanced'  => array( 'label' => __( 'Advanced', 'scanvexa-seo' ) ),
 		);
 
 		$current = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'general'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -57,27 +57,27 @@ final class SettingsView implements View {
 
 		$values = $this->settings->get_all();
 		?>
-		<div class="aasa-page aasa-page--settings">
+		<div class="scvx-page scvx-page--settings">
 
 			<?php if ( 'saved' === $status ) : ?>
-				<?php $this->render_toast( __( 'Settings saved.', 'ai-autopilot-seo-assistant' ), 'success' ); ?>
+				<?php $this->render_toast( __( 'Settings saved.', 'scanvexa-seo' ), 'success' ); ?>
 			<?php elseif ( 'deleted' === $status ) : ?>
-				<?php $this->render_toast( __( 'API key removed.', 'ai-autopilot-seo-assistant' ), 'success' ); ?>
+				<?php $this->render_toast( __( 'API key removed.', 'scanvexa-seo' ), 'success' ); ?>
 			<?php elseif ( 'error' === $status ) : ?>
-				<?php $this->render_toast( $message ?: __( 'Something went wrong.', 'ai-autopilot-seo-assistant' ), 'error' ); ?>
+				<?php $this->render_toast( $message ?: __( 'Something went wrong.', 'scanvexa-seo' ), 'error' ); ?>
 			<?php endif; ?>
 
-			<div class="aasa-settings-layout">
-				<nav class="aasa-settings-nav">
+			<div class="scvx-settings-layout">
+				<nav class="scvx-settings-nav">
 					<?php foreach ( $tabs as $key => $tab ) : ?>
-						<a class="aasa-settings-nav__link <?php echo $current === $key ? 'is-active' : ''; ?>"
+						<a class="scvx-settings-nav__link <?php echo $current === $key ? 'is-active' : ''; ?>"
 							href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::SETTINGS_SLUG . '&tab=' . $key ) ); ?>">
 							<?php echo esc_html( $tab['label'] ); ?>
 						</a>
 					<?php endforeach; ?>
 				</nav>
 
-				<div class="aasa-settings-content">
+				<div class="scvx-settings-content">
 					<?php $this->render_tab( $current, $values, $plugin ); ?>
 				</div>
 			</div>
@@ -114,9 +114,9 @@ final class SettingsView implements View {
 	 */
 	private function render_toast( string $message, string $type ): void {
 		?>
-		<div id="aasa-toast" class="aasa-toast aasa-toast--<?php echo esc_attr( $type ); ?>" role="status">
-			<span class="aasa-toast__message"><?php echo esc_html( $message ); ?></span>
-			<button type="button" class="aasa-toast__close" aria-label="<?php esc_attr_e( 'Dismiss', 'ai-autopilot-seo-assistant' ); ?>">&times;</button>
+		<div id="scvx-toast" class="scvx-toast scvx-toast--<?php echo esc_attr( $type ); ?>" role="status">
+			<span class="scvx-toast__message"><?php echo esc_html( $message ); ?></span>
+			<button type="button" class="scvx-toast__close" aria-label="<?php esc_attr_e( 'Dismiss', 'scanvexa-seo' ); ?>">&times;</button>
 		</div>
 		<?php
 		// Styling and dismiss behavior live in admin/css/admin.css and

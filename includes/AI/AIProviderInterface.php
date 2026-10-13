@@ -4,10 +4,10 @@
  * added without touching any calling code — they just register themselves
  * with AIProviderManager.
  *
- * @package Aasa\AI
+ * @package Scvx\AI
  */
 
-namespace Aasa\AI;
+namespace Scvx\AI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -1,5 +1,5 @@
 /**
- * AI Autopilot SEO Assistant — block editor sidebar panel.
+ * Scanvexa SEO — AI Website Analyzer — block editor sidebar panel.
  *
  * Deliberately built with wp.element.createElement (no JSX/build step)
  * so the plugin ships and runs with zero bundler dependency, using only
@@ -24,7 +24,7 @@
 	var __                = wp.i18n.__;
 	var apiFetch          = wp.apiFetch;
 
-	var config = window.aasaEditor || {};
+	var config = window.scvxEditor || {};
 
 	function ScoreBar( props ) {
 		var score = props.score || 0;
@@ -36,7 +36,7 @@
 			el(
 				'div',
 				{ style: { display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '12px' } },
-				el( 'span', {}, __( 'SEO Score', 'ai-autopilot-seo-assistant' ) ),
+				el( 'span', {}, __( 'SEO Score', 'scanvexa-seo' ) ),
 				el( 'strong', {}, score )
 			),
 			el(
@@ -56,7 +56,7 @@
 			setError( '' );
 
 			apiFetch( {
-				path: '/aasa/v1/ai/generate',
+				path: '/scvx/v1/ai/generate',
 				method: 'POST',
 				data: props.requestData,
 			} )
@@ -66,7 +66,7 @@
 				} )
 				.catch( function ( err ) {
 					setLoading( false );
-					setError( ( err && err.message ) || __( 'AI generation failed.', 'ai-autopilot-seo-assistant' ) );
+					setError( ( err && err.message ) || __( 'AI generation failed.', 'scanvexa-seo' ) );
 				} );
 		}
 
@@ -111,7 +111,7 @@
 				return;
 			}
 			setAnalyzing( true );
-			apiFetch( { path: '/aasa/v1/analyze', method: 'POST', data: { post_id: postId } } )
+			apiFetch( { path: '/scvx/v1/analyze', method: 'POST', data: { post_id: postId } } )
 				.then( function ( response ) {
 					setAnalyzing( false );
 					setAnalysis( response.data );
@@ -133,12 +133,12 @@
 
 		return el(
 			PluginDocumentSettingPanel,
-			{ name: 'ai-autopilot-seo-assistant-panel', title: __( 'AI Autopilot SEO Assistant', 'ai-autopilot-seo-assistant' ), className: 'aasa-editor-panel' },
+			{ name: 'scanvexa-seo-panel', title: __( 'Scanvexa SEO — AI Website Analyzer', 'scanvexa-seo' ), className: 'scvx-editor-panel' },
 			analysis && el( ScoreBar, { score: analysis.score } ),
-			analyzing && el( 'p', { style: { fontSize: '12px', color: '#6b7280' } }, __( 'Analyzing…', 'ai-autopilot-seo-assistant' ) ),
+			analyzing && el( 'p', { style: { fontSize: '12px', color: '#6b7280' } }, __( 'Analyzing…', 'scanvexa-seo' ) ),
 
 			el( TextControl, {
-				label: __( 'SEO Title', 'ai-autopilot-seo-assistant' ),
+				label: __( 'SEO Title', 'scanvexa-seo' ),
 				value: title,
 				maxLength: config.titleLimit,
 				help: title.length + ' / ' + config.titleLimit,
@@ -147,7 +147,7 @@
 				},
 			} ),
 			el( GenerateButton, {
-				label: __( 'Generate with AI', 'ai-autopilot-seo-assistant' ),
+				label: __( 'Generate with AI', 'scanvexa-seo' ),
 				requestData: { feature: 'title', post_id: postId },
 				onResult: function ( result ) {
 					updateMeta( 'title', result );
@@ -155,7 +155,7 @@
 			} ),
 
 			el( TextareaControl, {
-				label: __( 'Meta Description', 'ai-autopilot-seo-assistant' ),
+				label: __( 'Meta Description', 'scanvexa-seo' ),
 				value: description,
 				help: description.length + ' / ' + config.descriptionLimit,
 				onChange: function ( value ) {
@@ -163,7 +163,7 @@
 				},
 			} ),
 			el( GenerateButton, {
-				label: __( 'Generate with AI', 'ai-autopilot-seo-assistant' ),
+				label: __( 'Generate with AI', 'scanvexa-seo' ),
 				requestData: { feature: 'meta_description', post_id: postId },
 				onResult: function ( result ) {
 					updateMeta( 'description', result );
@@ -171,7 +171,7 @@
 			} ),
 
 			el( TextControl, {
-				label: __( 'Focus Keyword', 'ai-autopilot-seo-assistant' ),
+				label: __( 'Focus Keyword', 'scanvexa-seo' ),
 				value: keyword,
 				onChange: function ( value ) {
 					updateMeta( 'focus_keyword', value );
@@ -179,7 +179,7 @@
 			} ),
 
 			el( TextControl, {
-				label: __( 'Canonical URL', 'ai-autopilot-seo-assistant' ),
+				label: __( 'Canonical URL', 'scanvexa-seo' ),
 				value: canonical,
 				placeholder: 'https://',
 				onChange: function ( value ) {
@@ -188,7 +188,7 @@
 			} ),
 
 			el( ToggleControl, {
-				label: __( 'Discourage search engines (noindex)', 'ai-autopilot-seo-assistant' ),
+				label: __( 'Discourage search engines (noindex)', 'scanvexa-seo' ),
 				checked: noindex,
 				onChange: function ( value ) {
 					updateMeta( 'robots_noindex', value );
@@ -210,7 +210,7 @@
 		);
 	}
 
-	registerPlugin( 'ai-autopilot-seo-assistant', {
+	registerPlugin( 'scanvexa-seo', {
 		render: AiSeoPanel,
 		icon: 'superhero-alt',
 	} );

@@ -4,10 +4,10 @@
  * a site owner can remap "who is allowed to do what" via a single filter
  * instead of hunting through every controller for a current_user_can() call.
  *
- * @package Aasa\Features
+ * @package Scvx\Features
  */
 
-namespace Aasa\Features;
+namespace Scvx\Features;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -42,7 +42,7 @@ final class CapabilityManager {
 		 * @param string $capability
 		 * @param string $action
 		 */
-		return (string) apply_filters( 'aasa/capability', $default, $action );
+		return (string) apply_filters( 'scvx/capability', $default, $action );
 	}
 
 	public function current_user_can( string $action ): bool {

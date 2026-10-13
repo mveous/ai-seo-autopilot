@@ -3,13 +3,13 @@
  * Shared plumbing for REST controllers: namespace, permission helpers,
  * and consistent response shapes.
  *
- * @package Aasa\REST\Controllers
+ * @package Scvx\REST\Controllers
  */
 
-namespace Aasa\REST\Controllers;
+namespace Scvx\REST\Controllers;
 
-use Aasa\Core\Plugin;
-use Aasa\Features\CapabilityManager;
+use Scvx\Core\Plugin;
+use Scvx\Features\CapabilityManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class AbstractController {
 
-	protected const NAMESPACE = 'aasa/v1';
+	protected const NAMESPACE = 'scvx/v1';
 
 	abstract public function register_routes(): void;
 

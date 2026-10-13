@@ -1,19 +1,19 @@
 <?php
 /**
  * Registers the wp-admin menu pages and delegates rendering to the
- * class-based views in Aasa\Admin\Views.
+ * class-based views in Scvx\Admin\Views.
  *
- * @package Aasa\Admin
+ * @package Scvx\Admin
  */
 
-namespace Aasa\Admin;
+namespace Scvx\Admin;
 
-use Aasa\Admin\Views\DashboardView;
-use Aasa\Admin\Views\IssuesView;
-use Aasa\Admin\Views\SettingsView;
-use Aasa\Core\Plugin;
-use Aasa\Core\Registrable;
-use Aasa\Features\CapabilityManager;
+use Scvx\Admin\Views\DashboardView;
+use Scvx\Admin\Views\IssuesView;
+use Scvx\Admin\Views\SettingsView;
+use Scvx\Core\Plugin;
+use Scvx\Core\Registrable;
+use Scvx\Features\CapabilityManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Menu implements Registrable {
 
-	public const DASHBOARD_SLUG = 'ai-autopilot-seo-assistant';
-	public const SETTINGS_SLUG  = 'ai-autopilot-seo-assistant-settings';
+	public const DASHBOARD_SLUG = 'scanvexa-seo';
+	public const SETTINGS_SLUG  = 'scanvexa-seo-settings';
 
 	public function register(): void {
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
@@ -32,8 +32,8 @@ final class Menu implements Registrable {
 		$capability = $this->capability( 'view_dashboard' );
 
 		add_menu_page(
-			__( 'AI Autopilot SEO Assistant', 'ai-autopilot-seo-assistant' ),
-			__( 'AI SEO', 'ai-autopilot-seo-assistant' ),
+			__( 'Scanvexa SEO — AI Website Analyzer', 'scanvexa-seo' ),
+			__( 'Scanvexa SEO', 'scanvexa-seo' ),
 			$capability,
 			self::DASHBOARD_SLUG,
 			array( $this, 'render_dashboard' ),
@@ -43,8 +43,8 @@ final class Menu implements Registrable {
 
 		add_submenu_page(
 			self::DASHBOARD_SLUG,
-			__( 'Dashboard', 'ai-autopilot-seo-assistant' ),
-			__( 'Dashboard', 'ai-autopilot-seo-assistant' ),
+			__( 'Dashboard', 'scanvexa-seo' ),
+			__( 'Dashboard', 'scanvexa-seo' ),
 			$capability,
 			self::DASHBOARD_SLUG,
 			array( $this, 'render_dashboard' )
@@ -52,8 +52,8 @@ final class Menu implements Registrable {
 
 		add_submenu_page(
 			self::DASHBOARD_SLUG,
-			__( 'Settings', 'ai-autopilot-seo-assistant' ),
-			__( 'Settings', 'ai-autopilot-seo-assistant' ),
+			__( 'Settings', 'scanvexa-seo' ),
+			__( 'Settings', 'scanvexa-seo' ),
 			$this->capability( 'manage_settings' ),
 			self::SETTINGS_SLUG,
 			array( $this, 'render_settings' )
@@ -62,7 +62,7 @@ final class Menu implements Registrable {
 
 	public function render_dashboard(): void {
 		if ( ! current_user_can( $this->capability( 'view_dashboard' ) ) ) {
-			wp_die( esc_html__( 'You do not have permission to access this page.', 'ai-autopilot-seo-assistant' ) );
+			wp_die( esc_html__( 'You do not have permission to access this page.', 'scanvexa-seo' ) );
 		}
 
 		$view = isset( $_GET['view'] ) ? sanitize_key( wp_unslash( $_GET['view'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view switch, no state change.
@@ -77,7 +77,7 @@ final class Menu implements Registrable {
 
 	public function render_settings(): void {
 		if ( ! current_user_can( $this->capability( 'manage_settings' ) ) ) {
-			wp_die( esc_html__( 'You do not have permission to access this page.', 'ai-autopilot-seo-assistant' ) );
+			wp_die( esc_html__( 'You do not have permission to access this page.', 'scanvexa-seo' ) );
 		}
 
 		/** @var Settings|null $settings */

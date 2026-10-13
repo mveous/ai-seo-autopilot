@@ -2,12 +2,12 @@
 /**
  * "General" settings tab.
  *
- * @package Aasa\Admin\Views\SettingsTabs
+ * @package Scvx\Admin\Views\SettingsTabs
  */
 
-namespace Aasa\Admin\Views\SettingsTabs;
+namespace Scvx\Admin\Views\SettingsTabs;
 
-use Aasa\Admin\Views\View;
+use Scvx\Admin\Views\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,22 +23,22 @@ final class GeneralTab implements View {
 	public function render(): void {
 		$general = $this->values['general'];
 		?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="aasa-form">
-			<input type="hidden" name="action" value="aasa_save_settings" />
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="scvx-form">
+			<input type="hidden" name="action" value="scvx_save_settings" />
 			<input type="hidden" name="tab" value="general" />
-			<?php wp_nonce_field( 'aasa_settings' ); ?>
+			<?php wp_nonce_field( 'scvx_settings' ); ?>
 
-			<div class="aasa-field">
-				<label for="site_type"><?php esc_html_e( 'What kind of website is this?', 'ai-autopilot-seo-assistant' ); ?></label>
+			<div class="scvx-field">
+				<label for="site_type"><?php esc_html_e( 'What kind of website is this?', 'scanvexa-seo' ); ?></label>
 				<select name="settings[site_type]" id="site_type">
 					<?php
 					$options = array(
-						'blog'      => __( 'Blog', 'ai-autopilot-seo-assistant' ),
-						'business'  => __( 'Business website', 'ai-autopilot-seo-assistant' ),
-						'ecommerce' => __( 'Online store', 'ai-autopilot-seo-assistant' ),
-						'portfolio' => __( 'Portfolio', 'ai-autopilot-seo-assistant' ),
-						'news'      => __( 'News / publisher', 'ai-autopilot-seo-assistant' ),
-						'local'     => __( 'Local business', 'ai-autopilot-seo-assistant' ),
+						'blog'      => __( 'Blog', 'scanvexa-seo' ),
+						'business'  => __( 'Business website', 'scanvexa-seo' ),
+						'ecommerce' => __( 'Online store', 'scanvexa-seo' ),
+						'portfolio' => __( 'Portfolio', 'scanvexa-seo' ),
+						'news'      => __( 'News / publisher', 'scanvexa-seo' ),
+						'local'     => __( 'Local business', 'scanvexa-seo' ),
 					);
 					foreach ( $options as $value => $label ) :
 						?>
@@ -47,17 +47,17 @@ final class GeneralTab implements View {
 						</option>
 					<?php endforeach; ?>
 				</select>
-				<p class="aasa-field__help"><?php esc_html_e( 'Helps AI tailor recommendations and schema types to your site.', 'ai-autopilot-seo-assistant' ); ?></p>
+				<p class="scvx-field__help"><?php esc_html_e( 'Helps AI tailor recommendations and schema types to your site.', 'scanvexa-seo' ); ?></p>
 			</div>
 
-			<div class="aasa-field aasa-field--checkbox">
+			<div class="scvx-field scvx-field--checkbox">
 				<label>
 					<input type="checkbox" name="settings[disable_seo_plugin_notices]" value="1" <?php checked( ! empty( $general['disable_seo_plugin_notices'] ) ); ?> />
-					<?php esc_html_e( 'Hide notices about other active SEO plugins', 'ai-autopilot-seo-assistant' ); ?>
+					<?php esc_html_e( 'Hide notices about other active SEO plugins', 'scanvexa-seo' ); ?>
 				</label>
 			</div>
 
-			<button type="submit" class="aasa-button aasa-button--primary"><?php esc_html_e( 'Save Changes', 'ai-autopilot-seo-assistant' ); ?></button>
+			<button type="submit" class="scvx-button scvx-button--primary"><?php esc_html_e( 'Save Changes', 'scanvexa-seo' ); ?></button>
 		</form>
 		<?php
 	}

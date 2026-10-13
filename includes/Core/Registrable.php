@@ -2,10 +2,10 @@
 /**
  * Contract for services that hook themselves into WordPress.
  *
- * @package Aasa\Core
+ * @package Scvx\Core
  */
 
-namespace Aasa\Core;
+namespace Scvx\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

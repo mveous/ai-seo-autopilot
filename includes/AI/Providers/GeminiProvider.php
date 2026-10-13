@@ -3,10 +3,10 @@
  * Google Gemini adapter, backed by the bundled WordPress AI Client SDK's
  * Google provider.
  *
- * @package Aasa\AI\Providers
+ * @package Scvx\AI\Providers
  */
 
-namespace Aasa\AI\Providers;
+namespace Scvx\AI\Providers;
 
 use WordPress\AiClient\Providers\Http\Contracts\RequestAuthenticationInterface;
 use WordPress\GoogleAiProvider\Authentication\GoogleApiKeyRequestAuthentication;
@@ -23,7 +23,7 @@ final class GeminiProvider extends AbstractProvider {
 	}
 
 	public function get_label(): string {
-		return __( 'Google Gemini', 'ai-autopilot-seo-assistant' );
+		return __( 'Google Gemini', 'scanvexa-seo' );
 	}
 
 	protected function ai_client_provider_class(): string {
@@ -37,8 +37,8 @@ final class GeminiProvider extends AbstractProvider {
 	public function generate( string $system_prompt, string $user_prompt, array $options = array() ) {
 		if ( ! class_exists( GoogleApiKeyRequestAuthentication::class ) ) {
 			return new \WP_Error(
-				'aasa_ai_client_missing',
-				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-autopilot-seo-assistant' )
+				'scvx_ai_client_missing',
+				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'scanvexa-seo' )
 			);
 		}
 

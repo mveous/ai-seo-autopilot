@@ -2,12 +2,12 @@
 /**
  * Shared admin topbar/nav, rendered at the top of every top-level page.
  *
- * @package Aasa\Admin\Views
+ * @package Scvx\Admin\Views
  */
 
-namespace Aasa\Admin\Views;
+namespace Scvx\Admin\Views;
 
-use Aasa\Admin\Menu;
+use Scvx\Admin\Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,20 +21,20 @@ final class HeaderPartial implements View {
 		$active_tab = $this->active_tab;
 
 		$nav = array(
-			'dashboard' => array( 'label' => __( 'Dashboard', 'ai-autopilot-seo-assistant' ), 'page' => Menu::DASHBOARD_SLUG ),
-			'settings'  => array( 'label' => __( 'Settings', 'ai-autopilot-seo-assistant' ), 'page' => Menu::SETTINGS_SLUG ),
+			'dashboard' => array( 'label' => __( 'Dashboard', 'scanvexa-seo' ), 'page' => Menu::DASHBOARD_SLUG ),
+			'settings'  => array( 'label' => __( 'Settings', 'scanvexa-seo' ), 'page' => Menu::SETTINGS_SLUG ),
 		);
 		?>
-		<div class="aasa-wrap">
-			<div class="aasa-topbar">
-				<div class="aasa-topbar__brand">
+		<div class="scvx-wrap">
+			<div class="scvx-topbar">
+				<div class="scvx-topbar__brand">
 					<span class="dashicons dashicons-superhero-alt" aria-hidden="true"></span>
-					<span class="aasa-topbar__title"><?php esc_html_e( 'AI Autopilot SEO Assistant', 'ai-autopilot-seo-assistant' ); ?></span>
+					<span class="scvx-topbar__title"><?php esc_html_e( 'Scanvexa SEO — AI Website Analyzer', 'scanvexa-seo' ); ?></span>
 				</div>
-				<nav class="aasa-topbar__nav">
+				<nav class="scvx-topbar__nav">
 					<?php foreach ( $nav as $key => $item ) : ?>
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . $item['page'] ) ); ?>"
-							class="aasa-topbar__link <?php echo $active_tab === $key ? 'is-active' : ''; ?>">
+							class="scvx-topbar__link <?php echo $active_tab === $key ? 'is-active' : ''; ?>">
 							<?php echo esc_html( $item['label'] ); ?>
 						</a>
 					<?php endforeach; ?>

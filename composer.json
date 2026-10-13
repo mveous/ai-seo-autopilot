@@ -1,5 +1,5 @@
 {
-    "name": "ai-autopilot-seo-assistant/ai-autopilot-seo-assistant",
+    "name": "scanvexa-seo/scanvexa-seo",
     "description": "AI-powered SEO agent for WordPress.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
@@ -14,12 +14,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Aasa\\": "includes/"
+            "Scvx\\": "includes/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Aasa\\Tests\\": "tests/"
+            "Scvx\\Tests\\": "tests/"
         }
     },
     "config": {

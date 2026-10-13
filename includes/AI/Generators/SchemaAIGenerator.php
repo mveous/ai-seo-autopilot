@@ -4,10 +4,10 @@
  * schema.org type the caller requests — the underlying prompt and AI
  * response are generic, not type-specific.
  *
- * @package Aasa\AI\Generators
+ * @package Scvx\AI\Generators
  */
 
-namespace Aasa\AI\Generators;
+namespace Scvx\AI\Generators;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,7 +23,7 @@ final class SchemaAIGenerator extends AbstractGenerator {
 
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return new \WP_Error( 'aasa_not_found', __( 'Post not found.', 'ai-autopilot-seo-assistant' ) );
+			return new \WP_Error( 'scvx_not_found', __( 'Post not found.', 'scanvexa-seo' ) );
 		}
 
 		$context                = $this->build_post_context( $post );
@@ -38,7 +38,7 @@ final class SchemaAIGenerator extends AbstractGenerator {
 
 		$json = $result->json();
 		if ( null === $json ) {
-			return new \WP_Error( 'aasa_invalid_ai_response', __( 'The AI response could not be parsed as schema JSON.', 'ai-autopilot-seo-assistant' ) );
+			return new \WP_Error( 'scvx_invalid_ai_response', __( 'The AI response could not be parsed as schema JSON.', 'scanvexa-seo' ) );
 		}
 
 		$clean         = $this->sanitize_deep( $json );

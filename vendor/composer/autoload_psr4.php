@@ -6,6 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Aasa\\Tests\\' => array($baseDir . '/tests'),
-    'Aasa\\' => array($baseDir . '/includes'),
+    'Scvx\\Tests\\' => array($baseDir . '/tests'),
+    'Scvx\\' => array($baseDir . '/includes'),
 );

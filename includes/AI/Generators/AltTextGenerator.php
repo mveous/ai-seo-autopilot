@@ -1,9 +1,9 @@
 <?php
 /**
- * @package Aasa\AI\Generators
+ * @package Scvx\AI\Generators
  */
 
-namespace Aasa\AI\Generators;
+namespace Scvx\AI\Generators;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,7 +17,7 @@ final class AltTextGenerator extends AbstractGenerator {
 	public function generate_for_attachment( int $attachment_id, int $context_post_id = 0 ) {
 		$attachment = get_post( $attachment_id );
 		if ( ! $attachment || 'attachment' !== $attachment->post_type ) {
-			return new \WP_Error( 'aasa_not_found', __( 'Image not found.', 'ai-autopilot-seo-assistant' ) );
+			return new \WP_Error( 'scvx_not_found', __( 'Image not found.', 'scanvexa-seo' ) );
 		}
 
 		$file      = get_attached_file( $attachment_id );

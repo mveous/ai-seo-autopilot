@@ -4,12 +4,12 @@
  * register_post_meta + show_in_rest, consumed by the Gutenberg sidebar
  * panel JS) and the classic editor (a plain meta box + save_post).
  *
- * @package Aasa\SEO\Metadata
+ * @package Scvx\SEO\Metadata
  */
 
-namespace Aasa\SEO\Metadata;
+namespace Scvx\SEO\Metadata;
 
-use Aasa\Core\Registrable;
+use Scvx\Core\Registrable;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class MetaboxManager implements Registrable {
 
-	private const NONCE_ACTION = 'aasa_save_meta';
-	private const NONCE_NAME   = 'aasa_meta_nonce';
+	private const NONCE_ACTION = 'scvx_save_meta';
+	private const NONCE_NAME   = 'scvx_meta_nonce';
 
 	private MetaRepository $repository;
 
@@ -64,8 +64,8 @@ final class MetaboxManager implements Registrable {
 	public function add_classic_metabox(): void {
 		foreach ( $this->supported_post_types() as $post_type ) {
 			add_meta_box(
-				'ai-autopilot-seo-assistant-meta',
-				__( 'AI Autopilot SEO Assistant', 'ai-autopilot-seo-assistant' ),
+				'scanvexa-seo-meta',
+				__( 'Scanvexa SEO — AI Website Analyzer', 'scanvexa-seo' ),
 				array( $this, 'render_classic_metabox' ),
 				$post_type,
 				'normal',
@@ -79,30 +79,30 @@ final class MetaboxManager implements Registrable {
 
 		$data = $this->repository->get_all( $post->ID );
 		?>
-		<div class="aasa-metabox" id="ai-autopilot-seo-assistant-root" data-post-id="<?php echo esc_attr( (string) $post->ID ); ?>">
+		<div class="scvx-metabox" id="scanvexa-seo-root" data-post-id="<?php echo esc_attr( (string) $post->ID ); ?>">
 			<p class="description">
-				<?php esc_html_e( 'This panel also appears in the block editor sidebar with live AI generation and a real-time SEO score. In the classic editor, fill in the fields below manually or use the AI SEO menu to generate suggestions.', 'ai-autopilot-seo-assistant' ); ?>
+				<?php esc_html_e( 'This panel also appears in the block editor sidebar with live AI generation and a real-time SEO score. In the classic editor, fill in the fields below manually or use the AI SEO menu to generate suggestions.', 'scanvexa-seo' ); ?>
 			</p>
 			<p>
-				<label for="aasa_title"><strong><?php esc_html_e( 'SEO Title', 'ai-autopilot-seo-assistant' ); ?></strong></label><br />
-				<input type="text" class="widefat" id="aasa_title" name="ai_seo[title]" value="<?php echo esc_attr( $data['title'] ); ?>" maxlength="70" />
+				<label for="scvx_title"><strong><?php esc_html_e( 'SEO Title', 'scanvexa-seo' ); ?></strong></label><br />
+				<input type="text" class="widefat" id="scvx_title" name="ai_seo[title]" value="<?php echo esc_attr( $data['title'] ); ?>" maxlength="70" />
 			</p>
 			<p>
-				<label for="aasa_description"><strong><?php esc_html_e( 'Meta Description', 'ai-autopilot-seo-assistant' ); ?></strong></label><br />
-				<textarea class="widefat" id="aasa_description" name="ai_seo[description]" rows="3" maxlength="320"><?php echo esc_textarea( $data['description'] ); ?></textarea>
+				<label for="scvx_description"><strong><?php esc_html_e( 'Meta Description', 'scanvexa-seo' ); ?></strong></label><br />
+				<textarea class="widefat" id="scvx_description" name="ai_seo[description]" rows="3" maxlength="320"><?php echo esc_textarea( $data['description'] ); ?></textarea>
 			</p>
 			<p>
-				<label for="aasa_focus_keyword"><strong><?php esc_html_e( 'Focus Keyword', 'ai-autopilot-seo-assistant' ); ?></strong></label><br />
-				<input type="text" class="widefat" id="aasa_focus_keyword" name="ai_seo[focus_keyword]" value="<?php echo esc_attr( $data['focus_keyword'] ); ?>" />
+				<label for="scvx_focus_keyword"><strong><?php esc_html_e( 'Focus Keyword', 'scanvexa-seo' ); ?></strong></label><br />
+				<input type="text" class="widefat" id="scvx_focus_keyword" name="ai_seo[focus_keyword]" value="<?php echo esc_attr( $data['focus_keyword'] ); ?>" />
 			</p>
 			<p>
-				<label for="aasa_canonical"><strong><?php esc_html_e( 'Canonical URL', 'ai-autopilot-seo-assistant' ); ?></strong></label><br />
-				<input type="url" class="widefat" id="aasa_canonical" name="ai_seo[canonical]" value="<?php echo esc_attr( $data['canonical'] ); ?>" placeholder="https://" />
+				<label for="scvx_canonical"><strong><?php esc_html_e( 'Canonical URL', 'scanvexa-seo' ); ?></strong></label><br />
+				<input type="url" class="widefat" id="scvx_canonical" name="ai_seo[canonical]" value="<?php echo esc_attr( $data['canonical'] ); ?>" placeholder="https://" />
 			</p>
 			<p>
 				<label>
 					<input type="checkbox" name="ai_seo[robots_noindex]" value="1" <?php checked( ! empty( $data['robots_noindex'] ) ); ?> />
-					<?php esc_html_e( 'Discourage search engines from indexing this content (noindex)', 'ai-autopilot-seo-assistant' ); ?>
+					<?php esc_html_e( 'Discourage search engines from indexing this content (noindex)', 'scanvexa-seo' ); ?>
 				</label>
 			</p>
 		</div>
@@ -136,9 +136,9 @@ final class MetaboxManager implements Registrable {
 			return;
 		}
 
-		$asset_file = AASA_DIR . 'admin/js/editor.asset.php';
+		$asset_file = SCVX_DIR . 'admin/js/editor.asset.php';
 		$deps       = array( 'wp-plugins', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data', 'wp-core-data', 'wp-i18n', 'wp-api-fetch', 'wp-editor' );
-		$version    = AASA_VERSION;
+		$version    = SCVX_VERSION;
 
 		if ( is_readable( $asset_file ) ) {
 			$asset   = require $asset_file;
@@ -147,27 +147,27 @@ final class MetaboxManager implements Registrable {
 		}
 
 		wp_enqueue_script(
-			'ai-autopilot-seo-assistant-editor',
-			AASA_URL . 'admin/js/editor.js',
+			'scanvexa-seo-editor',
+			SCVX_URL . 'admin/js/editor.js',
 			$deps,
 			$version,
 			true
 		);
 
 		wp_enqueue_style(
-			'ai-autopilot-seo-assistant-editor',
-			AASA_URL . 'admin/css/editor.css',
+			'scanvexa-seo-editor',
+			SCVX_URL . 'admin/css/editor.css',
 			array(),
-			AASA_VERSION
+			SCVX_VERSION
 		);
 
 		wp_localize_script(
-			'ai-autopilot-seo-assistant-editor',
-			'aasaEditor',
+			'scanvexa-seo-editor',
+			'scvxEditor',
 			array(
-				'restUrl'      => esc_url_raw( rest_url( 'aasa/v1' ) ),
+				'restUrl'      => esc_url_raw( rest_url( 'scvx/v1' ) ),
 				'nonce'        => wp_create_nonce( 'wp_rest' ),
-				'metaPrefix'   => '_aasa_',
+				'metaPrefix'   => '_scvx_',
 				'titleLimit'   => 60,
 				'descriptionLimit' => 160,
 			)
@@ -186,7 +186,7 @@ final class MetaboxManager implements Registrable {
 		 *
 		 * @param string[] $post_types
 		 */
-		return array_values( (array) apply_filters( 'aasa/supported_post_types', array_values( $post_types ) ) );
+		return array_values( (array) apply_filters( 'scvx/supported_post_types', array_values( $post_types ) ) );
 	}
 
 	private function is_bool_field( string $field ): bool {

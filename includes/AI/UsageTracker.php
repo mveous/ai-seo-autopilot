@@ -7,13 +7,13 @@
  * is covered by a license — this is purely visibility + an optional
  * self-imposed guardrail.
  *
- * @package Aasa\AI
+ * @package Scvx\AI
  */
 
-namespace Aasa\AI;
+namespace Scvx\AI;
 
-use Aasa\Core\Registrable;
-use Aasa\Database\Migrator;
+use Scvx\Core\Registrable;
+use Scvx\Database\Migrator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -77,7 +77,7 @@ final class UsageTracker implements Registrable {
 	);
 
 	public function register(): void {
-		add_action( 'aasa/ai_request_completed', array( $this, 'record' ), 10, 3 );
+		add_action( 'scvx/ai_request_completed', array( $this, 'record' ), 10, 3 );
 	}
 
 	/**
@@ -160,7 +160,7 @@ final class UsageTracker implements Registrable {
 	 * @return true|\WP_Error
 	 */
 	public function can_make_request() {
-		$settings = get_option( 'aasa_settings', array() );
+		$settings = get_option( 'scvx_settings', array() );
 		$limit    = (int) ( $settings['ai']['monthly_request_limit'] ?? 0 );
 
 		if ( $limit <= 0 ) {
@@ -169,8 +169,8 @@ final class UsageTracker implements Registrable {
 
 		if ( $this->requests_this_month() >= $limit ) {
 			return new \WP_Error(
-				'aasa_usage_limit_reached',
-				__( 'You have reached your configured monthly AI request limit. Raise or remove the limit in AI SEO → Settings → AI Providers.', 'ai-autopilot-seo-assistant' )
+				'scvx_usage_limit_reached',
+				__( 'You have reached your configured monthly AI request limit. Raise or remove the limit in AI SEO → Settings → AI Providers.', 'scanvexa-seo' )
 			);
 		}
 

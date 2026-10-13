@@ -11,14 +11,14 @@
  * core and any other plugin built on the same SDK, and vice versa. See
  * get_api_key()/persist_api_key()/delete_api_key() below.
  *
- * @package Aasa\AI
+ * @package Scvx\AI
  */
 
-namespace Aasa\AI;
+namespace Scvx\AI;
 
-use Aasa\AI\Providers\AnthropicProvider;
-use Aasa\AI\Providers\GeminiProvider;
-use Aasa\AI\Providers\OpenAIProvider;
+use Scvx\AI\Providers\AnthropicProvider;
+use Scvx\AI\Providers\GeminiProvider;
+use Scvx\AI\Providers\OpenAIProvider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -39,7 +39,7 @@ final class AIProviderManager {
 		 *
 		 * @param AIProviderManager $manager
 		 */
-		do_action( 'aasa/register_ai_providers', $this );
+		do_action( 'scvx/register_ai_providers', $this );
 	}
 
 	/**
@@ -116,12 +116,12 @@ final class AIProviderManager {
 		$provider = $this->make_provider( $provider_id, $api_key );
 
 		if ( null === $provider ) {
-			return new \WP_Error( 'aasa_unknown_provider', __( 'Unknown AI provider.', 'ai-autopilot-seo-assistant' ) );
+			return new \WP_Error( 'scvx_unknown_provider', __( 'Unknown AI provider.', 'scanvexa-seo' ) );
 		}
 
 		$api_key = trim( $api_key );
 		if ( '' === $api_key ) {
-			return new \WP_Error( 'aasa_empty_key', __( 'API key cannot be empty.', 'ai-autopilot-seo-assistant' ) );
+			return new \WP_Error( 'scvx_empty_key', __( 'API key cannot be empty.', 'scanvexa-seo' ) );
 		}
 
 		$valid = $provider->validate_api_key( $api_key );
@@ -229,7 +229,7 @@ final class AIProviderManager {
 	// -------------------------------------------------------------
 
 	public function get_active_provider_id(): string {
-		$settings = get_option( 'aasa_settings', array() );
+		$settings = get_option( 'scvx_settings', array() );
 
 		return (string) ( $settings['ai']['active_provider'] ?? '' );
 	}
@@ -246,7 +246,7 @@ final class AIProviderManager {
 	 * default in that case).
 	 */
 	public function get_selected_model( string $provider_id ): string {
-		$settings = get_option( 'aasa_settings', array() );
+		$settings = get_option( 'scvx_settings', array() );
 
 		return (string) ( $settings['ai']['models'][ $provider_id ] ?? '' );
 	}
@@ -266,19 +266,19 @@ final class AIProviderManager {
 		$provider_id = $options['provider'] ?? $this->get_active_provider_id();
 
 		if ( '' === $provider_id ) {
-			return new \WP_Error( 'aasa_no_provider', __( 'No AI provider is configured. Add an API key in AI SEO → Settings → AI Providers.', 'ai-autopilot-seo-assistant' ) );
+			return new \WP_Error( 'scvx_no_provider', __( 'No AI provider is configured. Add an API key in AI SEO → Settings → AI Providers.', 'scanvexa-seo' ) );
 		}
 
 		$api_key = $this->get_api_key( $provider_id );
 
 		if ( null === $api_key ) {
-			return new \WP_Error( 'aasa_no_key', __( 'No API key is stored for the selected AI provider.', 'ai-autopilot-seo-assistant' ) );
+			return new \WP_Error( 'scvx_no_key', __( 'No API key is stored for the selected AI provider.', 'scanvexa-seo' ) );
 		}
 
 		$provider = $this->make_provider( $provider_id, $api_key );
 
 		if ( null === $provider ) {
-			return new \WP_Error( 'aasa_unknown_provider', __( 'Unknown AI provider.', 'ai-autopilot-seo-assistant' ) );
+			return new \WP_Error( 'scvx_unknown_provider', __( 'Unknown AI provider.', 'scanvexa-seo' ) );
 		}
 
 		if ( empty( $options['model'] ) ) {
@@ -299,7 +299,7 @@ final class AIProviderManager {
 		 * @param string               $feature
 		 * @param string               $provider_id
 		 */
-		do_action( 'aasa/ai_request_completed', $response, $feature, $provider_id );
+		do_action( 'scvx/ai_request_completed', $response, $feature, $provider_id );
 
 		return $response;
 	}

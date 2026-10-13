@@ -3,12 +3,12 @@
  * Basic breadcrumb trail: home → taxonomy/parent chain → current item.
  * Exposed as a shortcode and a template tag for theme integration.
  *
- * @package Aasa\SEO\Breadcrumbs
+ * @package Scvx\SEO\Breadcrumbs
  */
 
-namespace Aasa\SEO\Breadcrumbs;
+namespace Scvx\SEO\Breadcrumbs;
 
-use Aasa\Core\Registrable;
+use Scvx\Core\Registrable;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class BreadcrumbsGenerator implements Registrable {
 
 	public function register(): void {
-		add_shortcode( 'aasa_breadcrumbs', array( $this, 'shortcode' ) );
+		add_shortcode( 'scvx_breadcrumbs', array( $this, 'shortcode' ) );
 	}
 
 	/**
@@ -26,7 +26,7 @@ final class BreadcrumbsGenerator implements Registrable {
 	public function get_trail(): array {
 		$trail = array(
 			array(
-				'label' => __( 'Home', 'ai-autopilot-seo-assistant' ),
+				'label' => __( 'Home', 'scanvexa-seo' ),
 				'url'   => home_url( '/' ),
 			),
 		);
@@ -87,12 +87,12 @@ final class BreadcrumbsGenerator implements Registrable {
 		} elseif ( is_search() ) {
 			$trail[] = array(
 				/* translators: %s: search query */
-				'label' => sprintf( __( 'Search results for "%s"', 'ai-autopilot-seo-assistant' ), get_search_query() ),
+				'label' => sprintf( __( 'Search results for "%s"', 'scanvexa-seo' ), get_search_query() ),
 				'url'   => '',
 			);
 		} elseif ( is_404() ) {
 			$trail[] = array(
-				'label' => __( 'Page not found', 'ai-autopilot-seo-assistant' ),
+				'label' => __( 'Page not found', 'scanvexa-seo' ),
 				'url'   => '',
 			);
 		}
@@ -102,7 +102,7 @@ final class BreadcrumbsGenerator implements Registrable {
 		 *
 		 * @param array<int,array{label:string,url:string}> $trail
 		 */
-		return (array) apply_filters( 'aasa/breadcrumbs_trail', $trail );
+		return (array) apply_filters( 'scvx/breadcrumbs_trail', $trail );
 	}
 
 	public function render(): void {
@@ -111,12 +111,12 @@ final class BreadcrumbsGenerator implements Registrable {
 			return;
 		}
 
-		echo '<nav class="aasa-breadcrumbs" aria-label="' . esc_attr__( 'Breadcrumb', 'ai-autopilot-seo-assistant' ) . '">';
+		echo '<nav class="scvx-breadcrumbs" aria-label="' . esc_attr__( 'Breadcrumb', 'scanvexa-seo' ) . '">';
 		$last = count( $trail ) - 1;
 
 		foreach ( $trail as $index => $item ) {
 			if ( $index > 0 ) {
-				echo '<span class="aasa-breadcrumbs__sep"> › </span>';
+				echo '<span class="scvx-breadcrumbs__sep"> › </span>';
 			}
 
 			if ( '' !== $item['url'] && $index !== $last ) {

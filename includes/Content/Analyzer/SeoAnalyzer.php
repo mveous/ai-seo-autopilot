@@ -5,13 +5,13 @@
  * coverage, internal linking, and basic readability. Produces a 0-100
  * score plus a checklist of pass/warn/fail results.
  *
- * @package Aasa\Content\Analyzer
+ * @package Scvx\Content\Analyzer
  */
 
-namespace Aasa\Content\Analyzer;
+namespace Scvx\Content\Analyzer;
 
-use Aasa\Core\Plugin;
-use Aasa\SEO\Metadata\MetaRepository;
+use Scvx\Core\Plugin;
+use Scvx\SEO\Metadata\MetaRepository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -105,7 +105,7 @@ final class SeoAnalyzer {
 		$len = function_exists( 'mb_strlen' ) ? mb_strlen( $title ) : strlen( $title );
 
 		if ( '' === $title ) {
-			$this->add_check( $checks, 'title_missing', 'bad', __( 'No SEO title is set.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'title_missing', 'bad', __( 'No SEO title is set.', 'scanvexa-seo' ) );
 			return 0;
 		}
 
@@ -113,16 +113,16 @@ final class SeoAnalyzer {
 
 		if ( $len < 30 || $len > 65 ) {
 			$score -= 30;
-			$this->add_check( $checks, 'title_length', 'warning', __( 'Title length is outside the recommended 50-60 characters.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'title_length', 'warning', __( 'Title length is outside the recommended 50-60 characters.', 'scanvexa-seo' ) );
 		} else {
-			$this->add_check( $checks, 'title_length', 'good', __( 'Title length looks good.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'title_length', 'good', __( 'Title length looks good.', 'scanvexa-seo' ) );
 		}
 
 		if ( '' !== $keyword && false === stripos( $title, $keyword ) ) {
 			$score -= 30;
-			$this->add_check( $checks, 'title_keyword', 'warning', __( 'Focus keyword is missing from the title.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'title_keyword', 'warning', __( 'Focus keyword is missing from the title.', 'scanvexa-seo' ) );
 		} elseif ( '' !== $keyword ) {
-			$this->add_check( $checks, 'title_keyword', 'good', __( 'Focus keyword found in the title.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'title_keyword', 'good', __( 'Focus keyword found in the title.', 'scanvexa-seo' ) );
 		}
 
 		return max( 0, $score );
@@ -132,7 +132,7 @@ final class SeoAnalyzer {
 		$len = function_exists( 'mb_strlen' ) ? mb_strlen( $description ) : strlen( $description );
 
 		if ( '' === $description ) {
-			$this->add_check( $checks, 'description_missing', 'bad', __( 'No meta description is set.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'description_missing', 'bad', __( 'No meta description is set.', 'scanvexa-seo' ) );
 			return 0;
 		}
 
@@ -140,14 +140,14 @@ final class SeoAnalyzer {
 
 		if ( $len < 120 || $len > 165 ) {
 			$score -= 30;
-			$this->add_check( $checks, 'description_length', 'warning', __( 'Meta description length is outside the recommended 140-160 characters.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'description_length', 'warning', __( 'Meta description length is outside the recommended 140-160 characters.', 'scanvexa-seo' ) );
 		} else {
-			$this->add_check( $checks, 'description_length', 'good', __( 'Meta description length looks good.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'description_length', 'good', __( 'Meta description length looks good.', 'scanvexa-seo' ) );
 		}
 
 		if ( '' !== $keyword && false === stripos( $description, $keyword ) ) {
 			$score -= 30;
-			$this->add_check( $checks, 'description_keyword', 'warning', __( 'Focus keyword is missing from the meta description.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'description_keyword', 'warning', __( 'Focus keyword is missing from the meta description.', 'scanvexa-seo' ) );
 		}
 
 		return max( 0, $score );
@@ -158,7 +158,7 @@ final class SeoAnalyzer {
 	 */
 	private function score_keyword_usage( string $keyword, array $structure, \WP_Post $post, array &$checks ): int {
 		if ( '' === $keyword ) {
-			$this->add_check( $checks, 'keyword_missing', 'warning', __( 'No focus keyword is set.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'keyword_missing', 'warning', __( 'No focus keyword is set.', 'scanvexa-seo' ) );
 			return 50; // Neutral — not every page needs one, but we can't score usage.
 		}
 
@@ -168,9 +168,9 @@ final class SeoAnalyzer {
 
 		if ( false !== stripos( $first_100, $keyword ) ) {
 			$score += 40;
-			$this->add_check( $checks, 'keyword_intro', 'good', __( 'Focus keyword appears early in the content.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'keyword_intro', 'good', __( 'Focus keyword appears early in the content.', 'scanvexa-seo' ) );
 		} else {
-			$this->add_check( $checks, 'keyword_intro', 'warning', __( 'Focus keyword does not appear in the first paragraph.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'keyword_intro', 'warning', __( 'Focus keyword does not appear in the first paragraph.', 'scanvexa-seo' ) );
 		}
 
 		$in_heading = false;
@@ -182,9 +182,9 @@ final class SeoAnalyzer {
 		}
 		if ( $in_heading ) {
 			$score += 30;
-			$this->add_check( $checks, 'keyword_heading', 'good', __( 'Focus keyword appears in a heading.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'keyword_heading', 'good', __( 'Focus keyword appears in a heading.', 'scanvexa-seo' ) );
 		} else {
-			$this->add_check( $checks, 'keyword_heading', 'warning', __( 'Focus keyword does not appear in any heading.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'keyword_heading', 'warning', __( 'Focus keyword does not appear in any heading.', 'scanvexa-seo' ) );
 		}
 
 		$density_count = substr_count( strtolower( $plain ), strtolower( $keyword ) );
@@ -193,9 +193,9 @@ final class SeoAnalyzer {
 
 		if ( $density >= 0.5 && $density <= 2.5 ) {
 			$score += 30;
-			$this->add_check( $checks, 'keyword_density', 'good', __( 'Keyword density is within a healthy range.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'keyword_density', 'good', __( 'Keyword density is within a healthy range.', 'scanvexa-seo' ) );
 		} else {
-			$this->add_check( $checks, 'keyword_density', 'warning', __( 'Keyword density is too low or too high.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'keyword_density', 'warning', __( 'Keyword density is too low or too high.', 'scanvexa-seo' ) );
 		}
 
 		return min( 100, $score );
@@ -212,17 +212,17 @@ final class SeoAnalyzer {
 
 		if ( 0 === $h1_count ) {
 			$score -= 40;
-			$this->add_check( $checks, 'h1_missing', 'bad', __( 'No H1 heading found.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'h1_missing', 'bad', __( 'No H1 heading found.', 'scanvexa-seo' ) );
 		} elseif ( $h1_count > 1 ) {
 			$score -= 20;
-			$this->add_check( $checks, 'h1_multiple', 'warning', __( 'Multiple H1 headings found — use only one per page.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'h1_multiple', 'warning', __( 'Multiple H1 headings found — use only one per page.', 'scanvexa-seo' ) );
 		} else {
-			$this->add_check( $checks, 'h1_single', 'good', __( 'Exactly one H1 heading found.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'h1_single', 'good', __( 'Exactly one H1 heading found.', 'scanvexa-seo' ) );
 		}
 
 		if ( $structure['word_count'] > 300 && ! $has_h2 ) {
 			$score -= 20;
-			$this->add_check( $checks, 'h2_missing', 'warning', __( 'Longer content should be broken up with H2 subheadings.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'h2_missing', 'warning', __( 'Longer content should be broken up with H2 subheadings.', 'scanvexa-seo' ) );
 		}
 
 		return max( 0, $score );
@@ -235,15 +235,15 @@ final class SeoAnalyzer {
 		$count = $structure['word_count'];
 
 		if ( $count < 100 ) {
-			$this->add_check( $checks, 'content_thin', 'bad', __( 'Content is very thin (under 100 words).', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'content_thin', 'bad', __( 'Content is very thin (under 100 words).', 'scanvexa-seo' ) );
 			return 10;
 		}
 		if ( $count < 300 ) {
-			$this->add_check( $checks, 'content_short', 'warning', __( 'Content is shorter than the recommended 300 words.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'content_short', 'warning', __( 'Content is shorter than the recommended 300 words.', 'scanvexa-seo' ) );
 			return 50;
 		}
 
-		$this->add_check( $checks, 'content_length', 'good', __( 'Content length looks good.', 'ai-autopilot-seo-assistant' ) );
+		$this->add_check( $checks, 'content_length', 'good', __( 'Content length looks good.', 'scanvexa-seo' ) );
 
 		return 100;
 	}
@@ -261,7 +261,7 @@ final class SeoAnalyzer {
 		$missing = count( array_filter( $images, static fn( $img ) => ! $img['has_alt'] ) );
 
 		if ( 0 === $missing ) {
-			$this->add_check( $checks, 'images_alt', 'good', __( 'All images have ALT text.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'images_alt', 'good', __( 'All images have ALT text.', 'scanvexa-seo' ) );
 			return 100;
 		}
 
@@ -271,7 +271,7 @@ final class SeoAnalyzer {
 			'warning',
 			sprintf(
 				/* translators: %d: number of images missing alt text */
-				__( '%d image(s) are missing ALT text.', 'ai-autopilot-seo-assistant' ),
+				__( '%d image(s) are missing ALT text.', 'scanvexa-seo' ),
 				$missing
 			)
 		);
@@ -286,11 +286,11 @@ final class SeoAnalyzer {
 		$internal = count( array_filter( $structure['links'], static fn( $l ) => $l['internal'] ) );
 
 		if ( $internal > 0 ) {
-			$this->add_check( $checks, 'internal_links', 'good', __( 'Content includes internal links.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'internal_links', 'good', __( 'Content includes internal links.', 'scanvexa-seo' ) );
 			return 100;
 		}
 
-		$this->add_check( $checks, 'internal_links_missing', 'warning', __( 'No internal links found in this content.', 'ai-autopilot-seo-assistant' ) );
+		$this->add_check( $checks, 'internal_links_missing', 'warning', __( 'No internal links found in this content.', 'scanvexa-seo' ) );
 
 		return 40;
 	}
@@ -318,14 +318,14 @@ final class SeoAnalyzer {
 
 		if ( $avg_sentence > 25 ) {
 			$score -= 30;
-			$this->add_check( $checks, 'readability_sentences', 'warning', __( 'Sentences are long on average — consider shortening them.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'readability_sentences', 'warning', __( 'Sentences are long on average — consider shortening them.', 'scanvexa-seo' ) );
 		} else {
-			$this->add_check( $checks, 'readability_sentences', 'good', __( 'Sentence length looks reasonable.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'readability_sentences', 'good', __( 'Sentence length looks reasonable.', 'scanvexa-seo' ) );
 		}
 
 		if ( $avg_word_chars > 6.5 ) {
 			$score -= 20;
-			$this->add_check( $checks, 'readability_words', 'warning', __( 'Vocabulary is complex on average — consider simpler words.', 'ai-autopilot-seo-assistant' ) );
+			$this->add_check( $checks, 'readability_words', 'warning', __( 'Vocabulary is complex on average — consider simpler words.', 'scanvexa-seo' ) );
 		}
 
 		return max( 0, $score );

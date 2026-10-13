@@ -2,12 +2,12 @@
 /**
  * "Content" settings tab.
  *
- * @package Aasa\Admin\Views\SettingsTabs
+ * @package Scvx\Admin\Views\SettingsTabs
  */
 
-namespace Aasa\Admin\Views\SettingsTabs;
+namespace Scvx\Admin\Views\SettingsTabs;
 
-use Aasa\Admin\Views\View;
+use Scvx\Admin\Views\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,19 +23,19 @@ final class ContentTab implements View {
 	public function render(): void {
 		$content = $this->values['content'];
 		?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="aasa-form">
-			<input type="hidden" name="action" value="aasa_save_settings" />
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="scvx-form">
+			<input type="hidden" name="action" value="scvx_save_settings" />
 			<input type="hidden" name="tab" value="content" />
-			<?php wp_nonce_field( 'aasa_settings' ); ?>
+			<?php wp_nonce_field( 'scvx_settings' ); ?>
 
-			<div class="aasa-field aasa-field--checkbox">
+			<div class="scvx-field scvx-field--checkbox">
 				<label>
 					<input type="checkbox" name="settings[focus_keyword_enabled]" value="1" <?php checked( ! empty( $content['focus_keyword_enabled'] ) ); ?> />
-					<?php esc_html_e( 'Enable focus keyword field and keyword-based content analysis in the editor', 'ai-autopilot-seo-assistant' ); ?>
+					<?php esc_html_e( 'Enable focus keyword field and keyword-based content analysis in the editor', 'scanvexa-seo' ); ?>
 				</label>
 			</div>
 
-			<button type="submit" class="aasa-button aasa-button--primary"><?php esc_html_e( 'Save Changes', 'ai-autopilot-seo-assistant' ); ?></button>
+			<button type="submit" class="scvx-button scvx-button--primary"><?php esc_html_e( 'Save Changes', 'scanvexa-seo' ); ?></button>
 		</form>
 		<?php
 	}

@@ -1,20 +1,20 @@
 <?php
 /**
- * Registers all REST controllers under the aasa/v1 namespace.
+ * Registers all REST controllers under the scvx/v1 namespace.
  *
- * @package Aasa\REST
+ * @package Scvx\REST
  */
 
-namespace Aasa\REST;
+namespace Scvx\REST;
 
-use Aasa\Core\Plugin;
-use Aasa\Core\Registrable;
-use Aasa\REST\Controllers\AIController;
-use Aasa\REST\Controllers\AnalyzeController;
-use Aasa\REST\Controllers\DashboardController;
-use Aasa\REST\Controllers\ScanController;
-use Aasa\REST\Controllers\SchemaController;
-use Aasa\REST\Controllers\SettingsController;
+use Scvx\Core\Plugin;
+use Scvx\Core\Registrable;
+use Scvx\REST\Controllers\AIController;
+use Scvx\REST\Controllers\AnalyzeController;
+use Scvx\REST\Controllers\DashboardController;
+use Scvx\REST\Controllers\ScanController;
+use Scvx\REST\Controllers\SchemaController;
+use Scvx\REST\Controllers\SettingsController;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -49,7 +49,7 @@ final class RestBootstrap implements Registrable {
 		 * @param array<int,object> $controllers
 		 * @param Plugin             $plugin
 		 */
-		$controllers = (array) apply_filters( 'aasa/rest_controllers', $controllers, $this->plugin );
+		$controllers = (array) apply_filters( 'scvx/rest_controllers', $controllers, $this->plugin );
 
 		foreach ( $controllers as $controller ) {
 			$controller->register_routes();

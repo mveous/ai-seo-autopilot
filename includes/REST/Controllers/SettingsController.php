@@ -1,18 +1,18 @@
 <?php
 /**
- * GET /aasa/v1/settings — read-only settings snapshot for editor UI.
+ * GET /scvx/v1/settings — read-only settings snapshot for editor UI.
  * Writes go through the classic admin-post form handlers in
  * Admin\Settings, which additionally validate each AI provider key
  * against the provider itself before saving. Nothing sensitive (API
  * keys are stored in a separate, never-exposed option) is included here.
  *
- * @package Aasa\REST\Controllers
+ * @package Scvx\REST\Controllers
  */
 
-namespace Aasa\REST\Controllers;
+namespace Scvx\REST\Controllers;
 
-use Aasa\Admin\Settings;
-use Aasa\Core\Plugin;
+use Scvx\Admin\Settings;
+use Scvx\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

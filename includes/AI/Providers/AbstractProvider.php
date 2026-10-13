@@ -1,16 +1,16 @@
 <?php
 /**
  * Shared plumbing for AI provider adapters. Every request is executed
- * through the bundled WordPress AI Client SDK (see Aasa\AI\AIClient
+ * through the bundled WordPress AI Client SDK (see Scvx\AI\AIClient
  * for how it's loaded and registered).
  *
- * @package Aasa\AI\Providers
+ * @package Scvx\AI\Providers
  */
 
-namespace Aasa\AI\Providers;
+namespace Scvx\AI\Providers;
 
-use Aasa\AI\AIProviderInterface;
-use Aasa\AI\AIResponse;
+use Scvx\AI\AIProviderInterface;
+use Scvx\AI\AIResponse;
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\Http\Contracts\RequestAuthenticationInterface;
 use WordPress\AiClient\Providers\Http\DTO\RequestOptions;
@@ -64,7 +64,7 @@ abstract class AbstractProvider implements AIProviderInterface {
 			return array();
 		}
 
-		$cache_key = 'aasa_models_' . $this->get_id() . '_' . md5( $this->api_key );
+		$cache_key = 'scvx_models_' . $this->get_id() . '_' . md5( $this->api_key );
 		$cached    = get_transient( $cache_key );
 
 		if ( false !== $cached ) {
@@ -102,8 +102,8 @@ abstract class AbstractProvider implements AIProviderInterface {
 
 		if ( ! class_exists( AiClient::class ) || ! class_exists( $provider_class ) ) {
 			return new \WP_Error(
-				'aasa_ai_client_missing',
-				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-autopilot-seo-assistant' )
+				'scvx_ai_client_missing',
+				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'scanvexa-seo' )
 			);
 		}
 
@@ -114,9 +114,9 @@ abstract class AbstractProvider implements AIProviderInterface {
 
 			if ( empty( $models ) ) {
 				return new \WP_Error(
-					'aasa_ai_invalid_key',
+					'scvx_ai_invalid_key',
 					/* translators: %s: AI provider label, e.g. "OpenAI". */
-					sprintf( __( 'Invalid or unauthorized API key for %s.', 'ai-autopilot-seo-assistant' ), $this->get_label() )
+					sprintf( __( 'Invalid or unauthorized API key for %s.', 'scanvexa-seo' ), $this->get_label() )
 				);
 			}
 		} catch ( \Throwable $e ) {
@@ -125,14 +125,14 @@ abstract class AbstractProvider implements AIProviderInterface {
 			foreach ( array( '401', '403', 'incorrect api key', 'unauthorized', 'invalid', 'key not found' ) as $needle ) {
 				if ( false !== strpos( $message, $needle ) ) {
 					return new \WP_Error(
-						'aasa_ai_invalid_key',
+						'scvx_ai_invalid_key',
 						/* translators: %s: AI provider label, e.g. "OpenAI". */
-						sprintf( __( 'Invalid API key for %s. Please check your credentials.', 'ai-autopilot-seo-assistant' ), $this->get_label() )
+						sprintf( __( 'Invalid API key for %s. Please check your credentials.', 'scanvexa-seo' ), $this->get_label() )
 					);
 				}
 			}
 
-			return new \WP_Error( 'aasa_ai_client_error', $e->getMessage() );
+			return new \WP_Error( 'scvx_ai_client_error', $e->getMessage() );
 		}
 
 		return true;
@@ -172,8 +172,8 @@ abstract class AbstractProvider implements AIProviderInterface {
 	) {
 		if ( ! class_exists( AiClient::class ) || ! class_exists( $ai_client_provider_class ) ) {
 			return new \WP_Error(
-				'aasa_ai_client_missing',
-				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'ai-autopilot-seo-assistant' )
+				'scvx_ai_client_missing',
+				__( 'The bundled AI Client SDK could not be loaded. Try running "composer install" inside the plugin\'s includes/ai-providers directory.', 'scanvexa-seo' )
 			);
 		}
 
@@ -198,7 +198,7 @@ abstract class AbstractProvider implements AIProviderInterface {
 			$result = $prompt->generateTextResult();
 		} catch ( \Throwable $e ) {
 			return new \WP_Error(
-				'aasa_ai_client_error',
+				'scvx_ai_client_error',
 				$e->getMessage(),
 				array( 'status' => self::guess_error_status( $e->getMessage() ) )
 			);
@@ -208,8 +208,8 @@ abstract class AbstractProvider implements AIProviderInterface {
 
 		if ( '' === $content ) {
 			return new \WP_Error(
-				'aasa_ai_empty_response',
-				__( 'The AI provider returned an empty response.', 'ai-autopilot-seo-assistant' )
+				'scvx_ai_empty_response',
+				__( 'The AI provider returned an empty response.', 'scanvexa-seo' )
 			);
 		}
 

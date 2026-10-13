@@ -1,10 +1,10 @@
-=== AI Autopilot SEO Assistant ===
+=== Scanvexa SEO — AI Website Analyzer ===
 Contributors: deep7197
 Tags: seo, ai seo, schema, sitemap, meta tags
 Requires at least: 7.0
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ AI-powered SEO agent for WordPress. Connect your own AI provider, scan your site
 
 == Description ==
 
-**AI Autopilot SEO Assistant** is a modern, intelligent WordPress SEO plugin designed to audit, optimize, and streamline your search engine performance using artificial intelligence.
+**Scanvexa SEO — AI Website Analyzer** is a modern, intelligent WordPress SEO plugin designed to audit, optimize, and streamline your search engine performance using artificial intelligence.
 
 Bring Your Own Key (BYOK) to connect directly with leading AI providers—including **OpenAI (ChatGPT)**, **Anthropic (Claude)**, and **Google Gemini**—to generate high-converting meta titles, meta descriptions, image ALT text, and structured data schemas with no middleman markup or vendor lock-in.
 
@@ -30,11 +30,11 @@ Bring Your Own Key (BYOK) to connect directly with leading AI providers—includ
 
 == Installation ==
 
-1. Upload the `ai-autopilot-seo-assistant` folder to your `/wp-content/plugins/` directory, or install it directly via the WordPress Plugins screen.
+1. Upload the `scanvexa-seo` folder to your `/wp-content/plugins/` directory, or install it directly via the WordPress Plugins screen.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Navigate to **AI Autopilot SEO Assistant > Settings > AI Provider** in your WordPress admin menu.
+3. Navigate to **Scanvexa SEO — AI Website Analyzer > Settings > AI Provider** in your WordPress admin menu.
 4. Enter your API key for OpenAI, Anthropic, or Google Gemini and save your settings.
-5. Run your first site scan from the **AI Autopilot SEO Assistant > Dashboard**!
+5. Run your first site scan from the **Scanvexa SEO — AI Website Analyzer > Dashboard**!
 
 == Frequently Asked Questions ==
 
@@ -45,10 +45,10 @@ Basic SEO features like XML Sitemaps, Schema generation, and standard metadata w
 Your API keys are stored in your own WordPress database (the same options used by WordPress core's AI Client), never in plaintext in the page source, and are only ever transmitted to the official AI provider endpoint you configure — never to us or any other third party.
 
 = Which AI models are supported? =
-AI Autopilot SEO Assistant supports models from OpenAI (such as GPT-4o and GPT-4o-mini), Anthropic (Claude 3.5 Sonnet and Haiku), and Google Gemini (Gemini 1.5 Pro and Flash).
+Scanvexa SEO — AI Website Analyzer supports models from OpenAI (such as GPT-4o and GPT-4o-mini), Anthropic (Claude 3.5 Sonnet and Haiku), and Google Gemini (Gemini 1.5 Pro and Flash).
 
 = Does this plugin work with page builders? =
-Yes! AI Autopilot SEO Assistant is compatible with the WordPress Block Editor (Gutenberg), Classic Editor, Elementor, and major page builders.
+Yes! Scanvexa SEO — AI Website Analyzer is compatible with the WordPress Block Editor (Gutenberg), Classic Editor, Elementor, and major page builders.
 
 == External services ==
 
@@ -75,11 +75,14 @@ Your API key for each provider is stored in your own WordPress database and is s
 4. Content editor SEO & Schema meta box with AI generation tools.
 
 == Changelog ==
+= 1.0.2 =
+* Renamed plugin.
+
 = 1.0.1 =
 * Code Improvements.
 
 = 1.0.0 =
-* Initial release of AI Autopilot SEO Assistant.
+* Initial release of Scanvexa SEO — AI Website Analyzer.
 * Multi-provider AI support (OpenAI, Anthropic Claude, Google Gemini).
 * Complete site audit and issue diagnosis engine.
 * Automated AI meta tag and ALT text generators.

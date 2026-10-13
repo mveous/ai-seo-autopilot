@@ -2,13 +2,13 @@
 /**
  * Runs on plugin activation.
  *
- * @package Aasa\Core
+ * @package Scvx\Core
  */
 
-namespace Aasa\Core;
+namespace Scvx\Core;
 
-use Aasa\Admin\Settings;
-use Aasa\Database\Migrator;
+use Scvx\Admin\Settings;
+use Scvx\Database\Migrator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,21 +21,21 @@ final class Activator {
 			return;
 		}
 
-		require_once AASA_DIR . 'includes/Database/Migrator.php';
+		require_once SCVX_DIR . 'includes/Database/Migrator.php';
 		Migrator::install();
 
-		update_option( 'aasa_db_version', AASA_DB_VERSION );
+		update_option( 'scvx_db_version', SCVX_DB_VERSION );
 
-		if ( false === get_option( 'aasa_settings', false ) ) {
-			require_once AASA_DIR . 'includes/Admin/Settings.php';
-			add_option( 'aasa_settings', Settings::defaults() );
+		if ( false === get_option( 'scvx_settings', false ) ) {
+			require_once SCVX_DIR . 'includes/Admin/Settings.php';
+			add_option( 'scvx_settings', Settings::defaults() );
 		}
 
-		if ( false === get_option( 'aasa_activated_at', false ) ) {
-			add_option( 'aasa_activated_at', time() );
+		if ( false === get_option( 'scvx_activated_at', false ) ) {
+			add_option( 'scvx_activated_at', time() );
 		}
 
 		// Sitemap/robots rely on rewrite rules; flush once on activation.
-		update_option( 'aasa_flush_rewrite', 1 );
+		update_option( 'scvx_flush_rewrite', 1 );
 	}
 }

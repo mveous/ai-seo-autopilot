@@ -1,19 +1,19 @@
 <?php
 /**
  * Settings storage, defaults, and the admin-post handlers that save each
- * settings tab. Rendering lives in Aasa\Admin\Views\SettingsView
- * and Aasa\Admin\Views\SettingsTabs\*; this class only owns data
+ * settings tab. Rendering lives in Scvx\Admin\Views\SettingsView
+ * and Scvx\Admin\Views\SettingsTabs\*; this class only owns data
  * (read, sanitize, persist).
  *
- * @package Aasa\Admin
+ * @package Scvx\Admin
  */
 
-namespace Aasa\Admin;
+namespace Scvx\Admin;
 
-use Aasa\AI\AIProviderManager;
-use Aasa\Core\Plugin;
-use Aasa\Core\Registrable;
-use Aasa\Features\CapabilityManager;
+use Scvx\AI\AIProviderManager;
+use Scvx\Core\Plugin;
+use Scvx\Core\Registrable;
+use Scvx\Features\CapabilityManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,12 +21,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Settings implements Registrable {
 
-	public const OPTION = 'aasa_settings';
+	public const OPTION = 'scvx_settings';
 
 	public function register(): void {
-		add_action( 'admin_post_aasa_save_settings', array( $this, 'handle_save_settings' ) );
-		add_action( 'admin_post_aasa_save_ai_providers', array( $this, 'handle_save_ai_providers' ) );
-		add_action( 'admin_post_aasa_delete_api_key', array( $this, 'handle_delete_api_key' ) );
+		add_action( 'admin_post_scvx_save_settings', array( $this, 'handle_save_settings' ) );
+		add_action( 'admin_post_scvx_save_ai_providers', array( $this, 'handle_save_ai_providers' ) );
+		add_action( 'admin_post_scvx_delete_api_key', array( $this, 'handle_delete_api_key' ) );
 	}
 
 	/**
@@ -148,7 +148,7 @@ final class Settings implements Registrable {
 		$manager = Plugin::instance()->get( 'ai.providers' );
 
 		if ( ! $manager ) {
-			$this->redirect_back( 'ai', 'error', __( 'AI provider manager unavailable.', 'ai-autopilot-seo-assistant' ) );
+			$this->redirect_back( 'ai', 'error', __( 'AI provider manager unavailable.', 'scanvexa-seo' ) );
 		}
 
 		$keys            = isset( $_POST['keys'] ) && is_array( $_POST['keys'] ) ? wp_unslash( $_POST['keys'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce verified in guard() above; each value is sanitized and validated individually below via save_api_key().
@@ -213,15 +213,15 @@ final class Settings implements Registrable {
 	}
 
 	private function guard( string $action ): void {
-		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'aasa_settings' ) ) {
-			wp_die( esc_html__( 'Security check failed. Please reload the page and try again.', 'ai-autopilot-seo-assistant' ), 403 );
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'scvx_settings' ) ) {
+			wp_die( esc_html__( 'Security check failed. Please reload the page and try again.', 'scanvexa-seo' ), 403 );
 		}
 
 		/** @var CapabilityManager|null $capabilities */
 		$capabilities = Plugin::instance()->get( 'capabilities' );
 
 		if ( ! $capabilities || ! $capabilities->current_user_can( $action ) ) {
-			wp_die( esc_html__( 'You do not have permission to do this.', 'ai-autopilot-seo-assistant' ), 403 );
+			wp_die( esc_html__( 'You do not have permission to do this.', 'scanvexa-seo' ), 403 );
 		}
 	}
 
@@ -229,7 +229,7 @@ final class Settings implements Registrable {
 		$url = add_query_arg(
 			array_filter(
 				array(
-					'page'    => 'ai-autopilot-seo-assistant-settings',
+					'page'    => 'scanvexa-seo-settings',
 					'tab'     => $tab,
 					'status'  => $status,
 					'message' => $message ? rawurlencode( $message ) : '',

@@ -2,12 +2,12 @@
 /**
  * "Advanced" settings tab.
  *
- * @package Aasa\Admin\Views\SettingsTabs
+ * @package Scvx\Admin\Views\SettingsTabs
  */
 
-namespace Aasa\Admin\Views\SettingsTabs;
+namespace Scvx\Admin\Views\SettingsTabs;
 
-use Aasa\Admin\Views\View;
+use Scvx\Admin\Views\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,20 +23,20 @@ final class AdvancedTab implements View {
 	public function render(): void {
 		$advanced = $this->values['advanced'];
 		?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="aasa-form">
-			<input type="hidden" name="action" value="aasa_save_settings" />
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="scvx-form">
+			<input type="hidden" name="action" value="scvx_save_settings" />
 			<input type="hidden" name="tab" value="advanced" />
-			<?php wp_nonce_field( 'aasa_settings' ); ?>
+			<?php wp_nonce_field( 'scvx_settings' ); ?>
 
-			<div class="aasa-field aasa-field--checkbox">
+			<div class="scvx-field scvx-field--checkbox">
 				<label>
 					<input type="checkbox" name="settings[remove_data_on_uninstall]" value="1" <?php checked( ! empty( $advanced['remove_data_on_uninstall'] ) ); ?> />
-					<?php esc_html_e( 'Remove all plugin data when the plugin is deleted', 'ai-autopilot-seo-assistant' ); ?>
+					<?php esc_html_e( 'Remove all plugin data when the plugin is deleted', 'scanvexa-seo' ); ?>
 				</label>
-				<p class="aasa-field__help"><?php esc_html_e( 'Deletes all scans, issues, activity history, redirects, AI usage records and SEO metadata. This cannot be undone.', 'ai-autopilot-seo-assistant' ); ?></p>
+				<p class="scvx-field__help"><?php esc_html_e( 'Deletes all scans, issues, activity history, redirects, AI usage records and SEO metadata. This cannot be undone.', 'scanvexa-seo' ); ?></p>
 			</div>
 
-			<button type="submit" class="aasa-button aasa-button--primary"><?php esc_html_e( 'Save Changes', 'ai-autopilot-seo-assistant' ); ?></button>
+			<button type="submit" class="scvx-button scvx-button--primary"><?php esc_html_e( 'Save Changes', 'scanvexa-seo' ); ?></button>
 		</form>
 		<?php
 	}

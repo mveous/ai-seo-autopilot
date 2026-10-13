@@ -1,13 +1,13 @@
 <?php
 /**
- * GET /aasa/v1/dashboard — summary data for the admin dashboard.
+ * GET /scvx/v1/dashboard — summary data for the admin dashboard.
  *
- * @package Aasa\REST\Controllers
+ * @package Scvx\REST\Controllers
  */
 
-namespace Aasa\REST\Controllers;
+namespace Scvx\REST\Controllers;
 
-use Aasa\Core\Plugin;
+use Scvx\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
