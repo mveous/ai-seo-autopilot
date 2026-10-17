@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Scanvexa SEO — AI Website Analyzer
  * Description:       AI-powered SEO agent for WordPress. Connect your own AI provider, scan your site, and let AI analyze and improve your SEO.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Requires at least: 7.0
  * Requires PHP:      8.0
  * Author:            Mveous
@@ -25,7 +25,7 @@ if (!defined('ABSPATH')) {
 // Core constants.
 // -----------------------------------------------------------------------
 
-define('SCVX_VERSION', '1.0.2');
+define('SCVX_VERSION', '1.0.3');
 define('SCVX_DB_VERSION', '1.0.0');
 define('SCVX_FILE', __FILE__);
 define('SCVX_DIR', plugin_dir_path(__FILE__));

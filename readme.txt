@@ -4,7 +4,7 @@ Tags: seo, ai seo, schema, sitemap, meta tags
 Requires at least: 7.0
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,10 @@ Your API key for each provider is stored in your own WordPress database and is s
 4. Content editor SEO & Schema meta box with AI generation tools.
 
 == Changelog ==
+= 1.0.3 =
+* Fixed a PHP 8.0 activation error on admin settings screens (readonly constructor-promoted properties required PHP 8.1, while the plugin declares PHP 8.0 support).
+* API keys entered in this plugin are now always stored in a plugin-private option; the plugin no longer reads or writes WordPress core's native AI Client connector credentials.
+
 = 1.0.2 =
 * Renamed plugin.
 
