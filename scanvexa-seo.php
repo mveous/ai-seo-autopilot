@@ -4,7 +4,7 @@
  * Description:       AI-powered SEO agent for WordPress. Connect your own AI provider, scan your site, and let AI analyze and improve your SEO.
  * Version:           1.0.2
  * Requires at least: 7.0
- * Requires PHP:      8.1
+ * Requires PHP:      8.0
  * Author:            Mveous
  * Author URI:        https://mveous.com
  * License:           GPL v2 or later
