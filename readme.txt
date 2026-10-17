@@ -42,7 +42,7 @@ Bring Your Own Key (BYOK) to connect directly with leading AI providers—includ
 Basic SEO features like XML Sitemaps, Schema generation, and standard metadata work out of the box. To utilize the AI generation features (meta titles, descriptions, ALT text), you will need an API key from OpenAI, Anthropic, or Google Gemini.
 
 = Are my API keys secure? =
-Your API keys are stored in your own WordPress database (the same options used by WordPress core's AI Client), never in plaintext in the page source, and are only ever transmitted to the official AI provider endpoint you configure — never to us or any other third party.
+Your API keys are stored in a plugin-private option in your own WordPress database, never in plaintext in the page source, and are only ever transmitted to the official AI provider endpoint you configure — never to us or any other third party.
 
 = Which AI models are supported? =
 Scanvexa SEO — AI Website Analyzer supports models from OpenAI (such as GPT-4o and GPT-4o-mini), Anthropic (Claude 3.5 Sonnet and Haiku), and Google Gemini (Gemini 1.5 Pro and Flash).

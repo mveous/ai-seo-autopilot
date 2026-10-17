@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class HeaderPartial implements View {
 
-	public function __construct( private readonly string $active_tab = 'dashboard' ) {}
+	public function __construct( private string $active_tab = 'dashboard' ) {}
 
 	public function render(): void {
 		$active_tab = $this->active_tab;

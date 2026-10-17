@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class SettingsView implements View {
 
 	public function __construct(
-		private readonly Settings $settings
+		private Settings $settings
 	) {}
 
 	public function render(): void {

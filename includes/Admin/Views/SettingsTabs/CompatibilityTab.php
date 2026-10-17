@@ -20,8 +20,8 @@ final class CompatibilityTab implements View {
 	 * @param array<string,mixed> $values
 	 */
 	public function __construct(
-		private readonly array $values,
-		private readonly ?SeoPluginDetector $detector
+		private array $values,
+		private ?SeoPluginDetector $detector
 	) {}
 
 	public function render(): void {

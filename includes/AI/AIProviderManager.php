@@ -5,10 +5,12 @@
  * selection, API key retrieval, and usage recording so that no other
  * class needs to know about provider wiring.
  *
- * API keys are stored in the exact same options WordPress core's native
- * AI Client SDK (bundled in WP 7.0+) and its connector settings read from,
- * instead of a plugin-private option — so a key entered here is usable by
- * core and any other plugin built on the same SDK, and vice versa. See
+ * Keys entered in this plugin's own Settings → AI Providers screen are
+ * stored in a plugin-private option and only ever used by this plugin's
+ * own adapters. This never reads from or writes to WordPress core's native
+ * AI Client connector storage (the `connectors_ai_*_api_key` options) —
+ * doing so would reuse a credential the site owner authorized through
+ * core's own connector UI for a purpose they didn't consent to here. See
  * get_api_key()/persist_api_key()/delete_api_key() below.
  *
  * @package Scvx\AI
@@ -137,11 +139,6 @@ final class AIProviderManager {
 	public function delete_api_key( string $provider_id ): void {
 		$connector_id = self::connector_id( $provider_id );
 
-		if ( self::has_native_ai_client() ) {
-			delete_option( 'connectors_ai_' . $connector_id . '_api_key' );
-			return;
-		}
-
 		$creds = get_option( 'wp_ai_client_provider_credentials', array() );
 		if ( isset( $creds[ $connector_id ] ) ) {
 			unset( $creds[ $connector_id ] );
@@ -173,20 +170,15 @@ final class AIProviderManager {
 	}
 
 	/**
-	 * Store a provider's API key in the exact option WordPress core's
-	 * native AI Client SDK (WP 7.0+) reads from, or — on older WP, where
-	 * core doesn't bundle the SDK — the location the standalone SDK
-	 * package itself uses, so the bundled AI Client adapters in
-	 * includes/AI/Providers pick it up without any plugin-private copy.
+	 * Store a provider's API key in this plugin's own option, keyed by the
+	 * AI Client SDK's provider id so the bundled adapters in
+	 * includes/AI/Providers can look it up directly. This is always a
+	 * plugin-private store — it never touches WordPress core's native AI
+	 * Client connector options, even when core provides that SDK natively.
 	 */
 	private function persist_api_key( string $provider_id, string $api_key ): void {
 		$connector_id = self::connector_id( $provider_id );
 		$api_key      = sanitize_text_field( $api_key );
-
-		if ( self::has_native_ai_client() ) {
-			update_option( 'connectors_ai_' . $connector_id . '_api_key', $api_key );
-			return;
-		}
 
 		$creds                  = get_option( 'wp_ai_client_provider_credentials', array() );
 		$creds[ $connector_id ] = $api_key;
@@ -196,22 +188,10 @@ final class AIProviderManager {
 	private function get_api_key( string $provider_id ): ?string {
 		$connector_id = self::connector_id( $provider_id );
 
-		if ( self::has_native_ai_client() ) {
-			$key = (string) get_option( 'connectors_ai_' . $connector_id . '_api_key', '' );
-		} else {
-			$creds = get_option( 'wp_ai_client_provider_credentials', array() );
-			$key   = isset( $creds[ $connector_id ] ) ? (string) $creds[ $connector_id ] : '';
-		}
+		$creds = get_option( 'wp_ai_client_provider_credentials', array() );
+		$key   = isset( $creds[ $connector_id ] ) ? (string) $creds[ $connector_id ] : '';
 
 		return '' === $key ? null : $key;
-	}
-
-	/**
-	 * Whether WordPress core provides the AI Client SDK natively. Mirrors
-	 * the check the wp-ai-client package's own functions.php uses.
-	 */
-	private static function has_native_ai_client(): bool {
-		return function_exists( 'wp_ai_client_prompt' );
 	}
 
 	/**

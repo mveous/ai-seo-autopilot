@@ -26,8 +26,8 @@ final class AiTab implements View {
 	 * @param array<string,mixed> $values
 	 */
 	public function __construct(
-		private readonly array $values,
-		private readonly ?AIProviderManager $providers
+		private array $values,
+		private ?AIProviderManager $providers
 	) {}
 
 	public function render(): void {

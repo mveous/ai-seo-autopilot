@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class AIResponse {
 
 	public function __construct(
-		public readonly string $content,
-		public readonly int $prompt_tokens = 0,
-		public readonly int $completion_tokens = 0,
-		public readonly string $provider = '',
-		public readonly string $model = '',
-		public readonly array $raw = array()
+		public string $content,
+		public int $prompt_tokens = 0,
+		public int $completion_tokens = 0,
+		public string $provider = '',
+		public string $model = '',
+		public array $raw = array()
 	) {}
 
 	public function total_tokens(): int {

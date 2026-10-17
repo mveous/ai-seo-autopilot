@@ -18,7 +18,7 @@ final class GeneralTab implements View {
 	/**
 	 * @param array<string,mixed> $values
 	 */
-	public function __construct( private readonly array $values ) {}
+	public function __construct( private array $values ) {}
 
 	public function render(): void {
 		$general = $this->values['general'];
