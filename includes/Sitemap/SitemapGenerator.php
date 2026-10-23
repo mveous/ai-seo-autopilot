@@ -5,16 +5,16 @@
  * cached in a transient so repeat crawler requests don't rebuild the
  * query on every hit.
  *
- * @package AISEOAutopilot\Sitemap
+ * @package Scvx\Sitemap
  */
 
-namespace AISEOAutopilot\Sitemap;
+namespace Scvx\Sitemap;
 
-use AISEOAutopilot\Admin\Settings;
-use AISEOAutopilot\Compatibility\SeoPluginDetector;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Core\Registrable;
-use AISEOAutopilot\SEO\Metadata\MetaRepository;
+use Scvx\Admin\Settings;
+use Scvx\Compatibility\SeoPluginDetector;
+use Scvx\Core\Plugin;
+use Scvx\Core\Registrable;
+use Scvx\SEO\Metadata\MetaRepository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class SitemapGenerator implements Registrable {
 
-	private const QUERY_VAR   = 'ai_seo_sitemap';
+	private const QUERY_VAR   = 'scvx_sitemap';
 	private const MAX_PER_MAP = 2000;
 	private const CACHE_TTL   = HOUR_IN_SECONDS;
 
@@ -47,9 +47,9 @@ final class SitemapGenerator implements Registrable {
 	}
 
 	public function maybe_flush_rewrite(): void {
-		if ( get_option( 'ai_seo_autopilot_flush_rewrite' ) ) {
+		if ( get_option( 'scvx_flush_rewrite' ) ) {
 			flush_rewrite_rules( false );
-			delete_option( 'ai_seo_autopilot_flush_rewrite' );
+			delete_option( 'scvx_flush_rewrite' );
 		}
 	}
 
@@ -88,7 +88,7 @@ final class SitemapGenerator implements Registrable {
 			return;
 		}
 
-		$cache_key = 'ai_seo_sitemap_' . sanitize_key( $target );
+		$cache_key = 'scvx_sitemap_' . sanitize_key( $target );
 		$xml       = get_transient( $cache_key );
 
 		if ( false === $xml ) {
@@ -202,7 +202,7 @@ final class SitemapGenerator implements Registrable {
 		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- bulk-deleting transients by LIKE pattern; no core API exists for pattern-based transient deletion.
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-				$wpdb->esc_like( '_transient_ai_seo_sitemap_' ) . '%'
+				$wpdb->esc_like( '_transient_scvx_sitemap_' ) . '%'
 			)
 		);
 	}

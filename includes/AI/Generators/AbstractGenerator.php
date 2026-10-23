@@ -3,15 +3,15 @@
  * Shared plumbing for AI content generators: usage-limit enforcement,
  * running the request, and recording which feature it was for.
  *
- * @package AISEOAutopilot\AI\Generators
+ * @package Scvx\AI\Generators
  */
 
-namespace AISEOAutopilot\AI\Generators;
+namespace Scvx\AI\Generators;
 
-use AISEOAutopilot\AI\AIProviderManager;
-use AISEOAutopilot\AI\AIResponse;
-use AISEOAutopilot\AI\PromptManager;
-use AISEOAutopilot\AI\UsageTracker;
+use Scvx\AI\AIProviderManager;
+use Scvx\AI\AIResponse;
+use Scvx\AI\PromptManager;
+use Scvx\AI\UsageTracker;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -65,8 +65,8 @@ abstract class AbstractGenerator {
 	 * @return array<string,string>
 	 */
 	protected function build_post_context( \WP_Post $post ): array {
-		/** @var \AISEOAutopilot\SEO\Metadata\MetaRepository|null $repository */
-		$repository    = \AISEOAutopilot\Core\Plugin::instance()->get( 'seo.meta_repository' );
+		/** @var \Scvx\SEO\Metadata\MetaRepository|null $repository */
+		$repository    = \Scvx\Core\Plugin::instance()->get( 'seo.meta_repository' );
 		$focus_keyword = $repository ? (string) $repository->get( $post->ID, 'focus_keyword' ) : '';
 
 		$excerpt = '' !== $post->post_excerpt ? $post->post_excerpt : wp_trim_words( wp_strip_all_tags( $post->post_content ), 60 );

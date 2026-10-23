@@ -1,14 +1,14 @@
 <?php
 /**
- * GET /ai-seo/v1/schema/{post_id} — preview the schema.org JSON-LD graph
+ * GET /scvx/v1/schema/{post_id} — preview the schema.org JSON-LD graph
  * that would be output for a post, used by the editor sidebar.
  *
- * @package AISEOAutopilot\REST\Controllers
+ * @package Scvx\REST\Controllers
  */
 
-namespace AISEOAutopilot\REST\Controllers;
+namespace Scvx\REST\Controllers;
 
-use AISEOAutopilot\Core\Plugin;
+use Scvx\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,12 +44,12 @@ final class SchemaController extends AbstractController {
 		$post_id = (int) $request->get_param( 'post_id' );
 
 		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
-			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'ai-seo-autopilot' ) ), 403 );
+			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'scanvexa-seo' ) ), 403 );
 		}
 
 		$schema = $this->plugin->get( 'schema.generator' );
 		if ( ! $schema ) {
-			return $this->error( new \WP_Error( 'unavailable', __( 'Schema generator is unavailable.', 'ai-seo-autopilot' ) ), 500 );
+			return $this->error( new \WP_Error( 'unavailable', __( 'Schema generator is unavailable.', 'scanvexa-seo' ) ), 500 );
 		}
 
 		return $this->success(

@@ -2,10 +2,10 @@
 /**
  * Contract for services that hook themselves into WordPress.
  *
- * @package AISEOAutopilot\Core
+ * @package Scvx\Core
  */
 
-namespace AISEOAutopilot\Core;
+namespace Scvx\Core;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

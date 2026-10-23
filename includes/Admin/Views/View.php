@@ -2,10 +2,10 @@
 /**
  * Contract every admin-page renderer implements.
  *
- * @package AISEOAutopilot\Admin\Views
+ * @package Scvx\Admin\Views
  */
 
-namespace AISEOAutopilot\Admin\Views;
+namespace Scvx\Admin\Views;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

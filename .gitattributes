@@ -1,0 +1,45 @@
+# Normalize line endings for new/modified text files; let Git decide
+# text vs. binary for anything not listed explicitly below.
+* text=auto eol=lf
+
+*.php text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.md text eol=lf
+*.pot text eol=lf
+*.po text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+
+# Keep these out of GitHub's "Download ZIP"/git-archive output. Mirrors
+# .distignore, which governs the WordPress.org SVN release package.
+.gitattributes export-ignore
+.gitignore export-ignore
+.distignore export-ignore
+phpunit.xml.dist export-ignore
+phpcs.xml.dist export-ignore
+tests/ export-ignore
+includes/ai-providers/vendor/wordpress/*/tests/ export-ignore
+vendor/bin/ export-ignore
+vendor/dealerdirect/ export-ignore
+vendor/myclabs/ export-ignore
+vendor/nikic/ export-ignore
+vendor/phar-io/ export-ignore
+vendor/phpcompatibility/ export-ignore
+vendor/phpcsstandards/ export-ignore
+vendor/phpunit/ export-ignore
+vendor/sebastian/ export-ignore
+vendor/squizlabs/ export-ignore
+vendor/theseer/ export-ignore
+vendor/wp-coding-standards/ export-ignore
+vendor/yoast/ export-ignore

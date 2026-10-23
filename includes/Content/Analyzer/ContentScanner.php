@@ -4,10 +4,10 @@
  * links, word count) that SeoAnalyzer and SiteAuditor both build on.
  * Pure, stateless, no I/O — safe to call as often as needed.
  *
- * @package AISEOAutopilot\Content\Analyzer
+ * @package Scvx\Content\Analyzer
  */
 
-namespace AISEOAutopilot\Content\Analyzer;
+namespace Scvx\Content\Analyzer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,7 +44,7 @@ final class ContentScanner {
 		$internal_errors = libxml_use_internal_errors( true );
 
 		$dom->loadHTML(
-			'<?xml encoding="utf-8" ?><div id="ai-seo-root">' . $html . '</div>',
+			'<?xml encoding="utf-8" ?><div id="scvx-root">' . $html . '</div>',
 			LIBXML_NOERROR | LIBXML_NOWARNING
 		);
 

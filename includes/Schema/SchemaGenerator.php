@@ -2,25 +2,25 @@
 /**
  * Basic schema.org JSON-LD output: WebPage, Article/BlogPosting,
  * Organization, and BreadcrumbList. Advanced types (Product, Event,
- * Recipe, FAQ, HowTo, LocalBusiness, …) are a Pro feature — see
- * FeatureManager::is_available( 'advanced_schema' ).
+ * Recipe, FAQ, HowTo, LocalBusiness, …) can be added via the
+ * `scvx/schema_graph` filter below.
  *
- * A per-post AI-generated override (`_ai_seo_schema_json`) is honored
+ * A per-post AI-generated override (`_scvx_schema_json`) is honored
  * verbatim when present — it was already validated as well-formed JSON
  * at write time by MetaRepository — otherwise a safe default graph is
  * built from known, trusted post data only.
  *
- * @package AISEOAutopilot\Schema
+ * @package Scvx\Schema
  */
 
-namespace AISEOAutopilot\Schema;
+namespace Scvx\Schema;
 
-use AISEOAutopilot\Admin\Settings;
-use AISEOAutopilot\Compatibility\SeoPluginDetector;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Core\Registrable;
-use AISEOAutopilot\SEO\Breadcrumbs\BreadcrumbsGenerator;
-use AISEOAutopilot\SEO\Metadata\MetaRepository;
+use Scvx\Admin\Settings;
+use Scvx\Compatibility\SeoPluginDetector;
+use Scvx\Core\Plugin;
+use Scvx\Core\Registrable;
+use Scvx\SEO\Breadcrumbs\BreadcrumbsGenerator;
+use Scvx\SEO\Metadata\MetaRepository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -75,10 +75,11 @@ final class SchemaGenerator implements Registrable {
 		}
 
 		// wp_json_encode already produces safe JSON; script tag content is
-		// additionally hardened against premature </script> closure.
+		// additionally hardened against premature </script> closure,
+		// case-insensitively (a JSON string value could contain "</SCRIPT>").
 		printf(
 			"<script type=\"application/ld+json\">%s</script>\n",
-			str_replace( '</', '<\\/', $json ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode() output for a JSON-LD script tag; esc_html() would corrupt the JSON.
+			preg_replace( '#</#i', '<\\/', $json ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode() output for a JSON-LD script tag; esc_html() would corrupt the JSON.
 		);
 	}
 
@@ -223,12 +224,13 @@ final class SchemaGenerator implements Registrable {
 		}
 
 		/**
-		 * Filters the default schema @graph before output. Pro uses this
-		 * to inject advanced schema types (Product, Event, LocalBusiness…).
+		 * Filters the default schema @graph before output. Third-party
+		 * extensions use this to inject advanced schema types (Product,
+		 * Event, LocalBusiness…).
 		 *
 		 * @param array<int,array<string,mixed>> $graph
 		 * @param int                             $post_id
 		 */
-		return (array) apply_filters( 'ai_seo_autopilot/schema_graph', $graph, $post_id );
+		return (array) apply_filters( 'scvx/schema_graph', $graph, $post_id );
 	}
 }

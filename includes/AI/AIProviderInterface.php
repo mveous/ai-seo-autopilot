@@ -4,10 +4,10 @@
  * added without touching any calling code — they just register themselves
  * with AIProviderManager.
  *
- * @package AISEOAutopilot\AI
+ * @package Scvx\AI
  */
 
-namespace AISEOAutopilot\AI;
+namespace Scvx\AI;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,7 +26,9 @@ interface AIProviderInterface {
 	public function get_label(): string;
 
 	/**
-	 * Models this provider supports.
+	 * Models this provider supports, as returned live by the provider's own
+	 * API for the key this instance was constructed with (not a static,
+	 * curated list) — empty if no key is set or the lookup fails.
 	 *
 	 * @return array<string,string> model id => human label
 	 */

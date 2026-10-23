@@ -1,14 +1,14 @@
 /**
- * AI SEO Autopilot — admin dashboard/settings behavior.
+ * Scanvexa SEO — AI Website Analyzer — admin dashboard/settings behavior.
  * No build step: plain ES2017, loaded only on the plugin's own screens.
  */
 ( function () {
 	'use strict';
 
-	var config = window.aiSeoAutopilot || {};
+	var config = window.scvx || {};
 
 	function setScoreRings() {
-		document.querySelectorAll( '.ai-seo-score-ring' ).forEach( function ( el ) {
+		document.querySelectorAll( '.scvx-score-ring' ).forEach( function ( el ) {
 			var score = parseInt( el.getAttribute( 'data-score' ), 10 ) || 0;
 			el.style.setProperty( '--score', Math.max( 0, Math.min( 100, score ) ) );
 		} );
@@ -34,7 +34,7 @@
 	}
 
 	function initRunScan() {
-		var button = document.getElementById( 'ai-seo-run-scan' );
+		var button = document.getElementById( 'scvx-run-scan' );
 		if ( ! button ) {
 			return;
 		}
@@ -61,7 +61,7 @@
 	}
 
 	function initFixIssue() {
-		document.querySelectorAll( '.ai-seo-fix-issue' ).forEach( function ( button ) {
+		document.querySelectorAll( '.scvx-fix-issue' ).forEach( function ( button ) {
 			button.addEventListener( 'click', function () {
 				var cell = button.parentNode;
 				var originalText = button.innerHTML;
@@ -75,7 +75,7 @@
 						var label = 'title' === data.field ? config.i18n.newTitle : config.i18n.newDescription;
 
 						var status = document.createElement( 'span' );
-						status.className = 'ai-seo-issue-fixed';
+						status.className = 'scvx-issue-fixed';
 						status.textContent = '✓ ' + config.i18n.fixed;
 
 						var value = document.createElement( 'span' );
@@ -97,9 +97,57 @@
 		} );
 	}
 
+	function initSettingsToast() {
+		var toast = document.getElementById( 'scvx-toast' );
+		if ( ! toast ) {
+			return;
+		}
+
+		var url = new URL( window.location.href );
+		url.searchParams.delete( 'status' );
+		url.searchParams.delete( 'message' );
+		window.history.replaceState( {}, '', url );
+
+		function dismiss() {
+			toast.classList.add( 'is-hidden' );
+			setTimeout( function () { toast.remove(); }, 300 );
+		}
+
+		toast.querySelector( '.scvx-toast__close' ).addEventListener( 'click', dismiss );
+		setTimeout( dismiss, 10000 );
+	}
+
+	function initRemoveApiKey() {
+		document.querySelectorAll( '.scvx-remove-key' ).forEach( function ( button ) {
+			button.addEventListener( 'click', function () {
+				if ( ! window.confirm( config.i18n.confirmRemoveKey ) ) {
+					return;
+				}
+
+				var body = new URLSearchParams( {
+					action: 'scvx_delete_api_key',
+					_wpnonce: config.settingsNonce,
+					provider: button.dataset.provider,
+				} );
+
+				button.disabled = true;
+
+				fetch( config.adminPostUrl, { method: 'POST', credentials: 'same-origin', body: body } )
+					.then( function () {
+						var url = new URL( window.location.href );
+						url.searchParams.set( 'status', 'deleted' );
+						window.location.href = url.toString();
+					} )
+					.catch( function () { button.disabled = false; } );
+			} );
+		} );
+	}
+
 	document.addEventListener( 'DOMContentLoaded', function () {
 		setScoreRings();
 		initRunScan();
 		initFixIssue();
+		initSettingsToast();
+		initRemoveApiKey();
 	} );
 } )();

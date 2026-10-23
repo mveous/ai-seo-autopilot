@@ -2,12 +2,12 @@
 /**
  * Shared admin topbar/nav, rendered at the top of every top-level page.
  *
- * @package AISEOAutopilot\Admin\Views
+ * @package Scvx\Admin\Views
  */
 
-namespace AISEOAutopilot\Admin\Views;
+namespace Scvx\Admin\Views;
 
-use AISEOAutopilot\Admin\Menu;
+use Scvx\Admin\Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,29 +15,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class HeaderPartial implements View {
 
-	public function __construct( private readonly string $active_tab = 'dashboard' ) {}
+	public function __construct( private string $active_tab = 'dashboard' ) {}
 
 	public function render(): void {
 		$active_tab = $this->active_tab;
 
 		$nav = array(
-			'dashboard' => array( 'label' => __( 'Dashboard', 'ai-seo-autopilot' ), 'page' => Menu::DASHBOARD_SLUG ),
-			'settings'  => array( 'label' => __( 'Settings', 'ai-seo-autopilot' ), 'page' => Menu::SETTINGS_SLUG ),
-			'upgrade'   => array( 'label' => __( 'Upgrade to Pro', 'ai-seo-autopilot' ), 'page' => 'ai-seo-autopilot-upgrade' ),
+			'dashboard' => array( 'label' => __( 'Dashboard', 'scanvexa-seo' ), 'page' => Menu::DASHBOARD_SLUG ),
+			'settings'  => array( 'label' => __( 'Settings', 'scanvexa-seo' ), 'page' => Menu::SETTINGS_SLUG ),
 		);
 		?>
-		<div class="ai-seo-wrap">
-			<div class="ai-seo-topbar">
-				<div class="ai-seo-topbar__brand">
+		<div class="scvx-wrap">
+			<div class="scvx-topbar">
+				<div class="scvx-topbar__brand">
 					<span class="dashicons dashicons-superhero-alt" aria-hidden="true"></span>
-					<span class="ai-seo-topbar__title"><?php esc_html_e( 'AI SEO Autopilot', 'ai-seo-autopilot' ); ?></span>
-					<?php $plan_badge = apply_filters( 'ai_seo_autopilot/plan_badge', __( 'FREE', 'ai-seo-autopilot' ) ); ?>
-					<span class="ai-seo-badge ai-seo-badge--free"><?php echo esc_html( $plan_badge ); ?></span>
+					<span class="scvx-topbar__title"><?php esc_html_e( 'Scanvexa SEO — AI Website Analyzer', 'scanvexa-seo' ); ?></span>
 				</div>
-				<nav class="ai-seo-topbar__nav">
+				<nav class="scvx-topbar__nav">
 					<?php foreach ( $nav as $key => $item ) : ?>
 						<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . $item['page'] ) ); ?>"
-							class="ai-seo-topbar__link <?php echo $active_tab === $key ? 'is-active' : ''; ?>">
+							class="scvx-topbar__link <?php echo $active_tab === $key ? 'is-active' : ''; ?>">
 							<?php echo esc_html( $item['label'] ); ?>
 						</a>
 					<?php endforeach; ?>

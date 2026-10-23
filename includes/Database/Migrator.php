@@ -2,10 +2,10 @@
 /**
  * Creates / upgrades custom database tables via dbDelta.
  *
- * @package AISEOAutopilot\Database
+ * @package Scvx\Database
  */
 
-namespace AISEOAutopilot\Database;
+namespace Scvx\Database;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -20,7 +20,7 @@ final class Migrator {
 	public static function table( string $name ): string {
 		global $wpdb;
 
-		return $wpdb->prefix . 'ai_seo_' . $name;
+		return $wpdb->prefix . 'scvx_' . $name;
 	}
 
 	public static function install(): void {

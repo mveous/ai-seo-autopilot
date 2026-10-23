@@ -2,19 +2,25 @@
 /**
  * Registry + factory for AI provider adapters, and the single entry point
  * calling code should use to run an AI request. Handles provider
- * selection, API key retrieval/decryption, and usage recording so that
- * no other class needs to know about encryption or provider wiring.
+ * selection, API key retrieval, and usage recording so that no other
+ * class needs to know about provider wiring.
  *
- * @package AISEOAutopilot\AI
+ * Keys entered in this plugin's own Settings → AI Providers screen are
+ * stored in a plugin-private option and only ever used by this plugin's
+ * own adapters. This never reads from or writes to WordPress core's native
+ * AI Client connector storage (the `connectors_ai_*_api_key` options) —
+ * doing so would reuse a credential the site owner authorized through
+ * core's own connector UI for a purpose they didn't consent to here. See
+ * get_api_key()/persist_api_key()/delete_api_key() below.
+ *
+ * @package Scvx\AI
  */
 
-namespace AISEOAutopilot\AI;
+namespace Scvx\AI;
 
-use AISEOAutopilot\AI\Providers\AnthropicProvider;
-use AISEOAutopilot\AI\Providers\GeminiProvider;
-use AISEOAutopilot\AI\Providers\OpenAIProvider;
-use AISEOAutopilot\Features\FeatureManager;
-use AISEOAutopilot\Security\Encryption;
+use Scvx\AI\Providers\AnthropicProvider;
+use Scvx\AI\Providers\GeminiProvider;
+use Scvx\AI\Providers\OpenAIProvider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,26 +28,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class AIProviderManager {
 
-	private const KEYS_OPTION = 'ai_seo_autopilot_api_keys';
-
 	/** @var array<string,class-string<AIProviderInterface>> */
 	private array $providers = array();
 
-	private FeatureManager $features;
-
-	public function __construct( FeatureManager $features ) {
-		$this->features = $features;
-
+	public function __construct() {
 		$this->register_provider( 'openai', OpenAIProvider::class );
 		$this->register_provider( 'gemini', GeminiProvider::class );
 		$this->register_provider( 'anthropic', AnthropicProvider::class );
 
 		/**
-		 * Allows Pro or third parties to register additional AI providers.
+		 * Allows third parties to register additional AI providers.
 		 *
 		 * @param AIProviderManager $manager
 		 */
-		do_action( 'ai_seo_autopilot/register_ai_providers', $this );
+		do_action( 'scvx/register_ai_providers', $this );
 	}
 
 	/**
@@ -91,16 +91,7 @@ final class AIProviderManager {
 	}
 
 	/**
-	 * Whether this provider requires Pro to connect. Every registered
-	 * provider (Anthropic, OpenAI, Gemini, and any Pro-registered ones)
-	 * is available on Free.
-	 */
-	public function is_provider_locked( string $provider_id ): bool {
-		return false;
-	}
-
-	/**
-	 * Instantiate a provider adapter with a decrypted API key.
+	 * Instantiate a provider adapter with an API key.
 	 */
 	private function make_provider( string $provider_id, string $api_key ): ?AIProviderInterface {
 		if ( ! isset( $this->providers[ $provider_id ] ) ) {
@@ -117,9 +108,9 @@ final class AIProviderManager {
 	// -------------------------------------------------------------
 
 	/**
-	 * Validate and persist an API key for a provider. The key is only
-	 * ever stored encrypted; the plaintext value never touches the
-	 * database, logs, or a REST response.
+	 * Validate and persist an API key for a provider. Stored via
+	 * persist_api_key() — the plaintext value never appears in a REST
+	 * response, only a masked preview (see get_masked_key()).
 	 *
 	 * @return true|\WP_Error
 	 */
@@ -127,19 +118,12 @@ final class AIProviderManager {
 		$provider = $this->make_provider( $provider_id, $api_key );
 
 		if ( null === $provider ) {
-			return new \WP_Error( 'ai_seo_autopilot_unknown_provider', __( 'Unknown AI provider.', 'ai-seo-autopilot' ) );
-		}
-
-		if ( $this->is_provider_locked( $provider_id ) ) {
-			return new \WP_Error(
-				'ai_seo_autopilot_provider_locked',
-				__( 'This AI provider requires AI SEO Autopilot Pro. The Free plan is limited to Anthropic Claude.', 'ai-seo-autopilot' )
-			);
+			return new \WP_Error( 'scvx_unknown_provider', __( 'Unknown AI provider.', 'scanvexa-seo' ) );
 		}
 
 		$api_key = trim( $api_key );
 		if ( '' === $api_key ) {
-			return new \WP_Error( 'ai_seo_autopilot_empty_key', __( 'API key cannot be empty.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'scvx_empty_key', __( 'API key cannot be empty.', 'scanvexa-seo' ) );
 		}
 
 		$valid = $provider->validate_api_key( $api_key );
@@ -147,18 +131,19 @@ final class AIProviderManager {
 			return $valid;
 		}
 
-		$stored                = get_option( self::KEYS_OPTION, array() );
-		$stored[ $provider_id ] = Encryption::encrypt( $api_key );
-
-		update_option( self::KEYS_OPTION, $stored, false );
+		$this->persist_api_key( $provider_id, $api_key );
 
 		return true;
 	}
 
 	public function delete_api_key( string $provider_id ): void {
-		$stored = get_option( self::KEYS_OPTION, array() );
-		unset( $stored[ $provider_id ] );
-		update_option( self::KEYS_OPTION, $stored, false );
+		$connector_id = self::connector_id( $provider_id );
+
+		$creds = get_option( 'wp_ai_client_provider_credentials', array() );
+		if ( isset( $creds[ $connector_id ] ) ) {
+			unset( $creds[ $connector_id ] );
+			update_option( 'wp_ai_client_provider_credentials', $creds );
+		}
 	}
 
 	public function has_api_key( string $provider_id ): bool {
@@ -172,17 +157,51 @@ final class AIProviderManager {
 	public function get_masked_key( string $provider_id ): ?string {
 		$key = $this->get_api_key( $provider_id );
 
-		return null === $key ? null : Encryption::mask( $key );
-	}
-
-	private function get_api_key( string $provider_id ): ?string {
-		$stored = get_option( self::KEYS_OPTION, array() );
-
-		if ( empty( $stored[ $provider_id ] ) ) {
+		if ( null === $key ) {
 			return null;
 		}
 
-		return Encryption::decrypt( (string) $stored[ $provider_id ] );
+		$len = strlen( $key );
+		if ( $len <= 8 ) {
+			return str_repeat( '•', max( 4, $len ) );
+		}
+
+		return substr( $key, 0, 3 ) . str_repeat( '•', 6 ) . substr( $key, -4 );
+	}
+
+	/**
+	 * Store a provider's API key in this plugin's own option, keyed by the
+	 * AI Client SDK's provider id so the bundled adapters in
+	 * includes/AI/Providers can look it up directly. This is always a
+	 * plugin-private store — it never touches WordPress core's native AI
+	 * Client connector options, even when core provides that SDK natively.
+	 */
+	private function persist_api_key( string $provider_id, string $api_key ): void {
+		$connector_id = self::connector_id( $provider_id );
+		$api_key      = sanitize_text_field( $api_key );
+
+		$creds                  = get_option( 'wp_ai_client_provider_credentials', array() );
+		$creds[ $connector_id ] = $api_key;
+		update_option( 'wp_ai_client_provider_credentials', $creds );
+	}
+
+	private function get_api_key( string $provider_id ): ?string {
+		$connector_id = self::connector_id( $provider_id );
+
+		$creds = get_option( 'wp_ai_client_provider_credentials', array() );
+		$key   = isset( $creds[ $connector_id ] ) ? (string) $creds[ $connector_id ] : '';
+
+		return '' === $key ? null : $key;
+	}
+
+	/**
+	 * Maps this plugin's own provider identifiers to the AI Client SDK's
+	 * provider IDs, which is what both core's connector options and the
+	 * standalone SDK's credentials array are keyed by. Only "gemini"
+	 * differs — the SDK (and WP core) know Google's provider as "google".
+	 */
+	private static function connector_id( string $provider_id ): string {
+		return 'gemini' === $provider_id ? 'google' : $provider_id;
 	}
 
 	// -------------------------------------------------------------
@@ -190,7 +209,7 @@ final class AIProviderManager {
 	// -------------------------------------------------------------
 
 	public function get_active_provider_id(): string {
-		$settings = get_option( 'ai_seo_autopilot_settings', array() );
+		$settings = get_option( 'scvx_settings', array() );
 
 		return (string) ( $settings['ai']['active_provider'] ?? '' );
 	}
@@ -199,6 +218,17 @@ final class AIProviderManager {
 		$id = $this->get_active_provider_id();
 
 		return '' !== $id && $this->has_api_key( $id );
+	}
+
+	/**
+	 * The model saved for a provider in Settings → AI Providers, or '' if
+	 * none has been chosen yet (callers fall back to the provider's own
+	 * default in that case).
+	 */
+	public function get_selected_model( string $provider_id ): string {
+		$settings = get_option( 'scvx_settings', array() );
+
+		return (string) ( $settings['ai']['models'][ $provider_id ] ?? '' );
 	}
 
 	// -------------------------------------------------------------
@@ -216,26 +246,27 @@ final class AIProviderManager {
 		$provider_id = $options['provider'] ?? $this->get_active_provider_id();
 
 		if ( '' === $provider_id ) {
-			return new \WP_Error( 'ai_seo_autopilot_no_provider', __( 'No AI provider is configured. Add an API key in AI SEO → Settings → AI Providers.', 'ai-seo-autopilot' ) );
-		}
-
-		if ( $this->is_provider_locked( $provider_id ) ) {
-			return new \WP_Error(
-				'ai_seo_autopilot_provider_locked',
-				__( 'This AI provider requires AI SEO Autopilot Pro. Switch to Anthropic Claude, or upgrade to Pro.', 'ai-seo-autopilot' )
-			);
+			return new \WP_Error( 'scvx_no_provider', __( 'No AI provider is configured. Add an API key in AI SEO → Settings → AI Providers.', 'scanvexa-seo' ) );
 		}
 
 		$api_key = $this->get_api_key( $provider_id );
 
 		if ( null === $api_key ) {
-			return new \WP_Error( 'ai_seo_autopilot_no_key', __( 'No API key is stored for the selected AI provider.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'scvx_no_key', __( 'No API key is stored for the selected AI provider.', 'scanvexa-seo' ) );
 		}
 
 		$provider = $this->make_provider( $provider_id, $api_key );
 
 		if ( null === $provider ) {
-			return new \WP_Error( 'ai_seo_autopilot_unknown_provider', __( 'Unknown AI provider.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'scvx_unknown_provider', __( 'Unknown AI provider.', 'scanvexa-seo' ) );
+		}
+
+		if ( empty( $options['model'] ) ) {
+			$selected_model = $this->get_selected_model( $provider_id );
+
+			if ( '' !== $selected_model ) {
+				$options['model'] = $selected_model;
+			}
 		}
 
 		$response = $provider->generate( $system_prompt, $user_prompt, $options );
@@ -248,7 +279,7 @@ final class AIProviderManager {
 		 * @param string               $feature
 		 * @param string               $provider_id
 		 */
-		do_action( 'ai_seo_autopilot/ai_request_completed', $response, $feature, $provider_id );
+		do_action( 'scvx/ai_request_completed', $response, $feature, $provider_id );
 
 		return $response;
 	}

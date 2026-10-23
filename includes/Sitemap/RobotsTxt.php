@@ -5,14 +5,14 @@
  * how the `robots_txt` filter itself works) and only when this plugin
  * is the one controlling the sitemap output.
  *
- * @package AISEOAutopilot\Sitemap
+ * @package Scvx\Sitemap
  */
 
-namespace AISEOAutopilot\Sitemap;
+namespace Scvx\Sitemap;
 
-use AISEOAutopilot\Compatibility\SeoPluginDetector;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Core\Registrable;
+use Scvx\Compatibility\SeoPluginDetector;
+use Scvx\Core\Plugin;
+use Scvx\Core\Registrable;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

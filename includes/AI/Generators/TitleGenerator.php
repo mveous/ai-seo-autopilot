@@ -1,9 +1,9 @@
 <?php
 /**
- * @package AISEOAutopilot\AI\Generators
+ * @package Scvx\AI\Generators
  */
 
-namespace AISEOAutopilot\AI\Generators;
+namespace Scvx\AI\Generators;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -17,7 +17,7 @@ final class TitleGenerator extends AbstractGenerator {
 	public function generate_for_post( int $post_id ) {
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return new \WP_Error( 'ai_seo_autopilot_not_found', __( 'Post not found.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'scvx_not_found', __( 'Post not found.', 'scanvexa-seo' ) );
 		}
 
 		$context = $this->build_post_context( $post );

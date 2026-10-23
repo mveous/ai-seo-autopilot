@@ -5,14 +5,14 @@
  * and so large sites finish scanning over several cron ticks instead of
  * one long-running request.
  *
- * @package AISEOAutopilot\Cron
+ * @package Scvx\Cron
  */
 
-namespace AISEOAutopilot\Cron;
+namespace Scvx\Cron;
 
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Core\Registrable;
-use AISEOAutopilot\SEO\Audit\SiteAuditor;
+use Scvx\Core\Plugin;
+use Scvx\Core\Registrable;
+use Scvx\SEO\Audit\SiteAuditor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Scheduler implements Registrable {
 
-	public const HOOK_SITE_SCAN = 'ai_seo_autopilot/cron/site_scan';
+	public const HOOK_SITE_SCAN = 'scvx/cron/site_scan';
 
 	private const RESCAN_INTERVAL = DAY_IN_SECONDS;
 
@@ -36,9 +36,9 @@ final class Scheduler implements Registrable {
 	 * @return array<string,array{interval:int,display:string}>
 	 */
 	public function add_schedules( array $schedules ): array {
-		$schedules['ai_seo_autopilot_15min'] = array(
+		$schedules['scvx_15min'] = array(
 			'interval' => 15 * MINUTE_IN_SECONDS,
-			'display'  => __( 'Every 15 Minutes (AI SEO Autopilot)', 'ai-seo-autopilot' ),
+			'display'  => __( 'Every 15 Minutes (Scanvexa SEO — AI Website Analyzer)', 'scanvexa-seo' ),
 		);
 
 		return $schedules;
@@ -46,7 +46,7 @@ final class Scheduler implements Registrable {
 
 	public function maybe_schedule(): void {
 		if ( ! wp_next_scheduled( self::HOOK_SITE_SCAN ) ) {
-			wp_schedule_event( time() + ( 5 * MINUTE_IN_SECONDS ), 'ai_seo_autopilot_15min', self::HOOK_SITE_SCAN );
+			wp_schedule_event( time() + ( 5 * MINUTE_IN_SECONDS ), 'scvx_15min', self::HOOK_SITE_SCAN );
 		}
 	}
 

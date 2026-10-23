@@ -1,13 +1,13 @@
 <?php
 /**
- * GET /ai-seo/v1/dashboard — summary data for the admin dashboard.
+ * GET /scvx/v1/dashboard — summary data for the admin dashboard.
  *
- * @package AISEOAutopilot\REST\Controllers
+ * @package Scvx\REST\Controllers
  */
 
-namespace AISEOAutopilot\REST\Controllers;
+namespace Scvx\REST\Controllers;
 
-use AISEOAutopilot\Core\Plugin;
+use Scvx\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

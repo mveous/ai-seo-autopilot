@@ -1,21 +1,21 @@
 <?php
 /**
- * POST /ai-seo/v1/ai/generate — the single entry point the editor UI
+ * POST /scvx/v1/ai/generate — the single entry point the editor UI
  * uses for every AI-assisted generation feature. Dispatches to the
  * matching generator; every generator enforces the usage limit and
  * sanitizes AI output before it's ever returned to the browser.
  *
- * @package AISEOAutopilot\REST\Controllers
+ * @package Scvx\REST\Controllers
  */
 
-namespace AISEOAutopilot\REST\Controllers;
+namespace Scvx\REST\Controllers;
 
-use AISEOAutopilot\AI\Generators\AltTextGenerator;
-use AISEOAutopilot\AI\Generators\KeywordSuggester;
-use AISEOAutopilot\AI\Generators\MetaDescriptionGenerator;
-use AISEOAutopilot\AI\Generators\SchemaAIGenerator;
-use AISEOAutopilot\AI\Generators\TitleGenerator;
-use AISEOAutopilot\Core\Plugin;
+use Scvx\AI\Generators\AltTextGenerator;
+use Scvx\AI\Generators\KeywordSuggester;
+use Scvx\AI\Generators\MetaDescriptionGenerator;
+use Scvx\AI\Generators\SchemaAIGenerator;
+use Scvx\AI\Generators\TitleGenerator;
+use Scvx\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,7 +58,7 @@ final class AIController extends AbstractController {
 		$post_id = (int) $request->get_param( 'post_id' );
 
 		if ( $post_id && ! current_user_can( 'edit_post', $post_id ) ) {
-			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'ai-seo-autopilot' ) ), 403 );
+			return $this->error( new \WP_Error( 'forbidden', __( 'You cannot edit this content.', 'scanvexa-seo' ) ), 403 );
 		}
 
 		$providers = $this->plugin->get( 'ai.providers' );
@@ -66,7 +66,7 @@ final class AIController extends AbstractController {
 		$usage     = $this->plugin->get( 'ai.usage' );
 
 		if ( ! $providers || ! $prompts || ! $usage ) {
-			return $this->error( new \WP_Error( 'unavailable', __( 'AI services are unavailable.', 'ai-seo-autopilot' ) ), 500 );
+			return $this->error( new \WP_Error( 'unavailable', __( 'AI services are unavailable.', 'scanvexa-seo' ) ), 500 );
 		}
 
 		$result = match ( $feature ) {
@@ -75,7 +75,7 @@ final class AIController extends AbstractController {
 			'keywords'         => ( new KeywordSuggester( $providers, $prompts, $usage ) )->generate_for_post( $post_id ),
 			'schema'           => ( new SchemaAIGenerator( $providers, $prompts, $usage ) )->generate_for_post( $post_id, (string) $request->get_param( 'schema_type' ) ),
 			'alt_text'         => $this->generate_alt_text( $request, $providers, $prompts, $usage ),
-			default            => new \WP_Error( 'ai_seo_autopilot_unknown_feature', __( 'Unknown AI feature.', 'ai-seo-autopilot' ) ),
+			default            => new \WP_Error( 'scvx_unknown_feature', __( 'Unknown AI feature.', 'scanvexa-seo' ) ),
 		};
 
 		if ( is_wp_error( $result ) ) {
@@ -89,7 +89,7 @@ final class AIController extends AbstractController {
 		$attachment_id = (int) $request->get_param( 'attachment_id' );
 
 		if ( ! $attachment_id || ! current_user_can( 'edit_post', $attachment_id ) ) {
-			return new \WP_Error( 'forbidden', __( 'You cannot edit this attachment.', 'ai-seo-autopilot' ) );
+			return new \WP_Error( 'forbidden', __( 'You cannot edit this attachment.', 'scanvexa-seo' ) );
 		}
 
 		$context_post_id = (int) $request->get_param( 'post_id' );

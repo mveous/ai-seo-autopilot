@@ -1,0 +1,42 @@
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editors/IDEs
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs & local env
+*.log
+.env
+
+# Node (not used yet, but harmless to ignore if introduced)
+node_modules/
+
+# PHPUnit run artifacts
+.phpunit.result.cache
+.phpunit.cache/
+
+# Packaged release zips built locally
+/*.zip
+
+# Dev-only composer dependencies (require-dev): never ship or track these.
+# Keep this list in sync with .distignore's require-dev exclusions.
+vendor/bin/
+vendor/dealerdirect/
+vendor/myclabs/
+vendor/nikic/
+vendor/phar-io/
+vendor/phpcompatibility/
+vendor/phpcsstandards/
+vendor/phpunit/
+vendor/sebastian/
+vendor/squizlabs/
+vendor/theseer/
+vendor/wp-coding-standards/
+vendor/yoast/
+
+# Bundled AI provider SDKs ship their own test suites upstream; never track them.
+includes/ai-providers/vendor/wordpress/*/tests/

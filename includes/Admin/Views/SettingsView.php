@@ -2,24 +2,23 @@
 /**
  * Settings page: tabbed, one <form> per tab, posts to admin-post.php.
  *
- * @package AISEOAutopilot\Admin\Views
+ * @package Scvx\Admin\Views
  */
 
-namespace AISEOAutopilot\Admin\Views;
+namespace Scvx\Admin\Views;
 
-use AISEOAutopilot\Admin\Menu;
-use AISEOAutopilot\Admin\Settings;
-use AISEOAutopilot\Admin\Views\SettingsTabs\AdvancedTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\AiTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\CompatibilityTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\ContentTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\GeneralTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\SchemaTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\SitemapTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\SocialTab;
-use AISEOAutopilot\Admin\Views\SettingsTabs\SeoTab;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Features\FeatureManager;
+use Scvx\Admin\Menu;
+use Scvx\Admin\Settings;
+use Scvx\Admin\Views\SettingsTabs\AdvancedTab;
+use Scvx\Admin\Views\SettingsTabs\AiTab;
+use Scvx\Admin\Views\SettingsTabs\CompatibilityTab;
+use Scvx\Admin\Views\SettingsTabs\ContentTab;
+use Scvx\Admin\Views\SettingsTabs\GeneralTab;
+use Scvx\Admin\Views\SettingsTabs\SchemaTab;
+use Scvx\Admin\Views\SettingsTabs\SitemapTab;
+use Scvx\Admin\Views\SettingsTabs\SocialTab;
+use Scvx\Admin\Views\SettingsTabs\SeoTab;
+use Scvx\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,32 +27,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class SettingsView implements View {
 
 	public function __construct(
-		private readonly FeatureManager $features,
-		private readonly Settings $settings
+		private Settings $settings
 	) {}
 
 	public function render(): void {
 		( new HeaderPartial( 'settings' ) )->render();
 
-		$features = $this->features;
 		$plugin   = Plugin::instance();
-		$upgrade  = $plugin->get( 'upgrade' );
 
 		$tabs = array(
-			'general'   => array( 'label' => __( 'General', 'ai-seo-autopilot' ), 'pro' => false ),
-			'ai'        => array( 'label' => __( 'AI Providers', 'ai-seo-autopilot' ), 'pro' => false ),
-			'seo'       => array( 'label' => __( 'SEO', 'ai-seo-autopilot' ), 'pro' => false ),
-			'content'   => array( 'label' => __( 'Content', 'ai-seo-autopilot' ), 'pro' => false ),
-			'schema'    => array( 'label' => __( 'Schema', 'ai-seo-autopilot' ), 'pro' => false ),
-			'sitemap'   => array( 'label' => __( 'Sitemap', 'ai-seo-autopilot' ), 'pro' => false ),
-			'social'    => array( 'label' => __( 'Social', 'ai-seo-autopilot' ), 'pro' => false ),
-			'compatibility' => array( 'label' => __( 'Compatibility', 'ai-seo-autopilot' ), 'pro' => false ),
-			'internal_links' => array( 'label' => __( 'Internal Links', 'ai-seo-autopilot' ), 'pro' => true, 'feature' => 'internal_linking' ),
-			'automation'      => array( 'label' => __( 'Automation', 'ai-seo-autopilot' ), 'pro' => true, 'feature' => 'seo_autopilot' ),
-			'search_console'  => array( 'label' => __( 'Search Console', 'ai-seo-autopilot' ), 'pro' => true, 'feature' => 'search_console' ),
-			'woocommerce'     => array( 'label' => __( 'WooCommerce', 'ai-seo-autopilot' ), 'pro' => true, 'feature' => 'woocommerce_seo' ),
-			'local_seo'       => array( 'label' => __( 'Local SEO', 'ai-seo-autopilot' ), 'pro' => true, 'feature' => 'local_seo' ),
-			'advanced'  => array( 'label' => __( 'Advanced', 'ai-seo-autopilot' ), 'pro' => false ),
+			'general'   => array( 'label' => __( 'General', 'scanvexa-seo' ) ),
+			'ai'        => array( 'label' => __( 'AI Providers', 'scanvexa-seo' ) ),
+			'seo'       => array( 'label' => __( 'SEO', 'scanvexa-seo' ) ),
+			'content'   => array( 'label' => __( 'Content', 'scanvexa-seo' ) ),
+			'schema'    => array( 'label' => __( 'Schema', 'scanvexa-seo' ) ),
+			'sitemap'   => array( 'label' => __( 'Sitemap', 'scanvexa-seo' ) ),
+			'social'    => array( 'label' => __( 'Social', 'scanvexa-seo' ) ),
+			'compatibility' => array( 'label' => __( 'Compatibility', 'scanvexa-seo' ) ),
+			'advanced'  => array( 'label' => __( 'Advanced', 'scanvexa-seo' ) ),
 		);
 
 		$current = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'general'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -66,42 +57,28 @@ final class SettingsView implements View {
 
 		$values = $this->settings->get_all();
 		?>
-		<div class="ai-seo-page ai-seo-page--settings">
+		<div class="scvx-page scvx-page--settings">
 
 			<?php if ( 'saved' === $status ) : ?>
-				<div class="ai-seo-notice ai-seo-notice--success"><?php esc_html_e( 'Settings saved.', 'ai-seo-autopilot' ); ?></div>
+				<?php $this->render_toast( __( 'Settings saved.', 'scanvexa-seo' ), 'success' ); ?>
 			<?php elseif ( 'deleted' === $status ) : ?>
-				<div class="ai-seo-notice ai-seo-notice--success"><?php esc_html_e( 'API key removed.', 'ai-seo-autopilot' ); ?></div>
+				<?php $this->render_toast( __( 'API key removed.', 'scanvexa-seo' ), 'success' ); ?>
 			<?php elseif ( 'error' === $status ) : ?>
-				<div class="ai-seo-notice ai-seo-notice--error"><?php echo esc_html( $message ?: __( 'Something went wrong.', 'ai-seo-autopilot' ) ); ?></div>
+				<?php $this->render_toast( $message ?: __( 'Something went wrong.', 'scanvexa-seo' ), 'error' ); ?>
 			<?php endif; ?>
 
-			<div class="ai-seo-settings-layout">
-				<nav class="ai-seo-settings-nav">
+			<div class="scvx-settings-layout">
+				<nav class="scvx-settings-nav">
 					<?php foreach ( $tabs as $key => $tab ) : ?>
-						<a class="ai-seo-settings-nav__link <?php echo $current === $key ? 'is-active' : ''; ?>"
+						<a class="scvx-settings-nav__link <?php echo $current === $key ? 'is-active' : ''; ?>"
 							href="<?php echo esc_url( admin_url( 'admin.php?page=' . Menu::SETTINGS_SLUG . '&tab=' . $key ) ); ?>">
 							<?php echo esc_html( $tab['label'] ); ?>
-							<?php if ( ! empty( $tab['pro'] ) && ! $features->is_available( $tab['feature'] ) ) : ?>
-								<span class="ai-seo-badge ai-seo-badge--pro ai-seo-badge--sm"><?php esc_html_e( 'PRO', 'ai-seo-autopilot' ); ?></span>
-							<?php endif; ?>
 						</a>
 					<?php endforeach; ?>
 				</nav>
 
-				<div class="ai-seo-settings-content">
-					<?php
-					if ( ! empty( $tabs[ $current ]['pro'] ) && ! $features->is_available( $tabs[ $current ]['feature'] ) ) {
-						$feature = $features->get( $tabs[ $current ]['feature'] );
-						if ( $feature ) {
-							echo '<div class="ai-seo-grid ai-seo-grid--cards ai-seo-grid--single">';
-							$upgrade->render_locked_feature_card( $tabs[ $current ]['feature'], $feature );
-							echo '</div>';
-						}
-					} else {
-						$this->render_tab( $current, $values, $plugin );
-					}
-					?>
+				<div class="scvx-settings-content">
+					<?php $this->render_tab( $current, $values, $plugin ); ?>
 				</div>
 			</div>
 		</div>
@@ -125,5 +102,24 @@ final class SettingsView implements View {
 		};
 
 		$tab_view->render();
+	}
+
+	/**
+	 * A transient toast notice — auto-dismisses after 10 seconds or on
+	 * manual close, and strips status/message from the URL immediately so
+	 * refreshing the page never re-shows a past submission's notice. The
+	 * $status/$message query args exist only to survive the redirect from
+	 * the admin-post handler; they are not meant to be a permanent part of
+	 * this page's URL.
+	 */
+	private function render_toast( string $message, string $type ): void {
+		?>
+		<div id="scvx-toast" class="scvx-toast scvx-toast--<?php echo esc_attr( $type ); ?>" role="status">
+			<span class="scvx-toast__message"><?php echo esc_html( $message ); ?></span>
+			<button type="button" class="scvx-toast__close" aria-label="<?php esc_attr_e( 'Dismiss', 'scanvexa-seo' ); ?>">&times;</button>
+		</div>
+		<?php
+		// Styling and dismiss behavior live in admin/css/admin.css and
+		// admin/js/admin.js (enqueued by Admin\Assets) — never inline here.
 	}
 }

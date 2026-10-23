@@ -5,12 +5,12 @@
  * Permanent removal only happens in uninstall.php, and only if the
  * user opted into it.
  *
- * @package AISEOAutopilot\Core
+ * @package Scvx\Core
  */
 
-namespace AISEOAutopilot\Core;
+namespace Scvx\Core;
 
-use AISEOAutopilot\Cron\Scheduler;
+use Scvx\Cron\Scheduler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -25,6 +25,6 @@ final class Deactivator {
 
 		wp_clear_scheduled_hook( Scheduler::HOOK_SITE_SCAN );
 
-		update_option( 'ai_seo_autopilot_flush_rewrite', 1 );
+		update_option( 'scvx_flush_rewrite', 1 );
 	}
 }

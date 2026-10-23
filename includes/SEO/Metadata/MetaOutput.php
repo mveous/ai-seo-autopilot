@@ -8,15 +8,15 @@
  * Every output area is gated by SeoPluginDetector::controls() so this
  * never duplicates output alongside another active SEO plugin.
  *
- * @package AISEOAutopilot\SEO\Metadata
+ * @package Scvx\SEO\Metadata
  */
 
-namespace AISEOAutopilot\SEO\Metadata;
+namespace Scvx\SEO\Metadata;
 
-use AISEOAutopilot\Admin\Settings;
-use AISEOAutopilot\Compatibility\SeoPluginDetector;
-use AISEOAutopilot\Core\Plugin;
-use AISEOAutopilot\Core\Registrable;
+use Scvx\Admin\Settings;
+use Scvx\Compatibility\SeoPluginDetector;
+use Scvx\Core\Plugin;
+use Scvx\Core\Registrable;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
